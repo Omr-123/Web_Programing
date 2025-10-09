@@ -6,11 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+<style>
+    .come {
+        background-color: lightblue;
+        text-align: center;
+        padding: 20px;
+        border: 2px solid black;
+        border-radius: 10px;
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+        color: darkblue;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        margin-bottom: 20px;
+        transition: background-color 0.3s ease;
+
+    }
+</style>
 
 <body>
     <h1>Hello World</h1>
     <section>
-        <div>Welcome All</div>
+        <div class="come">Welcome All</div>
         <ol>
             <li>HTML</li>
             <li>CSS</li>
@@ -19,7 +36,29 @@
     </section>
     <section></section>
     <video src="assets/video1.mp4" controls width="300" height="300"></video>
-    <progress value="70" max="100">Don't Try</progress>
+    <table class="come">
+        <caption>My First Table</caption>
+        <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Age</th>
+        </tr>
+        <tr>
+            <td>John</td>
+            <td>Doe</td>
+            <td>25</td>
+        </tr>
+        <tr>
+            <td>Mary</td>
+            <td>Moe</td>
+            <td>50</td>
+        </tr>
+        <tr>
+            <td>July</td>
+            <td>Dooley</td>
+            <td>40</td>
+        </tr>
+    </table>
 </body>
 
 </html>
