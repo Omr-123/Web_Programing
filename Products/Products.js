@@ -16,7 +16,9 @@ function searchCourses() {
 // Array of courses
 const courses = [
     { name: "Web Development", img: "assets/web-programing.jpeg" },
-    "Data Science",
+    { name: "Data Science", img: "assets/Data-Science.jpeg" },
+    { name: "Machine Learning", img: "assets/Machine-Learning.jpeg" },
+    { name: "Graphic Design", img: "assets/Graphic-Designer.jpeg" },
     "Machine Learning",
     "Graphic Design",
     "Digital Marketing",
