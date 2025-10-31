@@ -1,4 +1,5 @@
 // Function to filter courses based on the input in the search bar
+
 function searchCourses() {
     let input = document.getElementById("search").value.toLowerCase(); // Get search input
     let courses = document.querySelectorAll(".course-item"); // Get all course items
