@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+    <link rel="stylesheet" href="PDetail.css">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="header">
+        <section class="flex">
+            <a href="home.html" class="logo">Educa.</a>
+            <form action="#" class="search-form">
+                <input type="text" id="search" placeholder="search courses..." maxlength="100">
+                <button type="submit" class="fas fa-search"></button>
+            </form>
+            <div class="icons">
+                <div id="menu-btn" class="fas fa-bars"></div>
+                <div id="search-btn" class="fas fa-search"></div>
+                <div id="user-btn" class="fas fa-user"></div>
+                <div id="toggle-btn" class="fas fa-sun"></div>
+            </div>
+        </section>
+    </header>
+
+    <!-- Sidebar -->
+    <div class="side-bar">
+        <div id="close-btn">
+            <i class="fas fa-times"></i>
+        </div>
+
+        <div class="profile">
+            <img src="assets/admin-profile.jpg" class="image" alt="">
+            <h3 class="name">Admin Name</h3>
+            <p class="role">Administrator</p>
+            <a href="#" class="btn">view profile</a>
+        </div>
+
+        <nav class="navbar">
+            <a href="#"><i class="fas fa-home"></i><span>Dashboard</span></a>
+            <a href="#"><i class="fas fa-graduation-cap"></i><span>Courses</span></a>
+            <a href="#"><i class="fas fa-users"></i><span>Students</span></a>
+            <a href="#"><i class="fas fa-cog"></i><span>Settings</span></a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <section class="courses">
+        <h1 class="heading">Course Management</h1>
+        
+        <!-- Button to add new course -->
+        <button class="btn" id="add-course-btn">Add New Course</button>
+
+        <!-- Add New Course Form (Hidden by default) -->
+        <div id="course-form" style="display: none;">
+            <h3>Add a New Course</h3>
+            <form id="new-course-form">
+                <label for="course-name">Course Name:</label>
+                <input type="text" id="course-name" required>
+                
+                <label for="course-image">Course Image URL:</label>
+                <input type="text" id="course-image" required>
+                
+                <label for="course-videos">Number of Videos:</label>
+                <input type="number" id="course-videos" required>
+                
+                <label for="course-description">Course Description:</label>
+                <textarea id="course-description" required></textarea>
+                
+                <button type="submit" class="btn">Save Course</button>
+                <button type="button" class="btn" id="cancel-btn">Cancel</button>
+            </form>
+        </div>
+
+        <div class="box-container" id="course-list">
+            <!-- Courses will be populated here dynamically -->
+        </div>
+    </section>
+
+    <script src="PDetail.js"></script>
+</body>
+</html>
