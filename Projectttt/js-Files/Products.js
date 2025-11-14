@@ -39,7 +39,7 @@ const products = [
         name: "Data Science Essentials 📊",
         price: "$35",
         image: "assets/Data-Science-course.png",
-        previewVideo:"assets/Videos/Data-Science.mp4", // <-- add preview file or remove this line
+        previewVideo: "assets/Videos/Data-Science.mp4", // <-- add preview file or remove this line
         description: "Comprehensive data analysis and visualization.",
         instructor: "John Smith",
         Duration: "7 weeks",
@@ -70,6 +70,7 @@ const products = [
         name: "UX Design ✨",
         price: "$34",
         image: "assets/UX-desgin-course.png",
+        previewVideo: "assets/Videos/ux.mp4",
         description: "User research, wireframing and prototyping.",
         instructor: "Salma Nasser",
         Duration: "6 weeks",
@@ -120,6 +121,7 @@ const products = [
         name: "C++ Course",
         price: "$99,99",
         image: "assets/C++-course.png",
+        previewVideo: "assets/Videos/C++.mp4",
         description: "Basic to advanced C++ programming concepts and practices.",
         instructor: "Ahmed Farouk",
         Duration: "100 weeks",
