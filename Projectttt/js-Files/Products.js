@@ -113,13 +113,13 @@ const products = [
     },
     {
         id: 12,
-        name: "Data Entry Course",
-        price: "$19,99",
-        image: "assets/Data-Entry.png",
-        description: "Learn data entry skills and techniques for accuracy and efficiency.",
-        instructor: "Michael Brown",
-        Duration: "7 weeks",
-        Level: "Beginner to Advanced"
+        name: "C++ Course",
+        price: "$99,99",
+        image: "assets/C++-course.png",
+        description: "Basic to advanced C++ programming concepts and practices.",
+        instructor: "Ahmed Farouk",
+        Duration: "100 weeks",
+        Level: "Beginner to Monster"
     }
 ];
 
