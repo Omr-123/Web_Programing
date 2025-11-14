@@ -4,6 +4,22 @@
     box-sizing: border-box;
 }
 
+/* ...existing code... */
+:root {
+    /* Warm coral palette */
+    --bg: #fbfaf9;
+    --surface: #ffffff;
+    --muted: #6b6460;
+    --text: #0e1214;
+    --accent: #ff7a59;
+    /* coral */
+    --accent-2: #ffb86b;
+    /* warm gold */
+    --danger: #e73b3b;
+    --soft-shadow: 0 10px 30px rgba(14, 17, 18, 0.06);
+}
+
+/* ...existing code... */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -197,6 +213,36 @@ nav ul.Cc li a:hover::after {
 .course:hover .course-image img {
     opacity: 1;
     transform: scale(1.05);
+}
+
+/* video preview inside card */
+.course-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.course-image img,
+.course-image video.preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* video sits above image but hidden until play */
+.course-image video.preview {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity .28s ease;
+    pointer-events: none;
+}
+
+/* small performance tweak for mobile: hide video previews */
+@media (max-width: 700px) {
+    .course-image video.preview {
+        display: none;
+    }
 }
 
 /* respect user motion preference */
@@ -539,4 +585,61 @@ nav ul.Cc li a:hover::after {
         width: 100%;
         right: -100%;
     }
+}
+
+/* make preview video enlarge smoothly on hover / focus */
+.course {
+  /* allow the hovered card to rise above neighbors when scaled */
+  z-index: 0;
+  will-change: transform;
+}
+
+.course:hover,
+.course:focus-within {
+  z-index: 30;
+  transform: translateY(-10px) scale(1.02);
+}
+
+/* allow the video to scale a bit beyond the image area */
+.course-image {
+  position: relative;
+  overflow: visible; /* let preview scale out slightly */
+}
+
+/* base behavior for preview */
+.course-image video.preview {
+  transform-origin: center center;
+  transform: scale(1);
+  transition: transform .28s cubic-bezier(.22,.9,.35,1), opacity .22s ease;
+  will-change: transform, opacity;
+  z-index: 5;
+}
+
+/* enlarge the video on hover/focus */
+.course:hover .course-image video.preview,
+.course:focus-within .course-image video.preview,
+.course-image:hover video.preview {
+  transform: scale(1.18); /* adjust scale as desired */
+  opacity: 1;
+  box-shadow: 0 18px 40px rgba(6,182,212,0.12);
+}
+
+/* keep image under the video when playing */
+.course-image img {
+  display: block;
+  z-index: 1;
+}
+
+/* mobile & reduced motion fallbacks */
+@media (max-width: 700px) {
+  .course-image video.preview { display: none; }
+  .course { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course,
+  .course-image video.preview {
+    transition: none !important;
+    transform: none !important;
+  }
 }
