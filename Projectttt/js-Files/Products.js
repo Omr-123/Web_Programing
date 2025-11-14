@@ -6,6 +6,7 @@ const products = [
         name: "JavaScript Course ⚡",
         price: "$30",
         image: "assets/js-course.png",
+        previewVideo: "assets/Videos/JavaScript.mp4", // <-- add preview file or remove this line
         description: "Learn JavaScript from zero to hero.",
         instructor: "Mohamed Samir",
         Duration: "6 weeks",
@@ -16,6 +17,7 @@ const products = [
         name: "Python Course 🐍",
         price: "$25",
         image: "assets/python-course.png",
+        previewVideo: "assets/Videos/Python.mp4", // <-- add preview file or remove this line
         description: "Master Python with practical exercises.",
         instructor: "Sara Ahmed",
         Duration: "5 weeks",
@@ -26,6 +28,7 @@ const products = [
         name: "Web Development Bootcamp 🌐",
         price: "$40",
         image: "assets/Web-dev.png",
+        previewVideo: "assets/Videos/Web-Development.mp4", // <-- add preview file or remove this line
         description: "HTML, CSS & JavaScript full course.",
         instructor: "Ahmed Ali",
         Duration: "8 weeks",
@@ -36,6 +39,7 @@ const products = [
         name: "Data Science Essentials 📊",
         price: "$35",
         image: "assets/Data-Science-course.png",
+        previewVideo:"assets/Videos/Data-Science.mp4", // <-- add preview file or remove this line
         description: "Comprehensive data analysis and visualization.",
         instructor: "John Smith",
         Duration: "7 weeks",
@@ -132,6 +136,7 @@ function displayProducts(productsToDisplay = products) {
     <div class="course" onclick="openCourse(${product.id})">
         <div class="course-image">
           <img src="${product.image}" alt="${product.name}">
+          ${product.previewVideo ? `<video class="preview" src="${product.previewVideo}" poster="${product.image}" muted loop playsinline preload="metadata"></video>` : ''}
         </div>
         <div class="course-details">
             <h2 class="course-title">${product.name}</h2>
@@ -151,7 +156,25 @@ function displayProducts(productsToDisplay = products) {
         `;
     });
 
-    container.innerHTML = html;
+    container.innerHTML = html || '<p class="empty-message">No products found.</p>';
+
+    // attach hover play/pause after DOM inserted
+    document.querySelectorAll('.course').forEach(card => {
+        const vid = card.querySelector('video.preview');
+        if (!vid) return;
+        // use mouseenter/leave for desktop
+        card.addEventListener('mouseenter', () => {
+            try { vid.currentTime = 0; vid.play(); vid.style.opacity = 1; } catch (e) { }
+        });
+        card.addEventListener('mouseleave', () => {
+            try { vid.pause(); vid.style.opacity = 0; } catch (e) { }
+        });
+        // for keyboard/focus support
+        card.addEventListener('focusin', () => { try { vid.currentTime = 0; vid.play(); vid.style.opacity = 1; } catch (e) { } });
+        card.addEventListener('focusout', () => { try { vid.pause(); vid.style.opacity = 0; } catch (e) { } });
+    });
+
+    // ...existing pagination code...
 }
 
 // Search functionality
