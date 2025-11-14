@@ -92,14 +92,17 @@ nav ul.Cc li a:hover::after {
     gap: 30px;
     padding: 20px 0;
     justify-content: center;
-    align-content: flex-start; /* ensures rows align from top */
-    min-height: calc((420px + 30px) * 3 - 30px); /* reserve space for exactly 3 rows (card height + gap) */
+    align-content: flex-start;
+    /* ensures rows align from top */
+    min-height: calc((420px + 30px) * 3 - 30px);
+    /* reserve space for exactly 3 rows (card height + gap) */
 }
 
 .course {
     flex: 0 1 calc(33.333% - 20px);
     max-width: calc(33.333% - 20px);
-    height: 420px; /* fixed card height so 3 rows are consistent */
+    height: 420px;
+    /* fixed card height so 3 rows are consistent */
     display: flex;
     flex-direction: column;
     background: white;
@@ -110,9 +113,67 @@ nav ul.Cc li a:hover::after {
     cursor: pointer;
 }
 
+/* Subtle entrance + stagger for product cards */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.995);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+#product-list .course {
+    /* start hidden so animation is visible */
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fadeUp 420ms cubic-bezier(.22, .9, .35, 1) forwards;
+}
+
+/* Stagger: up to 9 since page shows 9 items */
+#product-list .course:nth-child(1) {
+    animation-delay: 0.4s;
+}
+
+#product-list .course:nth-child(2) {
+    animation-delay: 0.10s;
+}
+
+#product-list .course:nth-child(3) {
+    animation-delay: 0.16s;
+}
+
+#product-list .course:nth-child(4) {
+    animation-delay: 0.22s;
+}
+
+#product-list .course:nth-child(5) {
+    animation-delay: 0.28s;
+}
+
+#product-list .course:nth-child(6) {
+    animation-delay: 0.34s;
+}
+
+#product-list .course:nth-child(7) {
+    animation-delay: 0.40s;
+}
+
+#product-list .course:nth-child(8) {
+    animation-delay: 0.46s;
+}
+
+#product-list .course:nth-child(9) {
+    animation-delay: 0.52s;
+}
+
+/* Softer hover transform (keeps animation nice) */
 .course:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 18px 45px rgba(102, 126, 234, 0.22);
 }
 
 .course-image {
@@ -125,6 +186,8 @@ nav ul.Cc li a:hover::after {
 
 /* Make image area fixed inside the fixed-height card */
 .course-image img {
+    opacity: 0.96;
+    transition: transform .35s ease, opacity .45s ease;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -132,7 +195,19 @@ nav ul.Cc li a:hover::after {
 }
 
 .course:hover .course-image img {
+    opacity: 1;
     transform: scale(1.05);
+}
+
+/* respect user motion preference */
+@media (prefers-reduced-motion: reduce) {
+
+    #product-list .course,
+    .course-image img {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
 }
 
 .course-details {
