@@ -11,6 +11,7 @@
 </head>
 
 <body>
+    <script src="js-Files/Home-Page.js"></script>
     <header class="navbar">
         <nav>
             <a href="index.html">
@@ -36,10 +37,136 @@
                 <button>Explore Courses</button>
             </a>
         </section>
+        <section class="featured-courses">
+            <h2>Featured Courses</h2>
+            <div class="courses-container">
+                <div class="course-card">
+                    <img src="assets/js-course.png" alt="Course 1">
+                    <h3>JavaScript Course ⚡</h3>
+                    <p>Learn JavaScript from zero to hero.</p>
+                    <a href="#" class="btn">Learn More</a>
+                </div>
+
+                <div class="course-card">
+                    <img src="assets/python-course.png" alt="Course 2">
+                    <h3>Python Course 🐍</h3>
+                    <p>Master Python with practical exercises.</p>
+                    <a href="#" class="btn">Learn More</a>
+                </div>
+
+                <div class="course-card">
+                    <img src="assets/Web-dev.png" alt="Course 3">
+                    <h3>Web Development Bootcamp 🌐</h3>
+                    <p>HTML, CSS & JavaScript full course.</p>
+                    <a href="#" class="btn">Learn More</a>
+                </div>
+            </div>
+        </section>
+        <section class="testimonials">
+            <h2>What Our Students Say</h2>
+            <div class="testimonial-container">
+                <div class="testimonial active">
+                    <img src="assets/student1.jpg" alt="Ahmed" class="student-img">
+                    <p>"This platform changed the way I learn! Highly recommend."</p>
+                    <div class="stars">★★★★★</div>
+                    <h4>Ahmed A.</h4>
+                </div>
+                <div class="testimonial">
+                    <img src="assets/student2.jpg" alt="Sara" class="student-img">
+                    <p>"Amazing courses and great instructors. Learned a lot!"</p>
+                    <div class="stars">★★★★★</div>
+                    <h4>Sara M.</h4>
+                </div>
+                <div class="testimonial">
+                    <img src="assets/student3.jpg" alt="Omar" class="student-img">
+                    <p>"The best online learning experience I've ever had."</p>
+                    <div class="stars">★★★★☆</div>
+                    <h4>Omar T.</h4>
+                </div>
+            </div>
+            <div class="testimonial-buttons">
+                <button id="prev">&#10094;</button>
+                <button id="next">&#10095;</button>
+            </div>
+        </section>
+        <section class="statistics">
+            <h2>Our Achievements</h2>
+            <div class="stats-container">
+                <div class="stat">
+                    <div class="icon">🎓</div>
+                    <div class="number" data-target="1500">0</div>
+                    <p>Students Enrolled</p>
+                </div>
+                <div class="stat">
+                    <div class="icon">📚</div>
+                    <div class="number" data-target="120">0</div>
+                    <p>Courses Available</p>
+                </div>
+                <div class="stat">
+                    <div class="icon">🏆</div>
+                    <div class="number" data-target="10">0</div>
+                    <p>Years of Experience</p>
+                </div>
+                <div class="stat">
+                    <div class="icon">🌟</div>
+                    <div class="number" data-target="5000">0</div>
+                    <p>Happy Students</p>
+                </div>
+            </div>
+        </section>
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2>Join Thousands of Learners Today</h2>
+                <p>Start your learning journey with our top-quality courses. Sign up now and unlock your full potential!
+                </p>
+                <a href="#" class="cta-btn">Get Started</a>
+            </div>
+        </section>
+        <section class="instructors-section">
+            <h2 class="section-title">Meet Our Instructors</h2>
+
+            <div class="instructors-container">
+
+                <div class="instructor-card">
+                    <img src="assets/Instructor1.jpg" alt="Instructor 1">
+                    <h3>John Doe</h3>
+                    <p>Senior Web Developer</p>
+                </div>
+
+                <div class="instructor-card">
+                    <img src="assets/Instructor3.jpg" alt="Instructor 2">
+                    <h3>Sarah Ahmed</h3>
+                    <p>Data Science Instructor</p>
+                </div>
+
+                <div class="instructor-card">
+                    <img src="assets/Instructor2.jpg" alt="Instructor 3">
+                    <h3>Michael Smith</h3>
+                    <p>Computer Vision Engineer</p>
+                </div>
+
+                <div class="instructor-card">
+                    <img src="assets/Instructor4.jpg" alt="Instructor 4">
+                    <h3>Emily Johnson</h3>
+                    <p>Machine Learning Engineer</p>
+                </div>
+
+            </div>
+        </section>
+
+
     </main>
 
     <footer>
         <div class="footer-container">
+            <div class="footer-section">
+                <img src="assets/Lerno.png" alt="Logo" />
+                <div class="social-icons">
+                    <a href="#">FB</a>
+                    <a href="#">TW</a>
+                    <a href="#">IN</a>
+                </div>
+            </div>
             <div class="footer-section">
                 <h3>Quick Links</h3>
                 <ul>
@@ -51,20 +178,21 @@
             </div>
             <div class="footer-section">
                 <h3>Contact</h3>
-                <p>Email: info@mywebsite.com</p>
+                <h3>Email: info@Lerno.com</h3>
                 <p>Phone: +20 123 456 789</p>
             </div>
             <div class="footer-section">
-                <h3>Follow Us</h3>
-                <div class="social-icons">
-                    <a href="#">FB</a>
-                    <a href="#">TW</a>
-                    <a href="#">IN</a>
-                </div>
+                <h3>Newsletter</h3>
+                <p>Subscribe to our newsletter for updates:</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
             </div>
+
         </div>
         <div class="footer-bottom">
-            <p>© 2025 MyWebsite. All Rights Reserved.</p>
+            <p>© 2025 Lerno. All Rights Reserved.</p>
         </div>
     </footer>
 
