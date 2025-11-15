@@ -1,0 +1,67 @@
+/* تصميم بسيط لصفحة التسجيل */
+:root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --accent:#2b6cb0;
+    --muted:#6b7280;
+}
+
+html,body{height:100%}
+body{
+    font-family: Arial, "Noto Sans", sans-serif;
+    background:var(--bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    direction:rtl;
+}
+
+.container{width:100%;max-width:420px}
+
+.card{
+    background:var(--card);
+    padding:26px;
+    border-radius:10px;
+    box-shadow:0 6px 22px rgba(20,30,50,0.08);
+}
+
+h1{margin:0 0 12px 0;font-size:20px}
+
+label{display:block;margin-top:12px;font-size:14px;color:var(--muted)}
+input[type="text"],input[type="email"],input[type="password"],input[type="tel"]{
+    width:100%;
+    padding:10px 12px;
+    margin-top:6px;
+    border:1px solid #e6e9ef;
+    border-radius:6px;
+    font-size:14px;
+    box-sizing:border-box;
+}
+
+.checkbox{display:flex;align-items:center;gap:8px;margin-top:12px}
+.checkbox input{width:16px;height:16px}
+
+.btn{
+    width:100%;
+    margin-top:18px;
+    padding:10px 12px;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.btn:hover{opacity:0.95}
+
+.small{margin-top:12px;font-size:13px;color:var(--muted);text-align:center}
+.small a{color:var(--accent);text-decoration:none}
+
+.error{
+    color:#b91c1c;
+    margin-top:10px;
+    min-height:20px;
+    font-size:13px;
+}
