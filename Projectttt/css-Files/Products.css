@@ -84,14 +84,17 @@ nav ul.Cc li a::after {
 nav ul.Cc li a:hover::after {
     width: 100%;
 }
+
 .Logo img {
     height: auto;
     width: 150px;
 }
+
 nav div {
     margin: 10px;
     font-size: 24px;
 }
+
 .Products-Container {
     padding: 10px 15px;
     border: 2px solid white;
@@ -100,6 +103,11 @@ nav div {
     color: white;
     width: 250px;
     transition: 0.3s ease;
+}
+
+.Links {
+    font-size: 30px;
+    color: #000000;
 }
 
 .Products-Container::placeholder {
@@ -668,6 +676,7 @@ nav div {
         transform: none !important;
     }
 }
+
 footer {
     background-color: #222;
     color: #fff;
