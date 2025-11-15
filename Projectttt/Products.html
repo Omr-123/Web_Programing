@@ -15,7 +15,7 @@
         <ul class="Cc">
             <li><a href="index.html">Home</a></li>
             <li><a href="About.html">About</a></li>
-            <li><a href="Products.html">Products</a></li>
+            <li><a href="Products.html">Courses</a></li>
             <li><a href="Contact.html">Contact</a></li>
 
             <input type="text" placeholder="&#128269 Search..." class="Products-Container" id="search-input">
@@ -26,7 +26,7 @@
         <div id="product-list"></div>
     </div>
     <a href="cart.html" class="continue-btn">View Cart</a>
-    
+
     <div class="cart-sidebar">
         <div class="cart-header">
             <h3>🛒 Cart (<span id="cart-count">0</span>)</h3>
@@ -42,23 +42,23 @@
             <button class="view-cart-btn" onclick="window.location.href='cart.html'">View Full Cart</button>
         </div>
     </div>
-    
+
     <button class="cart-toggle-btn" onclick="toggleCart()">🛒 <span id="badge">0</span></button>
     <script src="js-Files/Products.js"></script>
-    
+
     <footer class="site-footer">
-      <div class="footer-inner">
-        <div class="footer-left">© <span id="current-year"></span> Future Courses</div>
-        <div class="footer-right">
-          <a href="About.html">About</a>
-          <span class="dot">·</span>
-          <a href="Contact.html">Contact</a>
+        <div class="footer-inner">
+            <div class="footer-left">© <span id="current-year"></span> Future Courses</div>
+            <div class="footer-right">
+                <a href="About.html">About</a>
+                <span class="dot">·</span>
+                <a href="Contact.html">Contact</a>
+            </div>
         </div>
-      </div>
     </footer>
 
     <script>
-      document.getElementById('current-year').textContent = new Date().getFullYear();
+        document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
 </body>
 

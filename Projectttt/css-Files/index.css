@@ -1,0 +1,130 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 120vh;
+    background-image: url('../assets/Hero.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.hero h1 {
+    color: rgb(0, 0, 0);
+    font-size: 3rem;
+    text-align: center;
+}
+
+button {
+    font-size: 1.5rem;
+    color: #fafafa;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 2px solid #fafafa;
+    background: #252525;
+    box-shadow: 3px 3px #787777;
+    cursor: pointer;
+    margin: 35px 0;
+}
+
+button:active {
+    box-shadow: none;
+    transform: translate(3px, 3px);
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(135deg, #000000 0%, #9b9b9b 100%);
+}
+
+nav ul.Cc {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 0 20px;
+}
+
+.Login {
+    margin-left: 500px;
+
+}
+
+nav ul.Cc li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s ease;
+    position: relative;
+}
+
+nav ul.Cc li a:hover {
+    color: #ffd700;
+    transform: translateY(-2px);
+}
+
+nav ul.Cc li a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #ffd700;
+    transition: width 0.3s ease;
+}
+
+nav ul.Cc li a:hover::after {
+    width: 100%;
+}
+
+.Products-Container {
+    padding: 10px 15px;
+    border: 2px solid white;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 250px;
+    transition: 0.3s ease;
+}
+
+.Products-Container::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.Products-Container:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.Logo img {
+    height: auto;
+    width: 150px;
+}
+
+nav div {
+    margin: 10px;
+    font-size: 24px;
+}
