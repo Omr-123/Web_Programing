@@ -19,21 +19,27 @@
     --soft-shadow: 0 10px 30px rgba(14, 17, 18, 0.06);
 }
 
-/* ...existing code... */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
 }
 
-/* Navigation */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
 nav {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 15px 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
+    background: linear-gradient(135deg, #000000 0%, #9b9b9b 100%);
 }
 
 nav ul.Cc {
@@ -44,6 +50,11 @@ nav ul.Cc {
     flex-wrap: wrap;
     gap: 30px;
     padding: 0 20px;
+}
+
+.Login {
+
+    margin-left: 750px;
 }
 
 nav ul.Cc li a {
@@ -73,7 +84,14 @@ nav ul.Cc li a::after {
 nav ul.Cc li a:hover::after {
     width: 100%;
 }
-
+.Logo img {
+    height: auto;
+    width: 150px;
+}
+nav div {
+    margin: 10px;
+    font-size: 24px;
+}
 .Products-Container {
     padding: 10px 15px;
     border: 2px solid white;
@@ -257,7 +275,7 @@ nav ul.Cc li a:hover::after {
 
 .course-details {
     padding: 20px;
-    overflow: auto;
+    overflow: none;
 }
 
 .course-title {
@@ -303,7 +321,7 @@ nav ul.Cc li a:hover::after {
 }
 
 .enroll-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #000000 0%, #9b9b9b 100%);
     color: white;
     border: none;
     padding: 10px 15px;
