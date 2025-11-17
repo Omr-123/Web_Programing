@@ -1,67 +1,266 @@
 /* تصميم بسيط لصفحة التسجيل */
 :root{
-    --bg:#f5f7fb;
-    --card:#ffffff;
-    --accent:#2b6cb0;
-    --muted:#6b7280;
+    --bg-1: #eef6ff;
+    --bg-2: #ffffff;
+    --card: #ffffff;
+    --accent: #2563eb;
+    --accent-2: #7c3aed;
+    --muted: #6b7280;
+    --text: #0f172a;
+    --success: #16a34a;
+    --error: #ef4444;
+    --glass: rgba(255,255,255,0.6);
+    --radius: 14px;
+    --shadow: 0 12px 40px rgba(16,24,40,0.08);
 }
 
+*{box-sizing:border-box}
 html,body{height:100%}
 body{
-    font-family: Arial, "Noto Sans", sans-serif;
-    background:var(--bg);
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color:var(--text);
+    background: linear-gradient(160deg, var(--bg-1) 0%, #f9fbff 60%);
+    min-height:100vh;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:20px;
-    direction:rtl;
+    padding:32px;
 }
 
-.container{width:100%;max-width:420px}
-
-.card{
-    background:var(--card);
-    padding:26px;
-    border-radius:10px;
-    box-shadow:0 6px 22px rgba(20,30,50,0.08);
-}
-
-h1{margin:0 0 12px 0;font-size:20px}
-
-label{display:block;margin-top:12px;font-size:14px;color:var(--muted)}
-input[type="text"],input[type="email"],input[type="password"],input[type="tel"]{
+/* layout */
+.container{
     width:100%;
-    padding:10px 12px;
-    margin-top:6px;
-    border:1px solid #e6e9ef;
-    border-radius:6px;
-    font-size:14px;
-    box-sizing:border-box;
+    max-width:980px;
+    display:grid;
+    grid-template-columns: 1fr 420px;
+    gap:28px;
+    align-items:center;
+    padding:8px;
 }
 
-.checkbox{display:flex;align-items:center;gap:8px;margin-top:12px}
-.checkbox input{width:16px;height:16px}
+/* illustration panel */
+.panel{
+    background: linear-gradient(180deg, rgba(37,99,235,0.06), rgba(124,58,237,0.03));
+    border-radius:var(--radius);
+    padding:36px;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(15,23,42,0.03);
+    overflow:hidden;
+}
 
+.panel h2{
+    margin:0 0 12px 0;
+    color:var(--accent);
+    font-size:22px;
+    letter-spacing:0.2px;
+}
+
+.panel p{
+    margin:0;
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.5;
+}
+
+/* card (form) */
+.card{
+    background: var(--card);
+    border-radius: var(--radius);
+    padding:28px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(15,23,42,0.04);
+    transition: transform .16s ease, box-shadow .16s ease;
+    backdrop-filter: blur(6px);
+}
+
+.card:hover{ transform: translateY(-6px); box-shadow: 0 22px 48px rgba(16,24,40,0.12); }
+
+.card header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:10px;
+}
+.logo{ width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; }
+.logo svg{ display:block; width:28px; height:28px; }
+
+/* form typography */
+h1{
+    margin:0 0 8px 0;
+    font-size:20px;
+    font-weight:700;
+    color:var(--text);
+}
+
+label{
+    display:block;
+    margin-top:14px;
+    font-size:13px;
+    color:var(--muted);
+}
+
+/* inputs with subtle icon space */
+.field{
+    position:relative;
+    margin-top:6px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"]{
+    width:100%;
+    padding:12px 14px;
+    padding-left:44px;
+    border-radius:10px;
+    border:1px solid rgba(15,23,42,0.06);
+    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,250,0.99));
+    font-size:14px;
+    outline:none;
+    transition: box-shadow .14s ease, border-color .14s ease, transform .12s ease;
+}
+
+.field .icon{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    width:20px;height:20px;
+    opacity:0.7;
+    pointer-events:none;
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* focus / valid / invalid */
+input:focus{
+    border-color: rgba(37,99,235,0.95);
+    box-shadow: 0 8px 26px rgba(37,99,235,0.06);
+}
+
+input:invalid{
+    border-color: rgba(239,68,68,0.9);
+    box-shadow: 0 6px 18px rgba(239,68,68,0.06);
+}
+
+.checkbox{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:14px;
+}
+
+.checkbox input{ width:18px; height:18px; accent-color: var(--accent); }
+
+/* actions */
 .btn{
     width:100%;
     margin-top:18px;
-    padding:10px 12px;
-    background:var(--accent);
+    padding:12px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
     color:#fff;
     border:none;
-    border-radius:8px;
+    border-radius:10px;
     font-size:16px;
+    font-weight:700;
     cursor:pointer;
+    box-shadow: 0 10px 30px rgba(37,99,235,0.12);
+    transition: transform .12s ease, box-shadow .12s ease, opacity .1s ease;
 }
 
-.btn:hover{opacity:0.95}
+.btn:active{ transform: translateY(1px) }
 
-.small{margin-top:12px;font-size:13px;color:var(--muted);text-align:center}
-.small a{color:var(--accent);text-decoration:none}
+.small{
+    margin-top:12px;
+    font-size:13px;
+    color:var(--muted);
+    text-align:center;
+}
 
+.small a{ color:var(--accent); text-decoration:none; font-weight:600 }
+
+/* messages */
 .error{
-    color:#b91c1c;
+    color: var(--error);
     margin-top:10px;
     min-height:20px;
     font-size:13px;
 }
+
+.success{
+    color: var(--success);
+    margin-top:10px;
+    min-height:20px;
+    font-size:13px;
+}
+
+/* small screens: stack layout, hide panel */
+@media (max-width:980px){
+    .container{ grid-template-columns: 1fr; max-width:520px; gap:16px; }
+    .panel{ order:2; padding:20px; display:block; }
+}
+
+/* mobile tweaks */
+@media (max-width:420px){
+    body{ padding:18px; }
+    .card{ padding:18px; border-radius:12px; }
+    input[type="text"], input[type="email"], input[type="password"], input[type="tel"]{ padding-left:42px; padding:10px 12px; }
+    .panel{ display:none; }
+}
+
+/* logo small adjustments */
+.card header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:10px;
+}
+.logo{ width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; }
+.logo svg{ display:block; width:28px; height:28px; }
+
+/* small cluster next to logo */
+.kv{ display:flex; gap:8px; align-items:center; color:var(--muted); font-size:13px; }
+
+/* subtle animated page background layer */
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    background:
+      radial-gradient(800px 400px at 10% 20%, rgba(124,58,237,0.06), transparent 10%),
+      radial-gradient(700px 350px at 90% 80%, rgba(37,99,235,0.06), transparent 12%);
+    opacity:1;
+    pointer-events:none;
+    animation: bgFloat 18s ease-in-out infinite;
+    transform-origin:center;
+}
+
+@keyframes bgFloat{
+    0%{ transform: translateY(0) scale(1); filter: blur(0px); }
+    50%{ transform: translateY(-18px) scale(1.02); filter: blur(2px); }
+    100%{ transform: translateY(0) scale(1); filter: blur(0px); }
+}
+
+/* faint grid texture overlay (optional) */
+body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 24px 24px, 24px 24px;
+    opacity:0.25;
+    pointer-events:none;
+}
+
+/* improve panel text contrast */
+.panel h2{ font-weight:700; margin-bottom:8px; }
+.panel p{ margin-top:6px; color:var(--muted); }
