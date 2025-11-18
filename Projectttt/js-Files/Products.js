@@ -10,7 +10,8 @@ const products = [
         description: "Learn JavaScript from zero to hero.",
         instructor: "Mohamed Samir",
         Duration: "6 weeks",
-        Level: "Beginner to Advanced"
+        Level: "Beginner to Advanced",
+        path:"Javascript.html"
     },
     {
         id: 2,
@@ -21,7 +22,8 @@ const products = [
         description: "Master Python with practical exercises.",
         instructor: "Sara Ahmed",
         Duration: "5 weeks",
-        Level: "Beginner to Intermediate"
+        Level: "Beginner to Intermediate",
+        path:"python.html"
     },
     {
         id: 3,
@@ -208,7 +210,14 @@ searchInput.addEventListener("input", (e) => {
 
 function openCourse(id) {
     localStorage.setItem("selectedCourse", id);
-    window.location.href = "course.html";
+    if(id==1){
+        window.location.href = "Javascript.html";
+
+    }
+    else if(id==2){
+        window.location.href = "python.html";
+        
+    }
 }
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
