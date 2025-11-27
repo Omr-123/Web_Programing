@@ -2,13 +2,35 @@
     --primary: rgb(154, 1, 118);
 }
 
+
+/* Section */
+
+.section-title {
+    padding: 40px 0;
+    text-align: center;
+}
+
+.section-name {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.section-description {
+    opacity: .5;
+    font-size: 12px;
+}
+
+
+/* Header */
+
 .header .nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 80px;
     padding: 0 60px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .05);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .1);
     background-color: white;
 }
 
@@ -49,4 +71,106 @@
 }
 
 
+/* My Courses */
 
+.courses {
+    display: grid;
+    gap: 20px;
+    justify-content: center;
+    grid-template-columns: repeat(auto-fit, 250px);
+    flex-wrap: wrap;
+    padding: 0 60px;
+}
+
+@media (max-width: 640px) {
+    .courses {
+        padding: 0 20px;
+    }
+}
+
+.courses .course {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: .3s;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+}
+
+.courses .course:hover {
+    transform: translateY(-3px);
+}
+
+.courses .course-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.courses .course-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+}
+
+.courses .course-title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.courses .course-description {
+    font-size: 13px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.courses .course-price {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.courses .course-price::before {
+    content: "Price: ";
+}
+
+.courses .course-button {
+    color: white;
+    padding: 12px;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 10px;
+    background-color: black;
+}
+
+.courses .course-progress {
+    position: relative;
+    display: inline-block;
+    margin-top: 15px;
+    width: 90%;
+    height: 6px;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+}
+
+.courses .course-progress::before {
+    position: absolute;
+    content: "";
+    left: 0;
+    width: var(--width, 0%);
+    height: 100%;
+    border-radius: 5px;
+    background-color: rgb(53, 53, 53);
+}
+
+.courses .course-progress::after {
+    position: absolute;
+    content: attr(value);
+    top: 50%;
+    right: -15%;
+    font-size: 9px;
+    transform: translateY(-50%);
+}

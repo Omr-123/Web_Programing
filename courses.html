@@ -4,87 +4,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products| Lerno</title>
-    <link rel="stylesheet" href="css-Files/Reset.css">
-    <link rel="stylesheet" href="css-Files/Products.css">
+    <title>Courses</title>
     <link rel="icon" href="assets/Lerno.png">
+    <link rel="stylesheet" href="assets/css/reset.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <script src="assets/js/main.js" defer></script>
 </head>
 
-
 <body>
-    <header class="navbar">
-        <nav>
-            <a href="Home-Page.html">
-                <div class="Logo">
-                    <img src="assets/Lerno.png" alt="Logo" />
-                </div>
+    <div class="header">
+        <div class="nav">
+            <a class="nav-logo" href="Home-Page.html">
+                <img src="assets/images/Lerno.png" alt="Logo">
             </a>
-
-            <ul class="Cc">
-                <li><a href="Home-Page.html">Home</a></li>
-                <li><a href="About.html">About</a></li>
-                <li><a href="Products.html">Courses</a></li>
-                <li><a href="Contact.html">Contact</a></li>
-
-                <input type="text" placeholder="&#128269 Search..." class="Products-Container" id="search-input">
-                <li class="Login"><a href="Login-Register.html">Sign in&SignUp</a></li>
+            <ul class="nav-links">
+                <li class="nav-link"><a href="index.html">Home</a></li>
+                <li class="nav-link active"><a href="courses.html">Courses</a></li>
+                <li class="nav-link"><a href="my-courses.html">My Courses</a></li>
+                <li class="nav-link"><a href="authentication.html">Account</a></li>
+                <li class="nav-link"><a href="cart.html">Cart</a></li>
             </ul>
-        </nav>
-    </header>
-    <div class="course-container">
-        <div id="product-list"></div>
-    </div>
-    <a href="cart.html" class="continue-btn">View Cart</a>
-
-    <div class="cart-sidebar">
-        <div class="cart-header">
-            <h3>🛒 Cart (<span id="cart-count">0</span>)</h3>
-            <button class="close-cart" onclick="toggleCart()">✕</button>
-        </div>
-        <div id="cart-items-display" class="cart-items-list">
-            <p class="empty-message">Your cart is empty</p>
-        </div>
-        <div class="cart-footer">
-            <div class="cart-total">
-                <strong>Total: <span id="cart-total">$0</span></strong>
-            </div>
-            <button class="view-cart-btn" onclick="window.location.href='cart.html'">View Full Cart</button>
         </div>
     </div>
 
-    <button class="cart-toggle-btn" onclick="toggleCart()">🛒 <span id="badge">0</span></button>
-    <script src="js-Files/Products.js"></script>
+    <div class="section-title">
+        <h1 class="section-name">Courses</h1>
+        <p class="section-description">Catch Up</p>
+    </div>
 
-    <footer>
-        <div class="footer-container">
-            <div class="footer-section">
-                <h3 class="Links">Quick Links</h3>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="Products.html">Courses</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contact</h3>
-                <p>Email: info@mywebsite.com</p>
-                <p>Phone: +20 123 456 789</p>
-            </div>
-            <div class="footer-section">
-                <h3>Follow Us</h3>
-                <div class="social-icons">
-                    <a href="#">FB</a>
-                    <a href="#">TW</a>
-                    <a href="#">IN</a>
-                </div>
+    <div class="courses">
+        <div class="course">
+            <img src="assets/images/Digital-Marketing-Course.png" alt="course" class="course-image">
+            <div class="course-details">
+                <h3 class="course-title">Fundemantals of C++</h3>
+                <p class="course-description">How to master C++ in 2 months only from scratch!</p>
+                <span class="course-price">200 EGP</span>
+                <a href="#" class="course-button">Add To Cart</a>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>© 2025 MyWebsite. All Rights Reserved.</p>
+        <div class="course">
+            <img src="assets/images/Digital-Marketing-Course.png" alt="course" class="course-image">
+            <div class="course-details">
+                <h3 class="course-title">Fundemantals of C++</h3>
+                <p class="course-description">How to master C++ in 2 months only from scratch!</p>
+                <span class="course-price">200 EGP</span>
+                <a href="#" class="course-button">Add To Cart</a>
+            </div>
         </div>
-    </footer>
+        <div class="course">
+            <img src="assets/images/Digital-Marketing-Course.png" alt="course" class="course-image">
+            <div class="course-details">
+                <h3 class="course-title">Fundemantals of C++</h3>
+                <p class="course-description">How to master C++ in 2 months only from scratch!</p>
+                <span class="course-price">200 EGP</span>
+                <a href="#" class="course-button">Add To Cart</a>
+            </div>
+        </div>
+        <div class="course">
+            <img src="assets/images/Digital-Marketing-Course.png" alt="course" class="course-image">
+            <div class="course-details">
+                <h3 class="course-title">Fundemantals of C++</h3>
+                <p class="course-description">How to master C++ in 2 months only from scratch!</p>
+                <span class="course-price">200 EGP</span>
+                <a href="#" class="course-button">Add To Cart</a>
+            </div>
+        </div>
+        <div class="course">
+            <img src="assets/images/Digital-Marketing-Course.png" alt="course" class="course-image">
+            <div class="course-details">
+                <h3 class="course-title">Fundemantals of C++</h3>
+                <p class="course-description">How to master C++ in 2 months only from scratch!</p>
+                <span class="course-price">200 EGP</span>
+                <a href="#" class="course-button">Add To Cart</a>
+            </div>
+        </div>
+        <div class="course">
+            <img src="assets/images/Digital-Marketing-Course.png" alt="course" class="course-image">
+            <div class="course-details">
+                <h3 class="course-title">Fundemantals of C++</h3>
+                <p class="course-description">How to master C++ in 2 months only from scratch!</p>
+                <span class="course-price">200 EGP</span>
+                <a href="#" class="course-button">Add To Cart</a>
+            </div>
+        </div>
+        <div class="course">
+            <img src="assets/images/Digital-Marketing-Course.png" alt="course" class="course-image">
+            <div class="course-details">
+                <h3 class="course-title">Fundemantals of C++</h3>
+                <p class="course-description">How to master C++ in 2 months only from scratch!</p>
+                <span class="course-price">200 EGP</span>
+                <a href="#" class="course-button">Add To Cart</a>
+            </div>
+        </div>
+    </div>
 </body>
-
 
 </html>

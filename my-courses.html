@@ -4,20 +4,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Courses</title>
-    <link rel="stylesheet" href="css-Files/Reset.css">
-    <link rel="stylesheet" href="css-Files/my-courses.css">
+    <title>Courses</title>
+    <link rel="icon" href="assets/Lerno.png">
+    <link rel="stylesheet" href="assets/css/reset.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <script src="assets/js/main.js" defer></script>
 </head>
 
 <body>
+    <div class="header">
+        <div class="nav">
+            <a class="nav-logo" href="Home-Page.html">
+                <img src="assets/images/Lerno.png" alt="Logo">
+            </a>
+            <ul class="nav-links">
+                <li class="nav-link"><a href="index.html">Home</a></li>
+                <li class="nav-link"><a href="courses.html">Courses</a></li>
+                <li class="nav-link active"><a href="my-courses.html">My Courses</a></li>
+                <li class="nav-link"><a href="authentication.html">Account</a></li>
+                <li class="nav-link"><a href="cart.html">Cart</a></li>
+            </ul>
+        </div>
+    </div>
+
     <div class="section-title">
         <h1 class="section-name">My Courses</h1>
         <p class="section-description">Keep up the good work!</p>
     </div>
 
-    <div class="my-courses">
+    <div class="courses">
         <a href="#" class="course">
-            <img src="assets/Digital-Marketing-Course.png" alt="course" class="course-image">
+            <img src="assets/images/Digital-Marketing-Course.png" alt="course" class="course-image">
             <div class="course-details">
                 <h3 class="course-title">Fundemantals of C++</h3>
                 <p class="course-description">How to master C++ in 2 months only from scratch!</p>
@@ -25,7 +42,7 @@
             </div>
         </a>
         <a href="#" class="course">
-            <img src="assets/Java-course.png" alt="course" class="course-image">
+            <img src="assets/images/Java-course.png" alt="course" class="course-image">
             <div class="course-details">
                 <h3 class="course-title">Fundemantals of C++</h3>
                 <p class="course-description">How to master C++ in 2 months only from scratch!</p>
@@ -33,7 +50,7 @@
             </div>
         </a>
         <a href="#" class="course">
-            <img src="assets/Graphic-Desgin-course.png" alt="course" class="course-image">
+            <img src="assets/images/Graphic-Desgin-course.png" alt="course" class="course-image">
             <div class="course-details">
                 <h3 class="course-title">Fundemantals of C++</h3>
                 <p class="course-description">How to master C++ in 2 months only from scratch!</p>
@@ -41,7 +58,7 @@
             </div>
         </a>
         <a href="#" class="course">
-            <img src="assets/js-course.png" alt="course" class="course-image">
+            <img src="assets/images/js-course.png" alt="course" class="course-image">
             <div class="course-details">
                 <h3 class="course-title">Fundemantals of C++</h3>
                 <p class="course-description">How to master C++ in 2 months only from scratch!</p>
@@ -49,7 +66,7 @@
             </div>
         </a>
         <a href="#" class="course">
-            <img src="assets/UX-desgin-course.png" alt="course" class="course-image">
+            <img src="assets/images/UX-desgin-course.png" alt="course" class="course-image">
             <div class="course-details">
                 <h3 class="course-title">Fundemantals of C++</h3>
                 <p class="course-description">How to master C++ in 2 months only from scratch!</p>
@@ -57,7 +74,7 @@
             </div>
         </a>
         <a href="#" class="course">
-            <img src="assets/Lerno.png" alt="course" class="course-image">
+            <img src="assets/images/Lerno.png" alt="course" class="course-image">
             <div class="course-details">
                 <h3 class="course-title">Fundemantals of C++</h3>
                 <p class="course-description">How to master C++ in 2 months only from scratch!</p>
@@ -65,7 +82,7 @@
             </div>
         </a>
         <a href="#" class="course">
-            <img src="assets/Machine Leanging-course.png" alt="course" class="course-image">
+            <img src="assets/images/Machine Leanging-course.png" alt="course" class="course-image">
             <div class="course-details">
                 <h3 class="course-title">Fundemantals of C++</h3>
                 <p class="course-description">How to master C++ in 2 months only from scratch!</p>
@@ -73,13 +90,6 @@
             </div>
         </a>
     </div>
-
-    <script>
-        var courseProgress = document.querySelectorAll('.course-progress');
-        courseProgress.forEach((e)=> {
-            e.style.setProperty('--width', e.getAttribute('value'));
-        })
-    </script>
 </body>
 
 </html>
