@@ -5,30 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home | Lerno</title>
-    <link rel="stylesheet" href="css-Files/Reset.css">
+    <link rel="stylesheet" href="assets/css/reset.css">
+    <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="css-Files/Home-Page.css">
     <link rel="icon" href="assets/Lerno.png">
+    <script src="js-Files/Home-Page.js"></script>
 </head>
 
 <body>
-    <script src="js-Files/Home-Page.js"></script>
-    <header class="navbar">
-        <nav>
-            <a href="Home-Page.html">
-                <div class="Logo">
-                    <img src="assets/Lerno.png" alt="Logo" />
-                </div>
+    <div class="header">
+        <div class="nav">
+            <a class="nav-logo" href="Home-Page.html">
+                <img src="assets/images/Lerno.png" alt="Logo">
             </a>
-            <ul class="Cc">
-                <li><a href="Home-Page.html">Home</a></li>
-                <li><a href="About.html">About</a></li>
-                <li><a href="Products.html">Courses</a></li>
-                <li><a href="Contact.html">Contact</a></li>
-                <input type="text" placeholder="&#128269 Search..." class="Products-Container" id="search-input">
-                <li class="Login"><a href="Login-Register.html">Sign in&SignUp</a></li>
+            <ul class="nav-links">
+                <li class="nav-link active"><a href="index.html">Home</a></li>
+                <li class="nav-link"><a href="courses.html">Courses</a></li>
+                <li class="nav-link"><a href="my-courses.html">My Courses</a></li>
+                <li class="nav-link"><a href="authentication.html">Account</a></li>
+                <li class="nav-link"><a href="cart.html">Cart</a></li>
             </ul>
-        </nav>
-    </header>
+        </div>
+    </div>
 
     <main>
         <section class="hero">
