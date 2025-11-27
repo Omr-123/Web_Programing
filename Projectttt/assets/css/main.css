@@ -1,0 +1,52 @@
+:root {
+    --primary: rgb(154, 1, 118);
+}
+
+.header .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+    padding: 0 60px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .05);
+    background-color: white;
+}
+
+.header .nav-logo {
+    height: 50%;
+}
+
+.header .nav-logo img {
+    height: 100%;
+}
+
+.header .nav-links {
+    display: flex;
+    gap: 25px;
+}
+
+.header .nav-link {
+    position: relative;
+    transition: .3s;
+}
+
+.header .nav-link::before {
+    position: absolute;
+    content: "";
+    left: 50%;
+    bottom: -10px;
+    width: 0;
+    height: 3px;
+    transition: .3s;
+    border-radius: 50px;
+    background-color: black;
+    transform: translateX(-50%);
+}
+
+.header .nav-link.active::before,
+.header .nav-link:hover::before {
+    width: 15px;
+}
+
+
+
