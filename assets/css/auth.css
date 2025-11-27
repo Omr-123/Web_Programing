@@ -116,3 +116,17 @@
 .auth-footer-text a:hover {
     text-decoration: underline;
 }
+
+/* Validation Styles */
+.input-group input.error-border {
+    border-color: #880000;
+    background-color: #fff0f0;
+}
+
+.error-message {
+    color: #880000;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+    font-weight: bold;
+}
