@@ -80,6 +80,7 @@
     grid-template-columns: repeat(auto-fit, 250px);
     flex-wrap: wrap;
     padding: 0 60px;
+    padding-bottom: 60px;
 }
 
 @media (max-width: 640px) {
@@ -180,7 +181,6 @@
 
 .footer {
     padding: 20px;
-    margin-top: 40px;
     text-align: center;
     border-top: 1px solid rgba(0, 0, 0, .1);
 }
