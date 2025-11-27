@@ -1,7 +1,6 @@
 const ITEMS_PER_PAGE = 9;
 
-const products = [
-    {
+const products = [{
         id: 1,
         name: "JavaScript Course ⚡",
         price: "$30",
@@ -11,7 +10,7 @@ const products = [
         instructor: "Mohamed Samir",
         Duration: "6 weeks",
         Level: "Beginner to Advanced",
-        path:"Javascript.html"
+        path: "Javascript.html"
     },
     {
         id: 2,
@@ -23,7 +22,7 @@ const products = [
         instructor: "Sara Ahmed",
         Duration: "5 weeks",
         Level: "Beginner to Intermediate",
-        path:"python.html"
+        path: "python.html"
     },
     {
         id: 3,
@@ -85,7 +84,7 @@ const products = [
         name: "Java Course ☕",
         price: "$28",
         image: "assets/Java-course.png",
-        previewVideo:"assets/Videos/Java.mp4",
+        previewVideo: "assets/Videos/Java.mp4",
         description: "Core Java concepts, OOP and small projects.",
         instructor: "Khaled Mansour",
         Duration: "8 weeks",
@@ -138,11 +137,11 @@ const products = [
 ];
 
 function displayProducts(productsToDisplay = products) {
-    const container = document.getElementById("product-list");
+    const container = document.getElementById("courses");
     let html = "";
 
     productsToDisplay.forEach(product => {
-        html += `
+                html += `
     <div class="course" onclick="openCourse(${product.id})">
         <div class="course-image">
           <img src="${product.image}" alt="${product.name}">
