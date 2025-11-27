@@ -1,0 +1,198 @@
+/* Hero */
+
+.hero {
+    background: black;
+    padding: 60px 60px;
+    color: white;
+}
+
+.hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero .tag {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-right: 10px;
+    margin-bottom: 15px;
+}
+
+.hero h1 {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.hero .course-desc {
+    font-size: 16px;
+    opacity: 0.9;
+    line-height: 1.5;
+    max-width: 700px;
+    margin-bottom: 30px;
+}
+
+.hero .stats {
+    display: flex;
+    gap: 40px;
+}
+
+.hero .stats div {
+    font-size: 14px;
+}
+
+.hero .stats strong {
+    font-size: 18px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Main */
+
+.main-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 2 parts content, 1 part sidebar */
+    gap: 40px;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 60px;
+}
+
+@media (max-width: 900px) {
+    .main-container {
+        grid-template-columns: 1fr; /* Stack on mobile */
+        padding: 0 20px;
+    }
+}
+
+/* --- Left Content Area --- */
+
+.learn-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.learn-item {
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.learn-item::before {
+    content: "✔";
+}
+
+.curriculum-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.curriculum-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.curriculum-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+}
+
+.curriculum-item .circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.curriculum-item h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.curriculum-item p {
+    font-size: 13px;
+}
+
+/* Sidebar */
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar .box {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+}
+
+.sidebar .price-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.sidebar .small-note {
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+
+.sidebar .enroll-btn {
+    width: 100%;
+    padding: 15px;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.sidebar .secondary-btn {
+    width: 100%;
+    padding: 12px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.sidebar .details-row {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.sidebar .help-box {
+    border: 1px dashed #aac7ff;
+    padding: 15px;
+    text-align: center;
+    font-size: 13px;
+    border-radius: 10px;
+}

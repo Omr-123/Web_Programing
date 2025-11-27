@@ -174,3 +174,13 @@
     font-size: 9px;
     transform: translateY(-50%);
 }
+
+
+/* Footer */
+
+.footer {
+    padding: 20px;
+    margin-top: 40px;
+    text-align: center;
+    border-top: 1px solid rgba(0, 0, 0, .1);
+}
