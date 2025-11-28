@@ -29,22 +29,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-document.addEventListener('DOMContentLoaded', () => {
-    const counters = document.querySelectorAll('.number');
+$(document).ready(function () {
+    $('.number').each(function () {
+        const $counter = $(this);
+        const target = +$counter.data('target');
+        let count = +$counter.text();
+        const increment = target / 200;
 
-    counters.forEach(counter => {
         const updateCount = () => {
-            const target = +counter.getAttribute('data-target');
-            const count = +counter.innerText;
-            const increment = target / 200;
-
             if (count < target) {
-                counter.innerText = Math.ceil(count + increment);
+                count = Math.ceil(count + increment);
+                $counter.text(count);
                 setTimeout(updateCount, 20);
             } else {
-                counter.innerText = target;
+                $counter.text(target);
             }
-        }
+        };
 
         updateCount();
     });
