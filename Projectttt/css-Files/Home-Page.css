@@ -67,7 +67,7 @@ nav ul.Cc {
 }
 
 .Login {
-    margin-left: 500px;
+    margin-left: 800px;
 }
 
 nav ul.Cc li a {
@@ -123,65 +123,21 @@ nav ul.Cc li a:hover::after {
     width: 150px;
 }
 
-.footer-container img {
-    height: auto;
-    width: 150px;
-    margin-bottom: 20px;
-}
+
 
 nav div {
     margin: 10px;
     font-size: 24px;
 }
 
-footer {
-    background-color: #222;
-    color: #fff;
-    padding: 40px 20px 20px 20px;
-    font-family: Arial, sans-serif;
-}
 
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.footer-section h3 {
-    margin-bottom: 15px;
-}
-
-.footer-section ul {
-    list-style: none;
-    padding: 0;
-}
-
-.footer-section ul li {
-    margin-bottom: 10px;
-}
-
-.footer-section a {
-    color: #fff;
-    text-decoration: none;
-}
-
-.footer-section a:hover {
-    text-decoration: underline;
-}
 
 .social-icons a {
     margin-right: 10px;
     color: #fff;
 }
 
-.footer-bottom {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 14px;
-    border-top: 1px solid #444;
-    padding-top: 10px;
-}
+
 
 .newsletter-form {
     display: flex;
@@ -473,4 +429,54 @@ footer {
 .instructor-card p {
     color: #555;
     font-size: 0.95rem;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    border-top: 1px solid #444;
+    padding-top: 10px;
+}
+
+footer {
+    background-color: #222;
+    color: #fff;
+    padding: 40px 20px 20px 20px;
+    font-family: Arial, sans-serif;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-section h3 {
+    margin-bottom: 15px;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.footer-section a:hover {
+    text-decoration: underline;
+}
+
+.footer-container img {
+    height: auto;
+    width: 150px;
+    margin-bottom: 20px;
 }
