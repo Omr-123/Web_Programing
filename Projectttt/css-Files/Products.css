@@ -25,101 +25,6 @@ body {
     min-height: 100vh;
 }
 
-.navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-nav {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: linear-gradient(135deg, #000000 0%, #9b9b9b 100%);
-}
-
-nav ul.Cc {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 30px;
-    padding: 0 20px;
-}
-
-.Login {
-
-    margin-left: 500px;
-}
-
-nav ul.Cc li a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    transition: 0.3s ease;
-    position: relative;
-}
-
-nav ul.Cc li a:hover {
-    color: #ffd700;
-    transform: translateY(-2px);
-}
-
-nav ul.Cc li a::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: #ffd700;
-    transition: width 0.3s ease;
-}
-
-nav ul.Cc li a:hover::after {
-    width: 100%;
-}
-
-.Logo img {
-    height: auto;
-    width: 150px;
-}
-
-nav div {
-    margin: 10px;
-    font-size: 24px;
-}
-
-.Products-Container {
-    padding: 10px 15px;
-    border: 2px solid white;
-    border-radius: 25px;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    width: 250px;
-    transition: 0.3s ease;
-}
-
-.Links {
-    font-size: 30px;
-    color: #000000;
-}
-
-.Products-Container::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.Products-Container:focus {
-    outline: none;
-    background: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
 /* Course Container */
 .course-container {
     max-width: 1400px;
@@ -598,13 +503,7 @@ nav div {
         flex: 0 1 100%;
     }
 
-    nav ul.Cc {
-        gap: 15px;
-    }
-
-    .Products-Container {
-        width: 150px;
-    }
+    /* .Products-Container moved to NAVBAR section at end of file */
 
     .cart-sidebar {
         width: 100%;
@@ -677,10 +576,9 @@ nav div {
     }
 }
 
-.social-icons a {
-    margin-right: 10px;
-    color: #fff;
-}
+
+
+/* footer section*/
 
 .footer-bottom {
     text-align: center;
@@ -774,3 +672,114 @@ footer {
     box-shadow: none;
     transform: translate(3px, 3px);
 }
+
+.social-icons a {
+    margin-right: 10px;
+    color: #fff;
+}
+
+/* ===== NAVBAR / NAV RULES (moved to end) ===== */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(135deg, #000000 0%, #9b9b9b 100%);
+}
+
+nav ul.Cc {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 0 20px;
+}
+
+.Login {
+
+    margin-left: 500px;
+}
+
+nav ul.Cc li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s ease;
+    position: relative;
+}
+
+nav ul.Cc li a:hover {
+    color: #ffd700;
+    transform: translateY(-2px);
+}
+
+nav ul.Cc li a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #ffd700;
+    transition: width 0.3s ease;
+}
+
+nav ul.Cc li a:hover::after {
+    width: 100%;
+}
+
+.Logo img {
+    height: auto;
+    width: 150px;
+}
+
+nav div {
+    margin: 10px;
+    font-size: 24px;
+}
+
+@media (max-width: 768px) {
+    nav ul.Cc {
+        gap: 15px;
+    }
+}
+
+/* ===== Additional search / products input styles moved here ===== */
+.Products-Container {
+    padding: 10px 15px;
+    border: 2px solid white;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 250px;
+    transition: 0.3s ease;
+}
+
+.Products-Container::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.Products-Container:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+    .Products-Container {
+        width: 150px;
+    }
+}
+
+/* ===== end moved navbar/nav rules ===== */

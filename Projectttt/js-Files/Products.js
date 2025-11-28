@@ -11,7 +11,7 @@ const products = [
         instructor: "Mohamed Samir",
         Duration: "6 weeks",
         Level: "Beginner to Advanced",
-        path:"Javascript.html"
+        path: "Javascript.html"
     },
     {
         id: 2,
@@ -23,7 +23,7 @@ const products = [
         instructor: "Sara Ahmed",
         Duration: "5 weeks",
         Level: "Beginner to Intermediate",
-        path:"python.html"
+        path: "python.html"
     },
     {
         id: 3,
@@ -85,7 +85,7 @@ const products = [
         name: "Java Course ☕",
         price: "$28",
         image: "assets/Java-course.png",
-        previewVideo:"assets/Videos/Java.mp4",
+        previewVideo: "assets/Videos/Java.mp4",
         description: "Core Java concepts, OOP and small projects.",
         instructor: "Khaled Mansour",
         Duration: "8 weeks",
@@ -158,7 +158,7 @@ function displayProducts(productsToDisplay = products) {
             </div>
             <div class="course-price">
                 <span class="price">${product.price}</span>
-                <a href="index.html"><button class="enroll-btn">Course Info</button></a>
+                <a href="${product.path}"><button class="enroll-btn">Course Info</button></a>
                 <button class="enroll-btn" onclick="addToCart(${product.id}); event.stopPropagation();">Buy Now</button>
             </div>    
         </div>
@@ -210,13 +210,13 @@ searchInput.addEventListener("input", (e) => {
 
 function openCourse(id) {
     localStorage.setItem("selectedCourse", id);
-    if(id==1){
+    if (id == 1) {
         window.location.href = "Javascript.html";
 
     }
-    else if(id==2){
+    else if (id == 2) {
         window.location.href = "python.html";
-        
+
     }
 }
 
