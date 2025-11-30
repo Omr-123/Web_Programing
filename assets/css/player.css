@@ -1,0 +1,249 @@
+/* Layout Wrapper */
+
+.player-wrapper {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr;
+    width: 95%;
+    max-width: 1400px;
+    margin: 40px auto;
+    box-shadow: 0 0 20px rgba(0,0,0,0.15);
+    border-radius: 12px;
+    overflow: hidden;
+    min-height: 600px;
+    background-color: white;
+}
+
+@media (max-width: 900px) {
+    .player-wrapper {
+        grid-template-columns: 1fr;
+        margin: 20px auto;
+        width: 100%;
+        border-radius: 0;
+    }
+}
+
+/* Video Section */
+
+.video-section {
+    background-color: #000;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.video-container {
+    width: 100%;
+    background-color: black;
+    position: relative;
+    padding-top: 56.25%;
+    overflow: hidden;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.video-info {
+    padding: 30px;
+    background-color: white;
+    color: #333;
+    flex: 1;
+}
+
+.video-info h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #02413b;
+}
+
+
+/* Video Action Buttons */
+
+.video-actions {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+}
+
+.action-btn {
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+    transition: .3s;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    font-size: 14px;
+}
+
+.action-btn:hover {
+    background-color: #f5f5f5;
+}
+
+.action-btn.primary {
+    background-color: #02413b;
+    color: white;
+    border-color: #02413b;
+}
+
+.action-btn.primary:hover {
+    background-color: #035e56;
+}
+
+.action-btn.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    background-color: #f9f9f9;
+}
+
+
+/* Description Text */
+
+.lesson-desc h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.lesson-desc p {
+    line-height: 1.6;
+    color: #555;
+}
+
+
+/* Playlist Section */
+
+.playlist-section {
+    background-color: #f9f9f9;
+    border-left: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.playlist-header {
+    padding: 20px;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+}
+
+.playlist-header h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.playlist-header p {
+    font-size: 13px;
+    color: #777;
+}
+
+.playlist-items {
+    overflow-y: auto;
+    max-height: 600px; 
+}
+
+@media (max-width: 900px) {
+    .playlist-items {
+        max-height: 300px;
+    }
+}
+
+.playlist-group {
+    border-bottom: 1px solid #eee;
+}
+
+.group-title {
+    background-color: #eee;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #555;
+}
+
+
+/* Playlist Items (Anchors) */
+
+.lesson-item {
+    display: flex;
+    padding: 15px 20px;
+    background-color: white;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+    transition: .2s;
+    align-items: center;
+    width: 100%;
+    gap: 15px;
+    text-decoration: none;
+}
+
+.lesson-item:hover {
+    background-color: #f0f7f6;
+}
+
+.lesson-item.active {
+    background-color: #e6f0ef;
+    border-left: 4px solid #02413b;
+}
+
+.lesson-item.active .lesson-name {
+    color: #02413b;
+    font-weight: bold;
+}
+
+/* Locked State */
+.lesson-item.locked-item {
+    opacity: 0.8;
+}
+
+
+/* Checkbox Icons */
+
+.checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.lesson-item.active .checkbox {
+    border-color: #02413b;
+    background-color: #02413b;
+}
+
+.checkbox.locked {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    text-align: center;
+    line-height: 20px;
+}
+
+.lesson-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.lesson-name {
+    font-size: 14px;
+    color: #333;
+}
+
+.lesson-time {
+    font-size: 12px;
+    color: #888;
+}
