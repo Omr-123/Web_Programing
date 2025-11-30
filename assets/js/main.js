@@ -1,4 +1,5 @@
-var courseProgress = document.querySelectorAll('.course-progress');
-courseProgress.forEach((e) => {
-    e.style.setProperty('--width', e.getAttribute('value'));
-})
+$(window).load(function () {
+    $("#loader").animate({
+        top: -200
+    }, 1500);
+});
