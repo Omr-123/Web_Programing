@@ -2,6 +2,10 @@
     --primary: rgb(154, 1, 118);
 }
 
+body {
+    padding-top: 80px;
+}
+
 
 /* Section */
 
@@ -23,6 +27,13 @@
 
 
 /* Header */
+
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 9999;
+}
 
 .header .nav {
     display: flex;
