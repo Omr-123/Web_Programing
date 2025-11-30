@@ -26,5 +26,4 @@ $(document).ready(function () {
             .css('background-color', '#02413b')
             .css('border-color', '#02413b');
     }
-
 });
