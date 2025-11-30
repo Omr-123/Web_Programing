@@ -3,12 +3,9 @@
 .player-wrapper {
     display: grid;
     grid-template-columns: 2.5fr 1fr;
-    width: 95%;
-    max-width: 1400px;
-    margin: 40px auto;
-    box-shadow: 0 0 20px rgba(0,0,0,0.15);
-    border-radius: 12px;
-    overflow: hidden;
+    width: 100%;
+    height: calc(100vh - 80px);
+    overflow: auto;
     min-height: 600px;
     background-color: white;
 }
@@ -16,7 +13,6 @@
 @media (max-width: 900px) {
     .player-wrapper {
         grid-template-columns: 1fr;
-        margin: 20px auto;
         width: 100%;
         border-radius: 0;
     }
@@ -157,7 +153,7 @@
 
 @media (max-width: 900px) {
     .playlist-items {
-        max-height: 300px;
+        max-height: auto;
     }
 }
 
@@ -204,6 +200,7 @@
 }
 
 /* Locked State */
+
 .lesson-item.locked-item {
     opacity: 0.8;
 }
