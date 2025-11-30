@@ -73,6 +73,12 @@
     background-color: black;
 }
 
+.courses .course-button:not(:first-of-type) {
+    color: black;
+    border: 1px solid black;
+    background-color: white;
+}
+
 .courses .course-progress {
     position: relative;
     display: inline-block;
