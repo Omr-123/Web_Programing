@@ -1,3 +1,12 @@
+<?php include_once('conn.php') ?>
+
+<?php 
+
+$sql = "SELECT * FROM courses LEFT JOIN user_courses ON courses.id = user_courses.course_id WHERE user_courses.user_id = 1";
+$courses = $conn->query($sql);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,7 +47,18 @@
     </div>
 
     <div class="courses">
+        <?php foreach($courses as $course): ?>
         <a href="play-course.html" class="course">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_FvzJIVensrB8Tl1umSkp0xH253U1_qMvEQ&s" alt="course" class="course-image">
+            <div class="course-details">
+                <h3 class="course-title"><?php echo $course['name'] ?></h3>
+                <p class="course-description"><?php echo $course['description'] ?></p>
+                <span class="course-progress" value="100%"></span>
+            </div>
+        </a>
+        <?php endforeach ?>
+
+        <!-- <a href="play-course.html" class="course">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_FvzJIVensrB8Tl1umSkp0xH253U1_qMvEQ&s" alt="course" class="course-image">
             <div class="course-details">
                 <h3 class="course-title">Fundemantals of C++</h3>
@@ -93,7 +113,7 @@
                 <p class="course-description">How to master C++ in 2 months only from scratch!</p>
                 <span class="course-progress" value="90%"></span>
             </div>
-        </a>
+        </a> -->
     </div>
 
     <div class="footer">
