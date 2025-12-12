@@ -1,3 +1,51 @@
+<?php
+session_start();
+require 'conn.php'; // Database connection
+
+// Fetch courses in the cart
+$stmt = $conn->prepare("SELECT * FROM cart JOIN courses ON cart.courseId = courses.courseId WHERE cart.userId = 2");
+$stmt->execute();
+$items = $stmt->get_result();
+
+$subtotal = 0;
+
+foreach ($items as $item) {
+    $subtotal += $item['price'];
+}
+
+$taxes = $subtotal * .1;
+$totalPrice = $subtotal + $taxes;
+
+// // Handle payment process
+// if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pay_cash'])) {
+//     $stmt = $conn->prepare("INSERT INTO Enrollment (CourseID, EnrollmentDate) SELECT CourseID, NOW() FROM Cart");
+//     if ($stmt->execute()) {
+//         // Clear the cart after payment
+//         $stmt = $conn->prepare("DELETE FROM Cart");
+//         $stmt->execute();
+//         echo 'Payment successful. Courses added to your account.';
+//     } else {
+//         echo 'Payment failed. Please try again.';
+//     }
+// }
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="icon" href="assets/Lerno.png">
+    <link rel="stylesheet" href="assets/css/reset.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/cart.css">
+    <script src="assets/js/jquery-3.7.1.min.js"></script>
+    <script src="assets/js/cart.js" defer></script>
+</head>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,11 +70,11 @@
             </a>
             <ul class="nav-links">
                 <li class="nav-link"><a href="index.html">Home</a></li>
-                <li class="nav-link"><a href="courses.html">Courses</a></li>
-                <li class="nav-link"><a href="my-courses.html">My Courses</a></li>
+                <li class="nav-link"><a href="courses.php">Courses</a></li>
+                <li class="nav-link"><a href="my-courses.php">My Courses</a></li>
                 <li class="nav-link"><a href="login.html">Login</a></li>
                 <li class="nav-link"><a href="register.html">Register</a></li>
-                <li class="nav-link active"><a href="cart.html">Cart</a></li>
+                <li class="nav-link active"><a href="cart.">phpCart</a></li>
             </ul>
         </div>
     </div>
@@ -34,55 +82,27 @@
     <div class="cart-wrapper">
         <div class="cart-title">
             <h2>Your Shopping Cart</h2>
-            <p>3 Courses in Cart</p>
+            <p><?php if (!empty($items)) echo mysqli_num_rows($items) ?> Courses in Cart</p>
         </div>
 
         <div class="cart-container">
             
             <div class="cart-items">
-                
+                <?php foreach ($items as $item): ?>
                 <div class="cart-item">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzmVs-KrAZYL_hkKZhejpKkkzJ9V1Nu8jCkQ&s" alt="Course" class="item-img">
+                    <img src="assets/images/<?php echo $item['thumb'] ?>" alt="Course" class="item-img">
                     <div class="item-details">
-                        <h3>Python for Web & Software Development</h3>
-                        <p>Instructor: John Doe</p>
+                        <h3><?php echo $item['name'] ?></h3>
+                        <p><?php echo $item['description'] ?></p>
                         <div class="item-actions">
                             <span class="remove-btn">Remove</span>
                         </div>
                     </div>
                     <div class="item-price-box">
-                        <span class="price" data-price="89.99">$89.99</span>
+                        <span class="price" data-price="<?php echo round($item['price'], 2) ?>">$<?php echo round($item['price'], 2) ?></span>
                     </div>
                 </div>
-
-                <div class="cart-item">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxNOdJuY7zzkgaQA7Oz6eVD3Tg1gq1XexvBw&s" alt="Course" class="item-img">
-                    <div class="item-details">
-                        <h3>JavaScript Fundamentals</h3>
-                        <p>Instructor: Sara Smith</p>
-                        <div class="item-actions">
-                            <span class="remove-btn">Remove</span>
-                        </div>
-                    </div>
-                    <div class="item-price-box">
-                        <span class="price" data-price="49.99">$49.99</span>
-                    </div>
-                </div>
-
-                <div class="cart-item">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1QyTKrw3kcfJ9FwEgfB6vehuBrQIlTO7VoA&s" alt="Course" class="item-img">
-                    <div class="item-details">
-                        <h3>UI/UX Design Masterclass</h3>
-                        <p>Instructor: Ahmed Ali</p>
-                        <div class="item-actions">
-                            <span class="remove-btn">Remove</span>
-                        </div>
-                    </div>
-                    <div class="item-price-box">
-                        <span class="price" data-price="29.99">$29.99</span>
-                    </div>
-                </div>
-
+                <?php endforeach ?>
             </div>
 
             <div class="cart-summary">
@@ -90,19 +110,19 @@
                 
                 <div class="summary-row">
                     <span>Subtotal</span>
-                    <span id="subtotal-price">$169.97</span>
+                    <span id="subtotal-price">$<?php echo round($subtotal, 2) ?></span>
                 </div>
                 
                 <div class="summary-row">
                     <span>Tax (10%)</span>
-                    <span id="tax-price">$16.99</span>
+                    <span id="tax-price">$<?php echo round($taxes, 2) ?></span>
                 </div>
 
                 <div class="divider"></div>
 
                 <div class="summary-row total">
                     <span>Total</span>
-                    <span id="total-price">$186.96</span>
+                    <span id="total-price">$<?php echo round($totalPrice, 2) ?></span>
                 </div>
 
                 <button class="checkout-btn">Proceed to Checkout</button>

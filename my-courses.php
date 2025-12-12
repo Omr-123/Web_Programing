@@ -2,7 +2,7 @@
 
 <?php 
 
-$sql = "SELECT * FROM courses LEFT JOIN user_courses ON courses.id = user_courses.course_id WHERE user_courses.user_id = 1";
+$sql = "SELECT * FROM courses LEFT JOIN enrollments ON courses.courseId = enrollments.courseId WHERE enrollments.userId = 2";
 $courses = $conn->query($sql);
 
 ?>
@@ -32,11 +32,11 @@ $courses = $conn->query($sql);
             </a>
             <ul class="nav-links">
                 <li class="nav-link"><a href="index.html">Home</a></li>
-                <li class="nav-link"><a href="courses.html">Courses</a></li>
-                <li class="nav-link active"><a href="my-courses.html">My Courses</a></li>
+                <li class="nav-link"><a href="courses.php">Courses</a></li>
+                <li class="nav-link active"><a href="my-courses.php">My Courses</a></li>
                 <li class="nav-link"><a href="login.html">Login</a></li>
                 <li class="nav-link"><a href="register.html">Register</a></li>
-                <li class="nav-link"><a href="cart.html">Cart</a></li>
+                <li class="nav-link"><a href="cart.php">Cart</a></li>
             </ul>
         </div>
     </div>

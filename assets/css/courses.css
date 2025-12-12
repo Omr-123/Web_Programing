@@ -73,7 +73,7 @@
     background-color: black;
 }
 
-.courses .course-button:not(:first-of-type) {
+.courses .course-button:not(:first-of-child) {
     color: black;
     border: 1px solid black;
     background-color: white;
