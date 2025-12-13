@@ -48,7 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/auth.css">
     <script src="assets/js/jquery-3.7.1.min.js"></script>
-    <script src="assets/js/auth.js"></script>
+    <!--<script src="assets/js/auth.js"></script>-->
+   
+
 </head>
 
 <body>
