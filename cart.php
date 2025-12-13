@@ -15,7 +15,13 @@ foreach ($items as $item) {
 
 $taxes = $subtotal * .1;
 $totalPrice = $subtotal + $taxes;
+if (isset($_POST['delete'])) {
+    $id = $_POST['delete'];
 
+    $stmt = $pdo->prepare("DELETE FROM cart WHERE id = 2");
+$stmt->execute();
+
+}
 // // Handle payment process
 // if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pay_cash'])) {
 //     $stmt = $conn->prepare("INSERT INTO Enrollment (CourseID, EnrollmentDate) SELECT CourseID, NOW() FROM Cart");
@@ -95,7 +101,10 @@ $totalPrice = $subtotal + $taxes;
                         <h3><?php echo $item['name'] ?></h3>
                         <p><?php echo $item['description'] ?></p>
                         <div class="item-actions">
-                            <span class="remove-btn">Remove</span>
+                            <form method="post">
+                            <button type="submit" name="delete" value="5">Delete User</button>
+                            </form>
+                            <span class="remove-btn" >Remove</span>
                         </div>
                     </div>
                     <div class="item-price-box">

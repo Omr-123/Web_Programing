@@ -39,22 +39,30 @@
             </div>
 
             <div class="form-box">
-                <form id="registerForm" novalidate>
+                <form id="registerForm" action="register.php" method="post" novalidate>
                     <div class="input-group">
-                        <label>Full Name</label>
-                        <input type="text" name="fullname" placeholder="John Doe">
+                        <label>First Name</label>
+                        <input type="text" name="first_name" placeholder="John" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name" placeholder="Doe" required>
                     </div>
                     <div class="input-group">
                         <label>Email Address</label>
-                        <input type="email" name="email" placeholder="example@email.com">
+                        <input type="email" name="email" placeholder="example@email.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Role</label>
+                        <input type="text" name="role" placeholder="Add your role" required>
                     </div>
                     <div class="input-group">
                         <label>Password</label>
-                        <input type="password" name="password" placeholder="Create a password">
+                        <input type="password" name="password" placeholder="Create a password" required>
                     </div>
                     <div class="input-group">
                         <label>Confirm Password</label>
-                        <input type="password" name="confirm_password" placeholder="Confirm your password">
+                        <input type="password" name="confirm_password" placeholder="Confirm your password" required>
                     </div>
                     <button type="submit" class="submit-btn">Create Account</button>
                 </form>
