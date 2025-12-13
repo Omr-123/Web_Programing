@@ -17,16 +17,16 @@
 
     <div class="header">
         <div class="nav">
-            <a class="nav-logo" href="index.html">
+            <a class="nav-logo" href="index.php">
                 <img src="assets/images/Lerno.png" alt="Logo">
             </a>
             <ul class="nav-links">
-                <li class="nav-link"><a href="index.html">Home</a></li>
-                <li class="nav-link"><a href="courses.html">Courses</a></li>
+                <li class="nav-link"><a href="index.php">Home</a></li>
+                <li class="nav-link"><a href="courses.php">Courses</a></li>
                 <li class="nav-link"><a href="my-courses.php">My Courses</a></li>
-                <li class="nav-link"><a href="login.html">Login</a></li>
+                <li class="nav-link"><a href="login.php">Login</a></li>
                 <li class="nav-link"><a href="register.html">Register</a></li>
-                <li class="nav-link"><a href="cart.html">Cart</a></li>
+                <li class="nav-link"><a href="cart.php">Cart</a></li>
             </ul>
         </div>
     </div>
@@ -38,7 +38,7 @@
 
             <h1>Python for Web & Software Development</h1>
             <div class="course-desc">
-                Step into the world of Python! 🐍 Learn the basics, build real projects, 
+                Step into the world of Python! 🐍 Learn the basics, build real projects,
                 experiment freely, and become the developer who actually enjoys problem-solving.
             </div>
 
@@ -64,7 +64,7 @@
             <div class="curriculum-title">Course Curriculum</div>
 
             <div class="curriculum-list">
-                
+
                 <div class="curriculum-item">
                     <div class="circle">1</div>
                     <div class="text">
@@ -101,12 +101,16 @@
         </div>
 
         <div class="sidebar">
-            
+
             <div class="box">
                 <div class="price-title">$89.99</div>
                 <div class="small-note">Get a certificate after completing this course</div>
 
-                <button class="enroll-btn">Enroll Now</button>
+                <form action="enroll.php" method="post">
+                    <!-- TODO: set the correct course_id for this course -->
+                    <input type="hidden" name="course_id" value="1">
+                    <button type="submit" class="enroll-btn">Enroll Now</button>
+                </form>
                 <button class="secondary-btn">♡ Add to Wishlist</button>
                 <button class="secondary-btn">↗ Share This Course</button>
             </div>

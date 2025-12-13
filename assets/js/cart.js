@@ -2,16 +2,8 @@ $(document).ready(function () {
     // Handle Remove Button Click
     $('.remove-btn').on('click', function (e) {
         e.preventDefault();
-
-        var $item = $(this).closest('.cart-item');
-        $item.fadeOut(400, function () {
-            // Remove from DOM
-            $(this).remove();
-
-            // Recalculate totals
-            updateCartTotal();
-            updateItemCount();
-        });
+        // Submit the form to delete from database
+        $(this).closest('form').submit();
     });
 
     // Function to Calculate Totals

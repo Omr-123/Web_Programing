@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['userId'] = $user['userId'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['fullname'] = $user['fname'] . ' ' . $user['lname'];
-            header("Location: index.html");
+            header("Location: index.php");
             exit();
         } else {
             echo 'Invalid password.';
@@ -55,16 +55,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     <div class="header">
         <div class="nav">
-            <a class="nav-logo" href="index.html">
+            <a class="nav-logo" href="index.php">
                 <img src="assets/images/Lerno.png" alt="Logo">
             </a>
             <ul class="nav-links">
-                <li class="nav-link"><a href="index.html">Home</a></li>
-                <li class="nav-link"><a href="courses.html">Courses</a></li>
-                <li class="nav-link"><a href="my-courses.html">My Courses</a></li>
-                <li class="nav-link active"><a href="login.html">Login</a></li>
-                <li class="nav-link"><a href="register.html">Register</a></li>
-                <li class="nav-link"><a href="cart.html">Cart</a></li>
+                <li class="nav-link"><a href="index.php">Home</a></li>
+                <li class="nav-link"><a href="courses.php">Courses</a></li>
+                <li class="nav-link"><a href="my-courses.php">My Courses</a></li>
+                <?php if (isset($_SESSION['userId'])): ?>
+                    <li class="nav-link"><span>Welcome, <?php echo htmlspecialchars($_SESSION['fullname'] ?? 'User'); ?></span></li>
+                    <li class="nav-link"><a href="logout.php">Logout</a></li>
+                <?php else: ?>
+                    <li class="nav-link active"><a href="login.php">Login</a></li>
+                    <li class="nav-link"><a href="register.html">Register</a></li>
+                <?php endif; ?>
+                <li class="nav-link"><a href="cart.php">Cart</a></li>
             </ul>
         </div>
     </div>

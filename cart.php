@@ -2,8 +2,58 @@
 session_start();
 require 'conn.php'; // Database connection
 
-// Fetch courses in the cart
-$stmt = $conn->prepare("SELECT * FROM cart JOIN courses ON cart.courseId = courses.courseId WHERE cart.userId = 2");
+// Require login: redirect if not authenticated
+if (!isset($_SESSION['userId'])) {
+    header('Location: login.php');
+    exit();
+}
+
+// Handle remove item from cart
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_course_id'])) {
+    $removeCourseId = intval($_POST['remove_course_id']);
+    if ($removeCourseId > 0) {
+        $del = $conn->prepare('DELETE FROM cart WHERE userId = ? AND courseId = ?');
+        if (!$del) {
+            die('Error preparing DELETE: ' . $conn->error);
+        }
+        $del->bind_param('ii', $_SESSION['userId'], $removeCourseId);
+        if (!$del->execute()) {
+            die('Error executing DELETE: ' . $del->error);
+        }
+        $del->close();
+    }
+    header('Location: cart.php');
+    exit();
+}
+
+// Handle checkout: move cart items to my courses (enrollments)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
+    $userId = $_SESSION['userId'];
+    // Insert all cart items for this user into enrollments (avoid duplicates)
+    $ins = $conn->prepare("INSERT INTO enrollments (userId, courseId) 
+                           SELECT c.userId, c.courseId FROM cart c 
+                           WHERE c.userId = ? AND NOT EXISTS (
+                               SELECT 1 FROM enrollments e 
+                               WHERE e.userId = c.userId AND e.courseId = c.courseId
+                           )");
+    $ins->bind_param('i', $userId);
+    $ins->execute();
+    $ins->close();
+
+    // Clear cart for this user
+    $delAll = $conn->prepare('DELETE FROM cart WHERE userId = ?');
+    $delAll->bind_param('i', $userId);
+    $delAll->execute();
+    $delAll->close();
+
+    // Redirect to home
+    header('Location: index.php');
+    exit();
+}
+
+// Fetch courses in the cart for the logged-in user
+$stmt = $conn->prepare("SELECT cart.*, courses.* FROM cart JOIN courses ON cart.courseId = courses.courseId WHERE cart.userId = ?");
+$stmt->bind_param('i', $_SESSION['userId']);
 $stmt->execute();
 $items = $stmt->get_result();
 
@@ -15,13 +65,6 @@ foreach ($items as $item) {
 
 $taxes = $subtotal * .1;
 $totalPrice = $subtotal + $taxes;
-if (isset($_POST['delete'])) {
-    $id = $_POST['delete'];
-
-    $stmt = $pdo->prepare("DELETE FROM cart WHERE id = 2");
-$stmt->execute();
-
-}
 // // Handle payment process
 // if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pay_cash'])) {
 //     $stmt = $conn->prepare("INSERT INTO Enrollment (CourseID, EnrollmentDate) SELECT CourseID, NOW() FROM Cart");
@@ -71,16 +114,21 @@ $stmt->execute();
     
     <div class="header">
         <div class="nav">
-            <a class="nav-logo" href="index.html">
+            <a class="nav-logo" href="index.php">
                 <img src="assets/images/Lerno.png" alt="Logo">
             </a>
             <ul class="nav-links">
-                <li class="nav-link"><a href="index.html">Home</a></li>
+                <li class="nav-link"><a href="index.php">Home</a></li>
                 <li class="nav-link"><a href="courses.php">Courses</a></li>
                 <li class="nav-link"><a href="my-courses.php">My Courses</a></li>
-                <li class="nav-link"><a href="login.html">Login</a></li>
-                <li class="nav-link"><a href="register.html">Register</a></li>
-                <li class="nav-link active"><a href="cart.">phpCart</a></li>
+                <?php if (isset($_SESSION['userId'])): ?>
+                    <li class="nav-link"><span>Welcome, <?php echo htmlspecialchars($_SESSION['fullname'] ?? 'User'); ?></span></li>
+                    <li class="nav-link"><a href="logout.php">Logout</a></li>
+                <?php else: ?>
+                    <li class="nav-link"><a href="login.php">Login</a></li>
+                    <li class="nav-link"><a href="register.html">Register</a></li>
+                <?php endif; ?>
+                <li class="nav-link active"><a href="cart.php">Cart</a></li>
             </ul>
         </div>
     </div>
@@ -102,9 +150,9 @@ $stmt->execute();
                         <p><?php echo $item['description'] ?></p>
                         <div class="item-actions">
                             <form method="post">
-                            <button type="submit" name="delete" value="5">Delete User</button>
+                                <input type="hidden" name="remove_course_id" value="<?php echo (int)$item['courseId']; ?>">
+                                <button type="submit" class="remove-btn">Remove</button>
                             </form>
-                            <span class="remove-btn" >Remove</span>
                         </div>
                     </div>
                     <div class="item-price-box">
@@ -134,7 +182,9 @@ $stmt->execute();
                     <span id="total-price">$<?php echo round($totalPrice, 2) ?></span>
                 </div>
 
-                <button class="checkout-btn">Proceed to Checkout</button>
+                <form method="post">
+                    <button type="submit" name="checkout" value="1" class="checkout-btn">Proceed to Checkout</button>
+                </form>
                 
                 <div class="coupon-box">
                     <input type="text" placeholder="Coupon Code">

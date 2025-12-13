@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,18 +19,22 @@
 </head>
 
 <body>
-    
     <div class="header">
         <div class="nav">
-            <a class="nav-logo" href="index.html">
+            <a class="nav-logo" href="index.php">
                 <img src="assets/images/Lerno.png" alt="Logo">
             </a>
             <ul class="nav-links">
-                <li class="nav-link active"><a href="index.html">Home</a></li>
+                <li class="nav-link active"><a href="index.php">Home</a></li>
                 <li class="nav-link"><a href="courses.php">Courses</a></li>
                 <li class="nav-link"><a href="my-courses.php">My Courses</a></li>
-                <li class="nav-link"><a href="login.html">Login</a></li>
-                <li class="nav-link"><a href="register.html">Register</a></li>
+                <?php if (isset($_SESSION['userId'])): ?>
+                    <li class="nav-link"><span>Welcome, <?php echo htmlspecialchars($_SESSION['fullname'] ?? 'User'); ?></span></li>
+                    <li class="nav-link"><a href="logout.php">Logout</a></li>
+                <?php else: ?>
+                    <li class="nav-link"><a href="login.php">Login</a></li>
+                    <li class="nav-link"><a href="register.html">Register</a></li>
+                <?php endif; ?>
                 <li class="nav-link"><a href="cart.php">Cart</a></li>
             </ul>
         </div>
@@ -37,7 +44,7 @@
         <div class="hero-content centered">
             <h1>Best Learning Education Platform in The World</h1>
             <p>Unlock your potential with expert-led courses.</p>
-            <a href="courses.html">
+            <a href="courses.php">
                 <button class="hero-btn">Explore Courses</button>
             </a>
         </div>
@@ -125,7 +132,7 @@
     <div class="cta-banner">
         <h2>Join Thousands of Learners Today</h2>
         <p>Start your learning journey with our top-quality courses.</p>
-        <a href="#" class="cta-btn">Get Started</a>
+        <a href="index.php" class="cta-btn">Get Started</a>
     </div>
 
     <div class="section-container">

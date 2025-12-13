@@ -1,10 +1,23 @@
-<?php include_once('conn.php') ?>
+<?php
+session_start();
+include_once('conn.php');
+
+// Redirect to login if not authenticated
+if (!isset($_SESSION['userId'])) {
+    header('Location: login.php');
+    exit();
+}
+?>
 
 <?php 
-
-$sql = "SELECT * FROM courses LEFT JOIN enrollments ON courses.courseId = enrollments.courseId WHERE enrollments.userId = 2";
-$courses = $conn->query($sql);
-
+// Fetch courses enrolled by the logged-in user using a prepared statement
+$sql = "SELECT courses.* FROM courses
+        LEFT JOIN enrollments ON courses.courseId = enrollments.courseId
+        WHERE enrollments.userId = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $_SESSION['userId']);
+$stmt->execute();
+$courses = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -27,15 +40,20 @@ $courses = $conn->query($sql);
     
     <div class="header">
         <div class="nav">
-            <a class="nav-logo" href="index.html">
+            <a class="nav-logo" href="index.php">
                 <img src="assets/images/Lerno.png" alt="Logo">
             </a>
             <ul class="nav-links">
-                <li class="nav-link"><a href="index.html">Home</a></li>
+                <li class="nav-link"><a href="index.php">Home</a></li>
                 <li class="nav-link"><a href="courses.php">Courses</a></li>
                 <li class="nav-link active"><a href="my-courses.php">My Courses</a></li>
-                <li class="nav-link"><a href="login.html">Login</a></li>
-                <li class="nav-link"><a href="register.html">Register</a></li>
+                <?php if (isset($_SESSION['userId'])): ?>
+                    <li class="nav-link"><span>Welcome, <?php echo htmlspecialchars($_SESSION['fullname'] ?? 'User'); ?></span></li>
+                    <li class="nav-link"><a href="logout.php">Logout</a></li>
+                <?php else: ?>
+                    <li class="nav-link"><a href="login.php">Login</a></li>
+                    <li class="nav-link"><a href="register.html">Register</a></li>
+                <?php endif; ?>
                 <li class="nav-link"><a href="cart.php">Cart</a></li>
             </ul>
         </div>
