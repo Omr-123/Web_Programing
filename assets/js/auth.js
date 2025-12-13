@@ -42,7 +42,7 @@ $(document).ready(function () {
         }
 
         if (isValid) {
-            alert('Login Successful!');
+            this.submit();
         }
     });
 

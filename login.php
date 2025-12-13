@@ -1,6 +1,6 @@
 <?php
-require 'conn.php'; // Database connection
-
+session_start();
+require_once 'conn.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if the user exists
-    $stmt = $conn->prepare("SELECT * FROM Student WHERE Email = ?");
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->bind_param('s', $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -20,8 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $result->fetch_assoc();
 
         // Verify the password
-        if (password_verify($password, $user['PasswordHash'])) {
-            echo 'Login successful. Welcome, ' . htmlspecialchars($user['FirstName']) . ' ' . htmlspecialchars($user['LastName']) . '!';
+        if (password_verify($password, $user['password'])) {
+            // Set session and redirect without printing a message
+            $_SESSION['userId'] = $user['userId'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['fullname'] = $user['fname'] . ' ' . $user['lname'];
+            header("Location: index.html");
+            exit();
         } else {
             echo 'Invalid password.';
         }
@@ -30,3 +35,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="icon" href="assets/Lerno.png">
+    <link rel="stylesheet" href="assets/css/reset.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/auth.css">
+    <script src="assets/js/jquery-3.7.1.min.js"></script>
+    <!-- <script src="assets/js/auth.js"></script> -->
+</head>
+
+<body>
+    
+    <div class="header">
+        <div class="nav">
+            <a class="nav-logo" href="index.html">
+                <img src="assets/images/Lerno.png" alt="Logo">
+            </a>
+            <ul class="nav-links">
+                <li class="nav-link"><a href="index.html">Home</a></li>
+                <li class="nav-link"><a href="courses.html">Courses</a></li>
+                <li class="nav-link"><a href="my-courses.html">My Courses</a></li>
+                <li class="nav-link active"><a href="login.html">Login</a></li>
+                <li class="nav-link"><a href="register.html">Register</a></li>
+                <li class="nav-link"><a href="cart.html">Cart</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="auth-wrapper">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2>Welcome Back</h2>
+                <p>Please enter your details to sign in.</p>
+            </div>
+
+            <div class="form-box">
+                <form id="loginForm" action="login.php" method="post" novalidate>
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" name="email" placeholder="example@email.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <div class="form-options">
+                        <label><input type="checkbox"> Remember me</label>
+                        <a href="#">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="submit-btn">Sign In</button>
+                </form>
+
+                <div class="auth-footer-text">
+                    Don't have an account? <a href="register.html">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p class="footer-description">2025 &copy; All Right Reserved By Lerno</p>
+    </div>
+
+</body>
+
+</html>
