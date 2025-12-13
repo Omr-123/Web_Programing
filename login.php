@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'conn.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -18,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
-
         // Verify the password
         if (password_verify($password, $user['password'])) {
             // Set session and redirect without printing a message
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/auth.css">
     <script src="assets/js/jquery-3.7.1.min.js"></script>
-    <!-- <script src="assets/js/auth.js"></script> -->
+    <script src="assets/js/auth.js"></script>
 </head>
 
 <body>
