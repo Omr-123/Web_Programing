@@ -12,8 +12,29 @@
             <?php endif; ?>
             <?php if (isset($_SESSION['userId'])): ?>
                 <li class="nav-link"><a href="cart.php">Cart</a></li>
+                <?php
+                    // Show circular instructor avatar on the left when logged in
+                    $avatarUrl = null;
+                    if (isset($_SESSION['role']) && (int)$_SESSION['role'] === 2) {
+                        if (isset($conn) && $conn instanceof mysqli) {
+                            $uid = (int)$_SESSION['userId'];
+                            if ($stmt = $conn->prepare("SELECT profile_image_url FROM users WHERE id = ?")) {
+                                $stmt->bind_param('i', $uid);
+                                $stmt->execute();
+                                $res = $stmt->get_result();
+                                if ($row = $res->fetch_assoc()) { $avatarUrl = $row['profile_image_url']; }
+                                $stmt->close();
+                            }
+                        }
+                    }
+                ?>
                 <li class="nav-link"><a href="#"><?php echo htmlspecialchars($_SESSION['fullname'] ?? 'User') ?></a></li>
                 <li class="nav-link"><a href="logout.php">Logout</a></li>
+                <?php if ($avatarUrl): ?>
+                    <li class="nav-link" style="display:flex; align-items:center; margin-left:12px;">
+                        <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="Avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #ddd;" />
+                    </li>
+                <?php endif; ?>
             <?php else: ?>
                 <li class="nav-link"><a href="login.php">Login</a></li>
                 <li class="nav-link"><a href="register.php">Register</a></li>

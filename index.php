@@ -2,8 +2,8 @@
 <?php include_once("conn.php") ?>
 
 <?php 
-// Fetch instructors per new schema
-$stmt = $conn->prepare("SELECT id, fname, lname FROM users WHERE role_id = 2 LIMIT 4");
+// Fetch instructors with non-empty profile image and bio
+$stmt = $conn->prepare("SELECT id, fname, lname, profile_image_url, bio FROM users WHERE role_id = 2 AND profile_image_url IS NOT NULL AND profile_image_url <> '' AND bio IS NOT NULL AND bio <> '' LIMIT 4");
 $stmt->execute();
 $instructors = $stmt->get_result();
 $stmt->close();
@@ -72,7 +72,7 @@ $stmt->close();
 
         <div class="testimonial-wrapper">
             <div class="testimonial active">
-                <img src="https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg?semt=ais_hybrid&w=740&q=80" alt="Ahmed" class="student-img">
+                <img src="https://via.placeholder.com/100x100?text=Student" alt="Student" class="student-img">
                 <p>"This platform changed the way I learn! Highly recommend."</p>
                 <div class="stars">★★★★★</div>
                 <h4>Ahmed A.</h4>
@@ -120,12 +120,12 @@ $stmt->close();
         </div>
         
         <div class="courses"> 
-            <?php foreach($instructors as $instructor): ?>
+            <?php foreach($instructors as $instructor):  ?>
             <div class="course">
-                <img src="https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg?semt=ais_hybrid&w=740&q=80" alt="Inst" class="course-image">
+                <img src="<?= htmlspecialchars($instructor['profile_image_url'] ?? 'https://via.placeholder.com/300x300?text=Instructor') ?>" alt="<?= htmlspecialchars($instructor['fname']) ?>" class="course-image">
                 <div class="course-details">
-                    <h3 class="course-title"><?php echo $instructor['fname'] . " " . $instructor['lname'] ?></h3>
-                    <p class="course-description">Senior Web Developer</p>
+                    <h3 class="course-title"><?php echo htmlspecialchars($instructor['fname'] . " " . $instructor['lname']) ?></h3>
+                    <p class="course-description"><?= htmlspecialchars($instructor['bio'] ?? 'Experienced Instructor') ?></p>
                 </div>
             </div>
             <?php endforeach ?>

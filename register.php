@@ -14,10 +14,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
     $role = isset($_POST['role']) && $_POST['role'] === 'instructor' ? 2 : 1; // Default role is student
+    $profile_image_url = (isset($_POST['profile_image_url']) && !empty($_POST['profile_image_url'])) ? $_POST['profile_image_url'] : null;
+    $instructor_bio = (isset($_POST['instructor_bio']) && !empty($_POST['instructor_bio'])) ? $_POST['instructor_bio'] : null;
 
     // Validate input
     if (empty($first_name) || empty($last_name) || empty($email) || empty($password) || empty($confirm_password)) {
         die('All fields are required.');
+    }
+
+    // For instructors, profile image URL is required
+    if ($role === 2 && empty($profile_image_url)) {
+        die('Instructors must provide a profile image URL.');
+    }
+    // For instructors, bio is also required
+    if ($role === 2 && empty($instructor_bio)) {
+        die('Instructors must provide a professional bio.');
     }
 
     if ($password !== $confirm_password) {
@@ -28,16 +39,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password_hash = password_hash($password, PASSWORD_BCRYPT);
 
     if ($role === 2) { // If instructor
-        // Insert instructor user and redirect to dashboard
-        $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, password, role_id, joined_at) VALUES (?, ?, ?, ?, ?, NOW())");
+        // Insert instructor user with profile image and bio
+        $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, password, role_id, profile_image_url, bio, joined_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
         if (!$stmt) {
             die('Prepare failed: ' . $conn->error);
         }
-        $stmt->bind_param("ssssi", $first_name, $last_name, $email, $password_hash, $role);
+        // 7 parameters: s,s,s,s,i,s,s
+        $stmt->bind_param("ssssiss", $first_name, $last_name, $email, $password_hash, $role, $profile_image_url, $instructor_bio);
         if ($stmt->execute()) {
             header('Location: login.php');
             exit();
-        } else { die('Registration failed: ' . $stmt->error); }
+        } else { 
+            die('Registration failed: ' . $stmt->error); 
+        }
     } else {
         // Insert student into the database
         $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, password, role_id, joined_at) VALUES (?, ?, ?, ?, ?, NOW())");
@@ -62,6 +76,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="assets/css/auth.css">
     <script src="assets/js/jquery-3.7.1.min.js"></script>
     <script src="assets/js/auth.js"></script>
+    <script>
+        // Show/hide profile image and bio fields based on role selection
+        $(document).ready(function() {
+            function setInstructorFields(required) {
+                const img = $('input[name="profile_image_url"]');
+                const bio = $('textarea[name="instructor_bio"]');
+                if (required) {
+                    $('#instructor-image-group').show();
+                    $('#instructor-bio-group').show();
+                    img.attr('required', true);
+                    bio.attr('required', true);
+                } else {
+                    $('#instructor-image-group').hide();
+                    $('#instructor-bio-group').hide();
+                    img.removeAttr('required');
+                    bio.removeAttr('required');
+                }
+            }
+
+            // Initialize based on default checked role
+            const isInstructor = $('input[name="role"][value="instructor"]').is(':checked');
+            setInstructorFields(isInstructor);
+
+            // Toggle on change
+            $('input[name="role"]').on('change', function() {
+                setInstructorFields($(this).val() === 'instructor');
+            });
+        });
+    </script>
 
 </head>
 
@@ -105,6 +148,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <input type="radio" name="role" value="instructor" id="instructor">
                             <label for="instructor">Instructor</label>
                         </div>
+                    </div>
+                    <div class="input-group" id="instructor-image-group" style="display: none;">
+                        <label>Profile Image URL (for instructors)</label>
+                        <input type="url" name="profile_image_url" placeholder="https://example.com/image.jpg">
+                    </div>
+                    <div class="input-group" id="instructor-bio-group" style="display: none;">
+                        <label>Professional Bio (for instructors)</label>
+                        <textarea name="instructor_bio" placeholder="Describe your expertise and experience..." rows="4"></textarea>
                     </div>
                     <button type="submit" class="submit-btn">Create Account</button>
                 </form>

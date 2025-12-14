@@ -5,7 +5,8 @@ include_once 'conn.php';
 // Only set $userId if session exists
 $userId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
 
-$stmt = $conn->prepare("SELECT id, title, description, price, thumbnail_url FROM courses WHERE is_published = 1 ORDER BY created_at DESC");
+// Get courses with instructor information
+$stmt = $conn->prepare("SELECT c.id, c.title, c.description, c.price, c.thumbnail_url, c.instructor_id, u.fname, u.lname, u.bio FROM courses c JOIN users u ON c.instructor_id = u.id WHERE c.is_published = 1 ORDER BY c.created_at DESC");
 $stmt->execute();
 $courses = $stmt->get_result();
 $stmt->close();
@@ -96,6 +97,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             <div class="course-details">
                 <h3 class="course-title"><?= htmlspecialchars($course['title']) ?></h3>
                 <p class="course-description"><?= htmlspecialchars($course['description']) ?></p>
+                <p style="font-size: 12px; color: #666; margin: 8px 0;"><strong>Instructor:</strong> <?= htmlspecialchars($course['fname'] . ' ' . $course['lname']) ?></p>
+                <p style="font-size: 12px; color: #666; margin: 8px 0;"><strong>Bio:</strong> <?= htmlspecialchars($course['bio'] ?? 'No bio provided') ?></p>
                 <span class="course-price">$<?= number_format((float)$course['price'],2) ?></span>
                 <a href="course.php?id=<?= (int)$course['id'] ?>" class="course-button">Learn More</a>
                 <!-- Form to handle Add To Cart -->
