@@ -12,28 +12,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $last_name = $_POST['last_name'];
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $role = 1; // Default role
+    $confirm_password = $_POST['confirm_password'];
+    $role = isset($_POST['role']) && $_POST['role'] === 'instructor' ? 2 : 1; // Default role is student
 
     // Validate input
-    if (empty($first_name) || empty($last_name) || empty($email) || empty($password)) {
+    if (empty($first_name) || empty($last_name) || empty($email) || empty($password) || empty($confirm_password)) {
         die('All fields are required.');
+    }
+
+    if ($password !== $confirm_password) {
+        die('Passwords do not match.');
     }
 
     // Hash the password
     $password_hash = password_hash($password, PASSWORD_BCRYPT);
 
-    // Insert user into the database
-    $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, password, role, joinedAt) VALUES (?, ?, ?, ?, ?, NOW())");
-    if (!$stmt) {
-        die('Prepare failed: ' . $conn->error);
-    }
+    if ($role === 2) { // If instructor
+        // Send a fake email
+        $to = "info@lerno.com";
+        $subject = "New Instructor Registration";
+        $message = "Instructor Details:\nName: $first_name $last_name\nEmail: $email";
+        $headers = "From: noreply@lerno.com";
 
-    $stmt->bind_param("ssssi", $first_name, $last_name, $email, $password_hash, $role);
+        // Uncomment the line below to send the email in a real environment
+        // mail($to, $subject, $message, $headers);
 
-    if ($stmt->execute()) {
-        echo 'Registration successful. You can now log in.';
+        // Redirect to approval page
+        header('Location: instructor-approval.php');
+        exit();
     } else {
-        die('Registration failed: ' . $stmt->error);
+        // Insert student into the database
+        $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, password, role, joinedAt) VALUES (?, ?, ?, ?, ?, NOW())");
+        if (!$stmt) {
+            die('Prepare failed: ' . $conn->error);
+        }
+
+        $stmt->bind_param("ssssi", $first_name, $last_name, $email, $password_hash, $role);
+
+        if ($stmt->execute()) {
+            echo 'Registration successful. You can now log in.';
+        } else {
+            die('Registration failed: ' . $stmt->error);
+        }
     }
 }
 ?>
@@ -85,6 +105,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="input-group">
                         <label>Confirm Password</label>
                         <input type="password" name="confirm_password" placeholder="Confirm your password" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Role</label>
+                        <div>
+                            <input type="radio" name="role" value="student" id="student" checked>
+                            <label for="student">Student</label>
+                            <input type="radio" name="role" value="instructor" id="instructor">
+                            <label for="instructor">Instructor</label>
+                        </div>
                     </div>
                     <button type="submit" class="submit-btn">Create Account</button>
                 </form>
