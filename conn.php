@@ -2,13 +2,11 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$db = "lerno";
+$db = "lerno2";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password,$db);
-
-// Check connection
+$conn = new mysqli($servername, $username, $password, $db);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+$conn->set_charset('utf8mb4');
 ?>

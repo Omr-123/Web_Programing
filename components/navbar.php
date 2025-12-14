@@ -7,8 +7,8 @@
             <li class="nav-link"><a href="index.php">Home</a></li>
             <li class="nav-link"><a href="courses.php">Courses</a></li>
             <li class="nav-link"><a href="my-courses.php">My Courses</a></li>
-            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 2): ?>
-                <li class="nav-link"><a href="admin/">Dashboard</a></li>
+            <?php if (isset($_SESSION['role']) && (int)$_SESSION['role'] === 2): ?>
+                <li class="nav-link"><a href="dashboard.php">Dashboard</a></li>
             <?php endif; ?>
             <?php if (isset($_SESSION['userId'])): ?>
                 <li class="nav-link"><a href="cart.php">Cart</a></li>

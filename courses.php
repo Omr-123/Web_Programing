@@ -5,7 +5,7 @@ include_once 'conn.php';
 // Only set $userId if session exists
 $userId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
 
-$stmt = $conn->prepare("SELECT * FROM courses");
+$stmt = $conn->prepare("SELECT id, title, description, price, thumbnail_url FROM courses WHERE is_published = 1 ORDER BY created_at DESC");
 $stmt->execute();
 $courses = $stmt->get_result();
 $stmt->close();
@@ -25,14 +25,14 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     }
 
     // Avoid duplicate cart items: check cart and enrollments separately and close statements
-    $checkCart = $conn->prepare("SELECT 1 FROM cart WHERE userId = ? AND courseId = ? LIMIT 1");
+    $checkCart = $conn->prepare("SELECT 1 FROM cart WHERE user_id = ? AND course_id = ? LIMIT 1");
     $checkCart->bind_param('ii', $userId, $courseID);
     $checkCart->execute();
     $cartRes = $checkCart->get_result();
     $inCart = $cartRes && $cartRes->num_rows > 0;
     $checkCart->close();
 
-    $checkEnroll = $conn->prepare("SELECT 1 FROM enrollments WHERE userId = ? AND courseId = ? LIMIT 1");
+    $checkEnroll = $conn->prepare("SELECT 1 FROM enrollments WHERE user_id = ? AND course_id = ? LIMIT 1");
     $checkEnroll->bind_param('ii', $userId, $courseID);
     $checkEnroll->execute();
     $enrollRes = $checkEnroll->get_result();
@@ -51,7 +51,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
     if (!$inCart && !$inCourses) {
         // include `addedAt` (use SQL CURDATE()) because the column is NOT NULL in the schema
-        $stmt = $conn->prepare("INSERT INTO cart (userId, courseId, addedAt) VALUES (?, ?, CURDATE())");
+        $stmt = $conn->prepare("INSERT INTO cart (user_id, course_id, added_at) VALUES (?, ?, NOW())");
         $stmt->bind_param('ii', $userId, $courseID);
         if (!$stmt->execute()) {
             echo "Error adding to cart: " . $stmt->error;
@@ -92,15 +92,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     <div class="courses">
         <?php foreach($courses as $course): ?>
         <div class="course">
-            <img src="assets/images/<?php echo $course['thumb'] ?>" alt="course" class="course-image">
+            <img src="<?= htmlspecialchars($course['thumbnail_url'] ?? 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4') ?>" alt="course" class="course-image">
             <div class="course-details">
-                <h3 class="course-title"><?php echo $course['name']; ?></h3>
-                <p class="course-description"><?php echo $course['description']; ?></p>
-                <span class="course-price">$<?php echo round($course['price'],2) ?></span>
-                <a href="course.php" class="course-button">Learn More</a>
+                <h3 class="course-title"><?= htmlspecialchars($course['title']) ?></h3>
+                <p class="course-description"><?= htmlspecialchars($course['description']) ?></p>
+                <span class="course-price">$<?= number_format((float)$course['price'],2) ?></span>
+                <a href="course.php?id=<?= (int)$course['id'] ?>" class="course-button">Learn More</a>
                 <!-- Form to handle Add To Cart -->
                 <form action="courses.php" method="post">
-                    <input type="hidden" name="course_id" value="<?php echo $course['courseId']; ?>">
+                    <input type="hidden" name="course_id" value="<?= (int)$course['id'] ?>">
                     <button type="submit" class="course-button">Add To Cart</button>
                 </form>
             </div>

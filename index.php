@@ -2,12 +2,17 @@
 <?php include_once("conn.php") ?>
 
 <?php 
-
-$stmt = $conn->prepare("SELECT * FROM users WHERE role = 2 LIMIT 4");
+// Fetch instructors per new schema
+$stmt = $conn->prepare("SELECT id, fname, lname FROM users WHERE role_id = 2 LIMIT 4");
 $stmt->execute();
 $instructors = $stmt->get_result();
 $stmt->close();
 
+// Fetch featured courses
+$stmt = $conn->prepare("SELECT id, title, description, thumbnail_url FROM courses WHERE is_published = 1 ORDER BY created_at DESC LIMIT 3");
+$stmt->execute();
+$featured = $stmt->get_result();
+$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -47,32 +52,16 @@ $stmt->close();
         </div>
 
         <div class="courses">
+            <?php foreach ($featured as $course): ?>
             <div class="course">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxNOdJuY7zzkgaQA7Oz6eVD3Tg1gq1XexvBw&s" alt="Course 1" class="course-image">
+                <img src="<?= htmlspecialchars($course['thumbnail_url'] ?? 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4') ?>" alt="Course" class="course-image">
                 <div class="course-details">
-                    <h3 class="course-title">JavaScript Course ⚡</h3>
-                    <p class="course-description">Learn JavaScript from zero to hero.</p>
-                    <a href="course.html" class="course-button">Learn More</a>
+                    <h3 class="course-title"><?= htmlspecialchars($course['title']) ?></h3>
+                    <p class="course-description"><?= htmlspecialchars(substr($course['description'],0,140)) ?>...</p>
+                    <a href="course.php?id=<?= (int)$course['id'] ?>" class="course-button">Learn More</a>
                 </div>
             </div>
-
-            <div class="course">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzmVs-KrAZYL_hkKZhejpKkkzJ9V1Nu8jCkQ&s" alt="Course 2" class="course-image">
-                <div class="course-details">
-                    <h3 class="course-title">Python Course 🐍</h3>
-                    <p class="course-description">Master Python with practical exercises.</p>
-                    <a href="course.html" class="course-button">Learn More</a>
-                </div>
-            </div>
-
-            <div class="course">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1QyTKrw3kcfJ9FwEgfB6vehuBrQIlTO7VoA&s" alt="Course 3" class="course-image">
-                <div class="course-details">
-                    <h3 class="course-title">Web Development</h3>
-                    <p class="course-description">HTML, CSS & JavaScript full course.</p>
-                    <a href="course.html" class="course-button">Learn More</a>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 

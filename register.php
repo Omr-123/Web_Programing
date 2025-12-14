@@ -28,32 +28,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password_hash = password_hash($password, PASSWORD_BCRYPT);
 
     if ($role === 2) { // If instructor
-        // Send a fake email
-        $to = "info@lerno.com";
-        $subject = "New Instructor Registration";
-        $message = "Instructor Details:\nName: $first_name $last_name\nEmail: $email";
-        $headers = "From: noreply@lerno.com";
-
-        // Uncomment the line below to send the email in a real environment
-        // mail($to, $subject, $message, $headers);
-
-        // Redirect to approval page
-        header('Location: instructor-approval.php');
-        exit();
-    } else {
-        // Insert student into the database
-        $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, password, role, joinedAt) VALUES (?, ?, ?, ?, ?, NOW())");
+        // Insert instructor user and redirect to dashboard
+        $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, password, role_id, joined_at) VALUES (?, ?, ?, ?, ?, NOW())");
         if (!$stmt) {
             die('Prepare failed: ' . $conn->error);
         }
-
         $stmt->bind_param("ssssi", $first_name, $last_name, $email, $password_hash, $role);
-
         if ($stmt->execute()) {
-            echo 'Registration successful. You can now log in.';
-        } else {
-            die('Registration failed: ' . $stmt->error);
-        }
+            header('Location: login.php');
+            exit();
+        } else { die('Registration failed: ' . $stmt->error); }
+    } else {
+        // Insert student into the database
+        $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, password, role_id, joined_at) VALUES (?, ?, ?, ?, ?, NOW())");
+        if (!$stmt) { die('Prepare failed: ' . $conn->error); }
+        $stmt->bind_param("ssssi", $first_name, $last_name, $email, $password_hash, $role);
+        if ($stmt->execute()) { echo 'Registration successful. You can now log in.'; }
+        else { die('Registration failed: ' . $stmt->error); }
     }
 }
 ?>

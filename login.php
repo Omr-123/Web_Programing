@@ -11,8 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die('Email and password are required.');
     }
 
-    // Check if the user exists
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    // Check if the user exists (lerno2 schema)
+    $stmt = $conn->prepare("SELECT id, fname, lname, email, password, role_id FROM users WHERE email = ?");
     $stmt->bind_param('s', $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -23,9 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verify the password
         if (password_verify($password, $user['password'])) {
             // Set session and redirect without printing a message
-            $_SESSION['userId'] = $user['userId'];
+            $_SESSION['userId'] = $user['id'];
             $_SESSION['email'] = $user['email'];
-            $_SESSION['role'] = $user['role'];
+            $_SESSION['role'] = $user['role_id'];
             $_SESSION['fullname'] = $user['fname'] . ' ' . $user['lname'];
             header("Location: index.php");
             exit();

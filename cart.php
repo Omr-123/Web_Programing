@@ -12,7 +12,7 @@ if (!isset($_SESSION['userId'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_course_id'])) {
     $removeCourseId = intval($_POST['remove_course_id']);
     if ($removeCourseId > 0) {
-        $del = $conn->prepare('DELETE FROM cart WHERE userId = ? AND courseId = ?');
+        $del = $conn->prepare('DELETE FROM cart WHERE user_id = ? AND course_id = ?');
         if (!$del) {
             die('Error preparing DELETE: ' . $conn->error);
         }
@@ -30,18 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_course_id'])) 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
     $userId = $_SESSION['userId'];
     // Insert all cart items for this user into enrollments (avoid duplicates)
-    $ins = $conn->prepare("INSERT INTO enrollments (userId, courseId) 
-                           SELECT c.userId, c.courseId FROM cart c 
-                           WHERE c.userId = ? AND NOT EXISTS (
+    $ins = $conn->prepare("INSERT INTO enrollments (user_id, course_id) 
+                           SELECT c.user_id, c.course_id FROM cart c 
+                           WHERE c.user_id = ? AND NOT EXISTS (
                                SELECT 1 FROM enrollments e 
-                               WHERE e.userId = c.userId AND e.courseId = c.courseId
+                               WHERE e.user_id = c.user_id AND e.course_id = c.course_id
                            )");
     $ins->bind_param('i', $userId);
     $ins->execute();
     $ins->close();
 
     // Clear cart for this user
-    $delAll = $conn->prepare('DELETE FROM cart WHERE userId = ?');
+    $delAll = $conn->prepare('DELETE FROM cart WHERE user_id = ?');
     $delAll->bind_param('i', $userId);
     $delAll->execute();
     $delAll->close();
@@ -51,8 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
     exit();
 }
 
-// Fetch courses in the cart for the logged-in user
-$stmt = $conn->prepare("SELECT * FROM cart LEFT JOIN courses ON cart.courseId = courses.courseId WHERE cart.userId = ?");
+// Fetch courses in the cart for the logged-in user (lerno2 schema)
+$stmt = $conn->prepare("SELECT c.id as cart_id, crs.id, crs.title, crs.description, crs.price, crs.thumbnail_url
+                        FROM cart c
+                        JOIN courses crs ON c.course_id = crs.id
+                        WHERE c.user_id = ?");
 $stmt->bind_param('i', $_SESSION['userId']);
 $stmt->execute();
 $items = $stmt->get_result();
@@ -100,19 +103,19 @@ $totalPrice = $subtotal + $taxes;
             <div class="cart-items">
                 <?php foreach ($items as $item): ?>
                 <div class="cart-item">
-                    <img src="assets/images/<?php echo $item['thumb'] ?>" alt="Course" class="item-img">
+                    <img src="<?= htmlspecialchars($item['thumbnail_url'] ?? 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4') ?>" alt="Course" class="item-img">
                     <div class="item-details">
-                        <h3><?php echo $item['name'] ?></h3>
-                        <p><?php echo $item['description'] ?></p>
+                        <h3><?= htmlspecialchars($item['title']) ?></h3>
+                        <p><?= htmlspecialchars($item['description']) ?></p>
                         <div class="item-actions">
                             <form method="post">
-                                <input type="hidden" name="remove_course_id" value="<?php echo (int)$item['courseId']; ?>">
+                                <input type="hidden" name="remove_course_id" value="<?= (int)$item['id'] ?>">
                                 <button type="submit" class="remove-btn">Remove</button>
                             </form>
                         </div>
                     </div>
                     <div class="item-price-box">
-                        <span class="price" data-price="<?php echo round($item['price'], 2) ?>">$<?php echo round($item['price'], 2) ?></span>
+                        <span class="price" data-price="<?= number_format((float)$item['price'], 2) ?>">$<?= number_format((float)$item['price'], 2) ?></span>
                     </div>
                 </div>
                 <?php endforeach ?>
