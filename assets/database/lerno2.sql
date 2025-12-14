@@ -117,8 +117,8 @@ INSERT INTO users (fname, lname, email, password, role_id) VALUES
 
 -- Seed courses
 INSERT INTO courses (instructor_id, title, slug, description, thumbnail_url, language, level, price) VALUES
-  (1, 'Full-Stack Web Development', 'full-stack-web-dev', 'Learn HTML, CSS, JS, PHP, and MySQL by building projects.', 'https://images.unsplash.com/photo-1517433456452-f9633a875f6f', 'en', 'beginner', 0.00),
-  (1, 'Advanced PHP Patterns', 'advanced-php-patterns', 'Master advanced PHP design patterns and best practices.', 'https://images.unsplash.com/photo-1518779578993-ec3579fee39f', 'en', 'advanced', 0.00);
+  (1, 'Full-Stack Web Development', 'full-stack-web-dev', 'Learn HTML, CSS, JS, PHP, and MySQL by building projects.', 'https://images.unsplash.com/photo-1517433456452-f9633a875f6f', 'en', 'beginner', 69),
+  (1, 'Advanced PHP Patterns', 'advanced-php-patterns', 'Master advanced PHP design patterns and best practices.', 'https://images.unsplash.com/photo-1518779578993-ec3579fee39f', 'en', 'advanced', 49);
 
 -- Seed lessons (YouTube embeds)
 INSERT INTO lessons (course_id, title, video_url, content, duration_seconds, position, is_preview) VALUES
