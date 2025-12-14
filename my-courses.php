@@ -18,6 +18,7 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $_SESSION['userId']);
 $stmt->execute();
 $courses = $stmt->get_result();
+$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -37,27 +38,7 @@ $courses = $stmt->get_result();
 </head>
 
 <body>
-    
-    <div class="header">
-        <div class="nav">
-            <a class="nav-logo" href="index.php">
-                <img src="assets/images/Lerno.png" alt="Logo">
-            </a>
-            <ul class="nav-links">
-                <li class="nav-link"><a href="index.php">Home</a></li>
-                <li class="nav-link"><a href="courses.php">Courses</a></li>
-                <li class="nav-link active"><a href="my-courses.php">My Courses</a></li>
-                <?php if (isset($_SESSION['userId'])): ?>
-                    <li class="nav-link"><span>Welcome, <?php echo htmlspecialchars($_SESSION['fullname'] ?? 'User'); ?></span></li>
-                    <li class="nav-link"><a href="logout.php">Logout</a></li>
-                <?php else: ?>
-                    <li class="nav-link"><a href="login.php">Login</a></li>
-                    <li class="nav-link"><a href="register.html">Register</a></li>
-                <?php endif; ?>
-                <li class="nav-link"><a href="cart.php">Cart</a></li>
-            </ul>
-        </div>
-    </div>
+    <?php include("components/navbar.php") ?>
 
     <div class="section-title">
         <h1 class="section-name">My Courses</h1>
@@ -67,7 +48,7 @@ $courses = $stmt->get_result();
     <div class="courses">
         <?php foreach($courses as $course): ?>
         <a href="play-course.html" class="course">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_FvzJIVensrB8Tl1umSkp0xH253U1_qMvEQ&s" alt="course" class="course-image">
+            <img src="assets/images/<?php echo $course['thumb'] ?>" alt="course" class="course-image">
             <div class="course-details">
                 <h3 class="course-title"><?php echo $course['name'] ?></h3>
                 <p class="course-description"><?php echo $course['description'] ?></p>

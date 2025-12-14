@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param('s', $email);
     $stmt->execute();
     $result = $stmt->get_result();
+    $stmt->close();
 
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
@@ -52,27 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    
-    <div class="header">
-        <div class="nav">
-            <a class="nav-logo" href="index.php">
-                <img src="assets/images/Lerno.png" alt="Logo">
-            </a>
-            <ul class="nav-links">
-                <li class="nav-link"><a href="index.php">Home</a></li>
-                <li class="nav-link"><a href="courses.php">Courses</a></li>
-                <li class="nav-link"><a href="my-courses.php">My Courses</a></li>
-                <?php if (isset($_SESSION['userId'])): ?>
-                    <li class="nav-link"><span>Welcome, <?php echo htmlspecialchars($_SESSION['fullname'] ?? 'User'); ?></span></li>
-                    <li class="nav-link"><a href="logout.php">Logout</a></li>
-                <?php else: ?>
-                    <li class="nav-link active"><a href="login.php">Login</a></li>
-                    <li class="nav-link"><a href="register.html">Register</a></li>
-                <?php endif; ?>
-                <li class="nav-link"><a href="cart.php">Cart</a></li>
-            </ul>
-        </div>
-    </div>
+    <?php include("components/navbar.php") ?>
 
     <div class="auth-wrapper">
         <div class="auth-container">

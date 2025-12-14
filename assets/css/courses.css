@@ -46,6 +46,9 @@
 .courses .course-title {
     font-size: 16px;
     font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .courses .course-description {
@@ -58,6 +61,7 @@
 .courses .course-price {
     font-size: 14px;
     font-weight: bold;
+    margin-bottom: 10px;
 }
 
 .courses .course-price::before {
@@ -66,6 +70,7 @@
 
 .courses .course-button {
     color: white;
+    width: 100%;
     padding: 12px;
     font-size: 14px;
     text-align: center;
@@ -73,7 +78,13 @@
     background-color: black;
 }
 
-.courses .course-button:not(:first-of-child) {
+.courses .course-button.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.courses .course-button:not(:first-of-type),
+.courses form .course-button {
     color: black;
     border: 1px solid black;
     background-color: white;

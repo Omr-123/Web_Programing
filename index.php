@@ -1,6 +1,5 @@
-<?php
-session_start();
-?>
+<?php include_once("conn.php") ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,7 +18,7 @@ session_start();
 </head>
 
 <body>
-    <?php include("nav.php") ?>
+    <?php include("components/navbar.php") ?>
 
     <div class="home-hero">
         <div class="hero-content centered">
