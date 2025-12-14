@@ -12,9 +12,7 @@
 </head>
 
 <body>
-
     <div class="admin-wrapper">
-
         <div class="sidebar">
             <div class="logo-area">
                 <h2>L</h2>
@@ -68,6 +66,7 @@
                     <h3>Overview</h3>
                 </div>
                 <div class="user-profile">
+                    <a href="../">Home</a>
                     <span>Admin User</span>
                     <div class="avatar">A</div>
                 </div>

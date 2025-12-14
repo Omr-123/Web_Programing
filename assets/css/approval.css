@@ -1,0 +1,108 @@
+.approval-wrapper {
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.approval-card {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.icon-area {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.status-icon {
+    width: 80px;
+    height: 80px;
+    color: #02413b;
+    stroke-width: 1.5;
+}
+
+.approval-card h1 {
+    font-size: 26px;
+    color: #02413b;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.message {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.message strong {
+    color: #333;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    border: 1px solid #ffeeba;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: #856404;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    animation: blink 1.5s infinite;
+}
+
+.back-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #02413b;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    background-color: #035e56;
+    transform: translateY(-2px);
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
