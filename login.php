@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Set session and redirect without printing a message
             $_SESSION['userId'] = $user['userId'];
             $_SESSION['email'] = $user['email'];
+            $_SESSION['role'] = $user['role'];
             $_SESSION['fullname'] = $user['fname'] . ' ' . $user['lname'];
             header("Location: index.php");
             exit();

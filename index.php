@@ -1,6 +1,15 @@
 <?php session_start() ?>
 <?php include_once("conn.php") ?>
 
+<?php 
+
+$stmt = $conn->prepare("SELECT * FROM users WHERE role = 2 LIMIT 4");
+$stmt->execute();
+$instructors = $stmt->get_result();
+$stmt->close();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -122,34 +131,15 @@
         </div>
         
         <div class="courses"> 
+            <?php foreach($instructors as $instructor): ?>
             <div class="course">
                 <img src="https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg?semt=ais_hybrid&w=740&q=80" alt="Inst" class="course-image">
                 <div class="course-details">
-                    <h3 class="course-title">John Doe</h3>
+                    <h3 class="course-title"><?php echo $instructor['fname'] . " " . $instructor['lname'] ?></h3>
                     <p class="course-description">Senior Web Developer</p>
                 </div>
             </div>
-            <div class="course">
-                <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="Inst" class="course-image">
-                <div class="course-details">
-                    <h3 class="course-title">Sarah Ahmed</h3>
-                    <p class="course-description">Data Science Instructor</p>
-                </div>
-            </div>
-            <div class="course">
-                <img src="https://media.istockphoto.com/id/1388648617/photo/confident-caucasian-young-man-in-casual-denim-clothes-with-arms-crossed-looking-at-camera.jpg?s=612x612&w=0&k=20&c=YxctPklAOJMmy6Tolyvn45rJL3puk5RlKt39FO46ZeA=" alt="Inst" class="course-image">
-                <div class="course-details">
-                    <h3 class="course-title">Michael Smith</h3>
-                    <p class="course-description">Computer Vision Engineer</p>
-                </div>
-            </div>
-            <div class="course">
-                <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?semt=ais_hybrid&w=740&q=80" alt="Inst" class="course-image">
-                <div class="course-details">
-                    <h3 class="course-title">Emily Johnson</h3>
-                    <p class="course-description">Machine Learning Engineer</p>
-                </div>
-            </div>
+            <?php endforeach ?>
         </div>
     </div>
 
