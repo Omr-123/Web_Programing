@@ -148,11 +148,11 @@ COMMIT;
 
 -- 1. Users (Roles: 0=Admin/Guest, 1=Student, 2=Instructor for context)
 INSERT INTO users (fname, lname, email, password, role, joinedAt) VALUES
-('Jane', 'Smith', 'jane.smith@lerno.com', 'hashedpass1', 2, '2023-10-05 10:00:00'),
-('Mo', 'Nour', 'mo.nour@student.com', 'hashedpass2', 1, '2025-11-20 14:30:00'),
-('Joe', 'Hany', 'joe.hany@student.com', 'hashedpass3', 1, '2025-11-22 09:15:00'),
-('Fady', 'Cross', 'fady.cross@uni.edu', 'hashedpass4', 2, '2023-01-15 08:00:00'),
-('Gerouge', 'Hany', 'gerouge.hany@student.com', 'hashedpass5', 1, '2025-11-25 16:45:00');
+('Jane', 'Smith', 'jane.smith@lerno.com', '$2y$10$S5dyb1h2rmP/ypZeSzQ1tueiamu.Ram3hwKaAmArNzFoaldmoUwLe', 2, '2023-10-05 10:00:00'),
+('Mo', 'Nour', 'mo.nour@student.com', '$2y$10$S5dyb1h2rmP/ypZeSzQ1tueiamu.Ram3hwKaAmArNzFoaldmoUwLe', 1, '2025-11-20 14:30:00'),
+('Joe', 'Hany', 'joe.hany@student.com', '$2y$10$S5dyb1h2rmP/ypZeSzQ1tueiamu.Ram3hwKaAmArNzFoaldmoUwLe', 1, '2025-11-22 09:15:00'),
+('Fady', 'Cross', 'fady.cross@uni.edu', '$2y$10$S5dyb1h2rmP/ypZeSzQ1tueiamu.Ram3hwKaAmArNzFoaldmoUwLe', 2, '2023-01-15 08:00:00'),
+('Gerouge', 'Hany', 'gerouge.hany@student.com', '$2y$10$S5dyb1h2rmP/ypZeSzQ1tueiamu.Ram3hwKaAmArNzFoaldmoUwLe', 1, '2025-11-25 16:45:00');
 
 -- 2. Courses (Linked to Instructors: Jane (1) and Dr. Ann (4))
 INSERT INTO courses (name, description, price, level, lang, thumb, createdAt, instructorId) VALUES
