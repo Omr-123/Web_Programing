@@ -51,19 +51,35 @@ $(document).ready(function () {
         clearErrors();
 
         let isValid = true;
-        
-        const nameInput = $(this).find('input[name="fullname"]');
+
+        // register form uses first_name and last_name fields
+        const firstInput = $(this).find('input[name="first_name"]');
+        const lastInput = $(this).find('input[name="last_name"]');
         const emailInput = $(this).find('input[name="email"]');
         const passInput = $(this).find('input[name="password"]');
         const confirmPassInput = $(this).find('input[name="confirm_password"]');
 
-        const name = nameInput.val().trim();
+        // Ensure all expected inputs exist
+        if (!firstInput.length || !lastInput.length || !emailInput.length || !passInput.length || !confirmPassInput.length) {
+            // developer-visible warning and a user alert to avoid silent failures
+            console.error('Register form is missing one or more required fields.');
+            alert('Registration form is incomplete. Please refresh the page and try again.');
+            return;
+        }
+
+        const first = firstInput.val().trim();
+        const last = lastInput.val().trim();
         const email = emailInput.val().trim();
         const password = passInput.val().trim();
         const confirmPass = confirmPassInput.val().trim();
 
-        if (name === '') {
-            showError(nameInput, 'Full Name is required.');
+        if (first === '') {
+            showError(firstInput, 'First name is required.');
+            isValid = false;
+        }
+
+        if (last === '') {
+            showError(lastInput, 'Last name is required.');
             isValid = false;
         }
 
@@ -92,7 +108,8 @@ $(document).ready(function () {
         }
 
         if (isValid) {
-            alert('Registration Successful!');
+            // submit the form to server
+            this.submit();
         }
     });
 
