@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="form-options">
                         <label><input type="checkbox"> Remember me</label>
-                        <a href="#">Forgot Password?</a>
+                        <a href="reset-password.html">Reset Password</a>
                     </div>
                     <button type="submit" class="submit-btn">Sign In</button>
                 </form>
