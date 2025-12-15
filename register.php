@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
     $role = isset($_POST['role']) && $_POST['role'] === 'instructor' ? 2 : 1; // Default role is student
-    $profile_image_url = (isset($_POST['profile_image_url']) && !empty($_POST['profile_image_url'])) ? $_POST['profile_image_url'] : null;
+    $profile_image_url = (isset($_POST['profile_image_url']) && !empty($_POST['profile_image_url'])) ? $_POST['profile_image_url'] : 'https://ui-avatars.com/api/?name=' . urlencode($first_name . '+' . $last_name) . '&size=200&background=9a0176&color=fff';
     $instructor_bio = (isset($_POST['instructor_bio']) && !empty($_POST['instructor_bio'])) ? $_POST['instructor_bio'] : null;
 
     // Validate input

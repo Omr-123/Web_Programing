@@ -21,18 +21,51 @@
                             $stmt->bind_param('i', $uid);
                             $stmt->execute();
                             $res = $stmt->get_result();
-                            if ($row = $res->fetch_assoc()) { $avatarUrl = $row['profile_image_url']; }
+                            if ($row = $res->fetch_assoc()) { 
+                                $avatarUrl = $row['profile_image_url']; 
+                                // If no avatar, use default
+                                if (empty($avatarUrl)) {
+                                    $avatarUrl = 'https://ui-avatars.com/api/?name=' . urlencode($_SESSION['fullname'] ?? 'User') . '&size=200&background=9a0176&color=fff';
+                                }
+                            }
                             $stmt->close();
                         }
                     }
                 ?>
                 <li class="nav-link"><a href="#"><?php echo htmlspecialchars($_SESSION['fullname'] ?? 'User') ?></a></li>
                 <li class="nav-link"><a href="logout.php">Logout</a></li>
-                <?php if ($avatarUrl): ?>
-                    <li class="nav-link" style="display:flex; align-items:center; margin-left:12px;">
-                        <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="Avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #ddd;" />
+                <li class="nav-link user-avatar-dropdown" style="display:flex; align-items:center; margin-left:12px; position:relative;">
+                    <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="Avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #ddd;cursor:pointer;" />
+                        <?php if (isset($_SESSION['role']) && (int)$_SESSION['role'] === 1): ?>
+                        <div class="avatar-dropdown-menu">
+                            <div class="dropdown-section">
+                                <h4>Change Photo</h4>
+                                <form method="post" action="index.php">
+                                    <input type="hidden" name="action" value="update_student_photo" />
+                                    <input type="url" name="profile_image_url" placeholder="https://..." value="<?= htmlspecialchars($avatarUrl) ?>" required />
+                                    <button type="submit">Update</button>
+                                </form>
+                            </div>
+                            <div class="dropdown-section">
+                                <h4>Delete Photo</h4>
+                                <form method="post" action="index.php">
+                                    <input type="hidden" name="action" value="delete_student_photo" />
+                                    <button type="submit" style="background:#dc2626;">Delete</button>
+                                </form>
+                            </div>
+                            <div class="dropdown-section">
+                                <h4>Change Password</h4>
+                                <form method="post" action="index.php">
+                                    <input type="hidden" name="action" value="change_student_password" />
+                                    <input type="email" name="email" placeholder="Your email" value="<?= htmlspecialchars($_SESSION['email'] ?? '') ?>" required />
+                                    <input type="password" name="current_password" placeholder="Current password" required />
+                                    <input type="password" name="new_password" placeholder="New password" required />
+                                    <button type="submit">Change</button>
+                                </form>
+                            </div>
+                        </div>
+                        <?php endif; ?>
                     </li>
-                <?php endif; ?>
             <?php else: ?>
                 <li class="nav-link"><a href="login.php">Login</a></li>
                 <li class="nav-link"><a href="register.php">Register</a></li>

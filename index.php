@@ -2,6 +2,63 @@
 <?php include_once("conn.php") ?>
 
 <?php 
+// Handle student actions from navbar dropdown
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $userId = (int)($_SESSION['userId'] ?? 0);
+    $userRole = (int)($_SESSION['role'] ?? 0);
+    
+    // Only allow students to update their profile
+    if ($userId > 0 && $userRole === 1) {
+        if ($_POST['action'] === 'update_student_photo') {
+            $photo_url = trim($_POST['profile_image_url'] ?? '');
+            if ($photo_url && filter_var($photo_url, FILTER_VALIDATE_URL)) {
+                $stmt = $conn->prepare("UPDATE users SET profile_image_url = ? WHERE id = ?");
+                $stmt->bind_param('si', $photo_url, $userId);
+                $stmt->execute();
+                $stmt->close();
+                header('Location: index.php');
+                exit();
+            }
+        } elseif ($_POST['action'] === 'delete_student_photo') {
+            // Set to default avatar instead of NULL
+            $default_avatar = 'https://ui-avatars.com/api/?name=' . urlencode($_SESSION['fullname'] ?? 'User') . '&size=200&background=9a0176&color=fff';
+            $stmt = $conn->prepare("UPDATE users SET profile_image_url = ? WHERE id = ?");
+            $stmt->bind_param('si', $default_avatar, $userId);
+            $stmt->execute();
+            $stmt->close();
+            header('Location: index.php');
+            exit();
+        } elseif ($_POST['action'] === 'change_student_password') {
+            $email = trim($_POST['email'] ?? '');
+            $current_password = $_POST['current_password'] ?? '';
+            $new_password = $_POST['new_password'] ?? '';
+            
+            if ($email && $current_password && $new_password && strlen($new_password) >= 6) {
+                // Verify email and current password
+                $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ? AND id = ?");
+                $stmt->bind_param('si', $email, $userId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                
+                if ($result->num_rows === 1) {
+                    $user = $result->fetch_assoc();
+                    if (password_verify($current_password, $user['password'])) {
+                        // Update password
+                        $new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
+                        $updateStmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+                        $updateStmt->bind_param('si', $new_password_hash, $userId);
+                        $updateStmt->execute();
+                        $updateStmt->close();
+                    }
+                }
+                $stmt->close();
+                header('Location: index.php');
+                exit();
+            }
+        }
+    }
+}
+
 // Fetch instructors with non-empty profile image and bio
 $stmt = $conn->prepare("SELECT id, fname, lname, profile_image_url, bio FROM users WHERE role_id = 2 AND profile_image_url IS NOT NULL AND profile_image_url <> '' AND bio IS NOT NULL AND bio <> '' LIMIT 4");
 $stmt->execute();

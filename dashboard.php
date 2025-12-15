@@ -67,6 +67,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmt->execute();
             $stmt->close();
         }
+    } elseif ($_POST['action'] === 'change_instructor_password') {
+        $email = trim($_POST['email'] ?? '');
+        $current_password = $_POST['current_password'] ?? '';
+        $new_password = $_POST['new_password'] ?? '';
+        
+        if ($email && $current_password && $new_password && strlen($new_password) >= 6) {
+            // Verify email and current password
+            $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ? AND id = ?");
+            $stmt->bind_param('si', $email, $userId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($result->num_rows === 1) {
+                $user = $result->fetch_assoc();
+                if (password_verify($current_password, $user['password'])) {
+                    // Update password
+                    $new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
+                    $updateStmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+                    $updateStmt->bind_param('si', $new_password_hash, $userId);
+                    $updateStmt->execute();
+                    $updateStmt->close();
+                }
+            }
+            $stmt->close();
+        }
     }
 }
 
@@ -139,6 +164,19 @@ $stmt->close();
                 <label>Professional Bio</label>
                 <textarea name="instructor_bio" placeholder="Describe your expertise and experience..." rows="5" required><?= htmlspecialchars($current_bio ?? '') ?></textarea>
                 <button type="submit">Update Bio</button>
+            </form>
+        </div>
+        <div class="card">
+            <h2>Change Password</h2>
+            <form method="post">
+                <input type="hidden" name="action" value="change_instructor_password" />
+                <label>Email</label>
+                <input type="email" name="email" placeholder="Your email" value="<?= htmlspecialchars($_SESSION['email'] ?? '') ?>" required />
+                <label>Current Password</label>
+                <input type="password" name="current_password" placeholder="Current password" required />
+                <label>New Password</label>
+                <input type="password" name="new_password" placeholder="New password (min 6 chars)" required />
+                <button type="submit">Change Password</button>
             </form>
         </div>
         <div class="card">
