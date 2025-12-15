@@ -13,18 +13,16 @@
             <?php if (isset($_SESSION['userId'])): ?>
                 <li class="nav-link"><a href="cart.php">Cart</a></li>
                 <?php
-                    // Show circular instructor avatar on the left when logged in
+                    // Fetch and show circular avatar for any logged-in user if available
                     $avatarUrl = null;
-                    if (isset($_SESSION['role']) && (int)$_SESSION['role'] === 2) {
-                        if (isset($conn) && $conn instanceof mysqli) {
-                            $uid = (int)$_SESSION['userId'];
-                            if ($stmt = $conn->prepare("SELECT profile_image_url FROM users WHERE id = ?")) {
-                                $stmt->bind_param('i', $uid);
-                                $stmt->execute();
-                                $res = $stmt->get_result();
-                                if ($row = $res->fetch_assoc()) { $avatarUrl = $row['profile_image_url']; }
-                                $stmt->close();
-                            }
+                    if (isset($conn) && $conn instanceof mysqli) {
+                        $uid = (int)($_SESSION['userId'] ?? 0);
+                        if ($uid > 0 && ($stmt = $conn->prepare("SELECT profile_image_url FROM users WHERE id = ?"))) {
+                            $stmt->bind_param('i', $uid);
+                            $stmt->execute();
+                            $res = $stmt->get_result();
+                            if ($row = $res->fetch_assoc()) { $avatarUrl = $row['profile_image_url']; }
+                            $stmt->close();
                         }
                     }
                 ?>
