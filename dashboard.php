@@ -104,6 +104,24 @@ $res = $stmt->get_result();
 while ($row = $res->fetch_assoc()) { $courses[] = $row; }
 $stmt->close();
 
+// Fetch lessons for all my courses
+$lessonsByCourse = [];
+if (!empty($courses)) {
+    $courseIds = array_map(fn($c) => (int)$c['id'], $courses);
+    $placeholders = implode(',', array_fill(0, count($courseIds), '?'));
+    $types = str_repeat('i', count($courseIds));
+    $stmt = $conn->prepare("SELECT id, course_id, title, video_url, position, duration_seconds FROM lessons WHERE course_id IN ($placeholders) ORDER BY course_id, position");
+    $stmt->bind_param($types, ...$courseIds);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    while ($row = $res->fetch_assoc()) {
+        $cid = (int)$row['course_id'];
+        if (!isset($lessonsByCourse[$cid])) $lessonsByCourse[$cid] = [];
+        $lessonsByCourse[$cid][] = $row;
+    }
+    $stmt->close();
+}
+
 // Fetch current instructor profile image and bio
 $current_profile_image = null;
 $current_bio = null;
@@ -239,11 +257,55 @@ $stmt->close();
                     <td>
                         <a href="course.php?id=<?= (int)$c['id'] ?>">View</a>
                         | <a href="course-player.php?course_id=<?= (int)$c['id'] ?>">Play</a>
+                        | <button type="button" class="toggle-lessons-btn" data-course-id="<?= (int)$c['id'] ?>" style="background:#3b82f6;padding:4px 8px;font-size:13px;">Show Lessons</button>
                         | <form method="post" style="display:inline">
                             <input type="hidden" name="action" value="delete_course" />
                             <input type="hidden" name="course_id" value="<?= (int)$c['id'] ?>" />
-                            <button type="submit" onclick="return confirm('Delete course?')">Delete</button>
+                            <button type="submit" onclick="return confirm('Delete course?')" style="background:#dc2626;padding:4px 8px;font-size:13px;">Delete</button>
                           </form>
+                    </td>
+                </tr>
+                <tr class="lessons-row" data-course-id="<?= (int)$c['id'] ?>" style="display:none;">
+                    <td colspan="3" style="background:#f9fafb;padding:16px;">
+                        <h3 style="margin-bottom:12px;font-size:16px;">Lessons for: <?= htmlspecialchars($c['title']) ?></h3>
+                        <?php 
+                        $cid = (int)$c['id'];
+                        $lessons = $lessonsByCourse[$cid] ?? [];
+                        ?>
+                        <?php if (empty($lessons)): ?>
+                            <p style="color:#6b7280;font-style:italic;">No lessons added yet.</p>
+                        <?php else: ?>
+                            <table style="width:100%;background:#fff;">
+                                <thead>
+                                    <tr style="background:#f3f4f6;">
+                                        <th style="padding:8px;">Position</th>
+                                        <th style="padding:8px;">Title</th>
+                                        <th style="padding:8px;">Duration</th>
+                                        <th style="padding:8px;">Video URL</th>
+                                        <th style="padding:8px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($lessons as $lesson): ?>
+                                    <tr>
+                                        <td style="padding:8px;"><?= (int)$lesson['position'] ?></td>
+                                        <td style="padding:8px;"><?= htmlspecialchars($lesson['title']) ?></td>
+                                        <td style="padding:8px;"><?= (int)$lesson['duration_seconds'] ?> sec</td>
+                                        <td style="padding:8px;font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                            <?= htmlspecialchars($lesson['video_url'] ?: 'N/A') ?>
+                                        </td>
+                                        <td style="padding:8px;">
+                                            <form method="post" style="display:inline;">
+                                                <input type="hidden" name="action" value="delete_lesson" />
+                                                <input type="hidden" name="lesson_id" value="<?= (int)$lesson['id'] ?>" />
+                                                <button type="submit" onclick="return confirm('Delete this lesson?')" style="background:#dc2626;padding:4px 8px;font-size:12px;">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -251,5 +313,25 @@ $stmt->close();
         </table>
     </div>
 </div>
+<script>
+// Toggle lessons visibility
+document.querySelectorAll('.toggle-lessons-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const courseId = btn.getAttribute('data-course-id');
+        const lessonsRow = document.querySelector(`.lessons-row[data-course-id="${courseId}"]`);
+        if (lessonsRow) {
+            if (lessonsRow.style.display === 'none') {
+                lessonsRow.style.display = '';
+                btn.textContent = 'Hide Lessons';
+                btn.style.background = '#6b7280';
+            } else {
+                lessonsRow.style.display = 'none';
+                btn.textContent = 'Show Lessons';
+                btn.style.background = '#3b82f6';
+            }
+        }
+    });
+});
+</script>
 </body>
 </html>

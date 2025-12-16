@@ -10,6 +10,9 @@
             <?php if (isset($_SESSION['role']) && (int)$_SESSION['role'] === 2): ?>
                 <li class="nav-link"><a href="dashboard.php">Dashboard</a></li>
             <?php endif; ?>
+            <?php if (isset($_SESSION['role']) && (int)$_SESSION['role'] === 3): ?>
+                <li class="nav-link"><a href="admin/index.php">Admin</a></li>
+            <?php endif; ?>
             <?php if (isset($_SESSION['userId'])): ?>
                 <li class="nav-link"><a href="cart.php">Cart</a></li>
                 <?php
