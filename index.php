@@ -35,15 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 
     } elseif ($_POST['action'] == 'change_student_password') {
 
-        $email = trim($_POST['email']);
         $current_password = $_POST['current_password'];
         $new_password = $_POST['new_password'];
 
-        if ($email && $current_password && $new_password && strlen($new_password) >= 6) {
+        if ($current_password && $new_password && strlen($new_password) >= 6) {
 
             // Verify email and current password
-            $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ? AND id = ?");
-            $stmt->bind_param('si', $email, $userId);
+            $stmt = $conn->prepare("SELECT id, password FROM users WHERE id = ?");
+            $stmt->bind_param('i', $userId);
             $stmt->execute();
             $res = $stmt->get_result();
             $user = $res->fetch_assoc();
@@ -59,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                 exit();
             }
 
-            $new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
+            $new_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
             $up = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
             $up->bind_param('si', $new_password_hash, $userId);
             $ok = $up->execute();

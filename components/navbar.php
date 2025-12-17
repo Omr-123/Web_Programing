@@ -64,7 +64,7 @@
                                 <?php elseif ($passStatus === 'wrong_current'): ?>
                                     <div class="notice error" style="margin-bottom:8px;color:#b91c1c">Current password is incorrect.</div>
                                 <?php elseif ($passStatus === 'invalid'): ?>
-                                    <div class="notice error" style="margin-bottom:8px;color:#b91c1c">Please provide a new password (Min 6 chars).</div>
+                                    <div class="notice error" style="margin-bottom:8px;color:#b91c1c">Please provide a new password (min 6 chars).</div>
                                 <?php elseif ($passStatus === 'notfound'): ?>
                                     <div class="notice error" style="margin-bottom:8px;color:#b91c1c">User not found.</div>
                                 <?php else: ?>
