@@ -1,75 +1,64 @@
 <?php
 session_start();
-require 'conn.php'; // Database connection
+require 'conn.php';
 
-// Require login: redirect if not authenticated
+// Require login
 if (!isset($_SESSION['userId'])) {
     header('Location: login.php');
     exit();
 }
 
+$userId = $_SESSION['userId'];
+
 // Handle remove item from cart
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_course_id'])) {
-    $removeCourseId = intval($_POST['remove_course_id']);
-    if ($removeCourseId > 0) {
-        $del = $conn->prepare('DELETE FROM cart WHERE user_id = ? AND course_id = ?');
-        if (!$del) {
-            die('Error preparing DELETE: ' . $conn->error);
-        }
-        $del->bind_param('ii', $_SESSION['userId'], $removeCourseId);
-        if (!$del->execute()) {
-            die('Error executing DELETE: ' . $del->error);
-        }
-        $del->close();
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['remove_course_id'])) {
+    $removeCourseId = $_POST['remove_course_id'];
+
+    if ($removeCourseId) {
+        $conn->query("DELETE FROM cart WHERE user_id = $userId AND course_id = $removeCourseId");
     }
+
     header('Location: cart.php');
     exit();
 }
 
-// Handle checkout: move cart items to my courses (enrollments)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
-    $userId = $_SESSION['userId'];
-    // Insert all cart items for this user into enrollments (avoid duplicates)
-    $ins = $conn->prepare("INSERT INTO enrollments (user_id, course_id) 
-                           SELECT c.user_id, c.course_id FROM cart c 
-                           WHERE c.user_id = ? AND NOT EXISTS (
-                               SELECT 1 FROM enrollments e 
-                               WHERE e.user_id = c.user_id AND e.course_id = c.course_id
-                           )");
-    $ins->bind_param('i', $userId);
-    $ins->execute();
-    $ins->close();
+// Handle checkout
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['checkout'])) {
+    // Get cart items
+    $result = $conn->query("SELECT course_id FROM cart WHERE user_id = $userId");
 
-    // Clear cart for this user
-    $delAll = $conn->prepare('DELETE FROM cart WHERE user_id = ?');
-    $delAll->bind_param('i', $userId);
-    $delAll->execute();
-    $delAll->close();
+    while ($row = $result->fetch_assoc()) {
+        $courseId = $row['course_id'];
 
-    // Redirect to home
-    header('Location: index.php');
+        // Add to enrollments (enrolled_at handled by DB)
+        $conn->query("INSERT INTO enrollments (user_id, course_id) VALUES ($userId, $courseId)");
+    }
+
+    // Clear cart
+    $conn->query("DELETE FROM cart WHERE user_id = $userId");
+
+    header('Location: my-courses.php');
     exit();
 }
 
-// Fetch courses in the cart for the logged-in user (lerno2 schema)
-$stmt = $conn->prepare("SELECT c.id as cart_id, crs.id, crs.title, crs.description, crs.price, crs.thumbnail_url
-                        FROM cart c
-                        JOIN courses crs ON c.course_id = crs.id
-                        WHERE c.user_id = ?");
-$stmt->bind_param('i', $_SESSION['userId']);
-$stmt->execute();
-$items = $stmt->get_result();
-$stmt->close();
+// Fetch cart items
+$items = array();
+$sql = "SELECT crs.id, crs.title, crs.description, crs.price, crs.thumbnail_url FROM cart c JOIN courses crs ON c.course_id = crs.id WHERE c.user_id = $userId";
+$result = $conn->query($sql);
+
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $items[] = $row;
+    }
+}
 
 $subtotal = 0;
-
 foreach ($items as $item) {
     $subtotal += $item['price'];
 }
 
-$taxes = $subtotal * .1;
+$taxes = $subtotal * 0.1;
 $totalPrice = $subtotal + $taxes;
-
 ?>
 
 <!DOCTYPE html>
@@ -78,7 +67,7 @@ $totalPrice = $subtotal + $taxes;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Cart</title>
     <link rel="icon" href="assets/Lerno.png">
     <link rel="stylesheet" href="assets/css/reset.css">
     <link rel="stylesheet" href="assets/css/main.css">
@@ -88,63 +77,63 @@ $totalPrice = $subtotal + $taxes;
 </head>
 
 <body>
-
-<body>
     <?php include("components/navbar.php") ?>
 
     <div class="cart-wrapper">
         <div class="cart-title">
             <h2>Your Shopping Cart</h2>
-            <p><?php if (!empty($items)) echo mysqli_num_rows($items) ?> Courses in Cart</p>
+            <p><?php echo count($items) ?> Courses in Cart</p>
         </div>
 
         <div class="cart-container">
-            
+
             <div class="cart-items">
+                <?php if ($items): ?>
                 <?php foreach ($items as $item): ?>
                 <div class="cart-item">
-                    <img src="<?= htmlspecialchars($item['thumbnail_url'] ?? 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4') ?>" alt="Course" class="item-img">
+                    <img src="<?= htmlspecialchars($item['thumbnail_url'] != '' ? $item['thumbnail_url'] : 'assets/images/course.png') ?>" alt="Course" class="item-img">
                     <div class="item-details">
                         <h3><?= htmlspecialchars($item['title']) ?></h3>
                         <p><?= htmlspecialchars($item['description']) ?></p>
                         <div class="item-actions">
                             <form method="post">
-                                <input type="hidden" name="remove_course_id" value="<?= (int)$item['id'] ?>">
+                                <input type="hidden" name="remove_course_id" value="<?= $item['id'] ?>">
                                 <button type="submit" class="remove-btn">Remove</button>
                             </form>
                         </div>
                     </div>
                     <div class="item-price-box">
-                        <span class="price" data-price="<?= number_format((float)$item['price'], 2) ?>">$<?= number_format((float)$item['price'], 2) ?></span>
+                        <span class="price" data-price="<?= number_format($item['price'], 2) ?>"><?= $item['price'] > 0 ? '$' . number_format($item['price'], 2) : "Free" ?></span>
                     </div>
                 </div>
                 <?php endforeach ?>
+                <?php endif; ?>
             </div>
 
             <div class="cart-summary">
                 <h3>Order Summary</h3>
-                
+
                 <div class="summary-row">
                     <span>Subtotal</span>
-                    <span id="subtotal-price">$<?php echo round($subtotal, 2) ?></span>
+                    <span id="subtotal-price"><?php echo $subtotal ? '$' . round($subtotal, 2) : "Free" ?></span>
                 </div>
-                
+
                 <div class="summary-row">
                     <span>Tax (10%)</span>
-                    <span id="tax-price">$<?php echo round($taxes, 2) ?></span>
+                    <span id="tax-price"><?php echo $taxes ? '$' . round($taxes, 2) : "Free" ?></span>
                 </div>
 
                 <div class="divider"></div>
 
                 <div class="summary-row total">
                     <span>Total</span>
-                    <span id="total-price">$<?php echo round($totalPrice, 2) ?></span>
+                    <span id="total-price"><?php echo $totalPrice ? '$' . round($totalPrice, 2) : "Free" ?></span>
                 </div>
 
                 <form method="post">
                     <button type="submit" name="checkout" value="1" class="checkout-btn">Proceed to Checkout</button>
                 </form>
-                
+
                 <div class="coupon-box">
                     <input type="text" placeholder="Coupon Code">
                     <button>Apply</button>

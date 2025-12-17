@@ -15,9 +15,9 @@ if ($courseId <= 0) {
     exit();
 }
 
-$userId = $_SESSION['userId'];
+$userId = (int)$_SESSION['userId'];
 
-// Enroll if not already enrolled (lerno2 schema)
+// Enroll if not already enrolled
 $ins = $conn->prepare("INSERT INTO enrollments (user_id, course_id, enrolled_at)
                        SELECT ?, ?, NOW() FROM DUAL WHERE NOT EXISTS (
                            SELECT 1 FROM enrollments WHERE user_id = ? AND course_id = ?

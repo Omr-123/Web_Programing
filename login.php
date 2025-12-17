@@ -1,39 +1,32 @@
 <?php
 session_start();
-require_once 'conn.php';
+require 'conn.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+    $password = isset($_POST['password']) ? $_POST['password'] : '';
 
     // Validate input
     if (empty($email) || empty($password)) {
-        die('Email and password are required.');
-    }
+        $error = 'Email and password are required.';
+    } else {
+        $stmt = $conn->prepare("SELECT id, fname, lname, email, password, role_id FROM users WHERE email = ?");
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $user = $res ? $res->fetch_assoc() : null;
+        $stmt->close();
 
-    // Check if the user exists (lerno2 schema)
-    $stmt = $conn->prepare("SELECT id, fname, lname, email, password, role_id FROM users WHERE email = ?");
-    $stmt->bind_param('s', $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $stmt->close();
-
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-        // Verify the password
-        if (password_verify($password, $user['password'])) {
-            // Set session and redirect without printing a message
+        if ($user && password_verify($password, $user['password'])) {
             $_SESSION['userId'] = $user['id'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['role'] = $user['role_id'];
             $_SESSION['fullname'] = $user['fname'] . ' ' . $user['lname'];
-            header("Location: index.php");
+            header('Location: index.php');
             exit();
         } else {
-            echo 'Invalid password.';
+            $error = 'Invalid credentials.';
         }
-    } else {
-        echo 'No user found with this email.';
     }
 }
 ?>

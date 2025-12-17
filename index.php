@@ -1,57 +1,65 @@
 <?php session_start() ?>
-<?php include_once("conn.php") ?>
+<?php require 'conn.php' ?>
 
-<?php 
+<?php
 // Handle student actions from navbar dropdown
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    $userId = (int)($_SESSION['userId'] ?? 0);
-    $userRole = (int)($_SESSION['role'] ?? 0);
-    
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
+
+    $userId = $_SESSION['userId'];
+    $userRole = $_SESSION['role'];
+
     // Only allow students to update their profile
-    if ($userId > 0 && $userRole === 1) {
-        if ($_POST['action'] === 'update_student_photo') {
-            $photo_url = trim($_POST['profile_image_url'] ?? '');
+    if ($userRole == 1) {
+
+        if ($_POST['action'] == 'update_student_photo') {
+
+            $photo_url = trim($_POST['avatar']);
+
             if ($photo_url && filter_var($photo_url, FILTER_VALIDATE_URL)) {
-                $stmt = $conn->prepare("UPDATE users SET profile_image_url = ? WHERE id = ?");
-                $stmt->bind_param('si', $photo_url, $userId);
-                $stmt->execute();
-                $stmt->close();
-                header('Location: index.php');
-                exit();
+                $up = $conn->prepare("UPDATE users SET avatar = ? WHERE id = ?");
+                $up->bind_param('si', $photo_url, $userId);
+                $up->execute();
+                $up->close();
             }
-        } elseif ($_POST['action'] === 'delete_student_photo') {
-            // Set to default avatar instead of NULL
-            $default_avatar = 'https://ui-avatars.com/api/?name=' . urlencode($_SESSION['fullname'] ?? 'User') . '&size=200&background=9a0176&color=fff';
-            $stmt = $conn->prepare("UPDATE users SET profile_image_url = ? WHERE id = ?");
-            $stmt->bind_param('si', $default_avatar, $userId);
-            $stmt->execute();
-            $stmt->close();
+
             header('Location: index.php');
             exit();
-        } elseif ($_POST['action'] === 'change_student_password') {
-            $email = trim($_POST['email'] ?? '');
-            $current_password = $_POST['current_password'] ?? '';
-            $new_password = $_POST['new_password'] ?? '';
-            
+
+        } elseif ($_POST['action'] == 'delete_student_photo') {
+
+            // Remove photo from database (fallback will be local image in HTML)
+            $up = $conn->prepare("UPDATE users SET avatar = '' WHERE id = ?");
+            $up->bind_param('i', $userId);
+            $up->execute();
+            $up->close();
+
+            header('Location: index.php');
+            exit();
+
+        } elseif ($_POST['action'] == 'change_student_password') {
+
+            $email = trim($_POST['email']);
+            $current_password = $_POST['current_password'];
+            $new_password = $_POST['new_password'];
+
             if ($email && $current_password && $new_password && strlen($new_password) >= 6) {
+
                 // Verify email and current password
                 $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ? AND id = ?");
                 $stmt->bind_param('si', $email, $userId);
                 $stmt->execute();
-                $result = $stmt->get_result();
-                
-                if ($result->num_rows === 1) {
-                    $user = $result->fetch_assoc();
-                    if (password_verify($current_password, $user['password'])) {
-                        // Update password
-                        $new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
-                        $updateStmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-                        $updateStmt->bind_param('si', $new_password_hash, $userId);
-                        $updateStmt->execute();
-                        $updateStmt->close();
-                    }
-                }
+                $res = $stmt->get_result();
+                $user = $res->fetch_assoc();
                 $stmt->close();
+
+                if ($user && password_verify($current_password, $user['password'])) {
+                    $new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
+                    $up = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+                    $up->bind_param('si', $new_password_hash, $userId);
+                    $up->execute();
+                    $up->close();
+                }
+
                 header('Location: index.php');
                 exit();
             }
@@ -59,17 +67,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Fetch instructors with non-empty profile image and bio
-$stmt = $conn->prepare("SELECT id, fname, lname, profile_image_url, bio FROM users WHERE role_id = 2 AND profile_image_url IS NOT NULL AND profile_image_url <> '' AND bio IS NOT NULL AND bio <> '' LIMIT 4");
-$stmt->execute();
-$instructors = $stmt->get_result();
-$stmt->close();
+// Simple SELECTs
+$sql = "SELECT id, fname, lname, avatar FROM users WHERE role_id = 2 LIMIT 4";
+$result = $conn->query($sql);
+$instructors = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
-// Fetch featured courses
-$stmt = $conn->prepare("SELECT id, title, description, thumbnail_url FROM courses WHERE is_published = 1 ORDER BY created_at DESC LIMIT 3");
-$stmt->execute();
-$featured = $stmt->get_result();
-$stmt->close();
+$sql = "SELECT id, title, description, thumbnail_url FROM courses WHERE status = 1 ORDER BY created_at DESC LIMIT 4";
+$result = $conn->query($sql);
+$featured = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 ?>
 
 <!DOCTYPE html>
@@ -96,9 +101,7 @@ $stmt->close();
         <div class="hero-content centered">
             <h1>Best Learning Education Platform in The World</h1>
             <p>Unlock your potential with expert-led courses.</p>
-            <a href="courses.php">
-                <button class="hero-btn">Explore Courses</button>
-            </a>
+            <a href="courses.php"><button class="hero-btn">Explore Courses</button></a>
         </div>
     </div>
 
@@ -109,16 +112,18 @@ $stmt->close();
         </div>
 
         <div class="courses">
+            <?php if ($featured): ?>
             <?php foreach ($featured as $course): ?>
             <div class="course">
-                <img src="<?= htmlspecialchars($course['thumbnail_url'] ?? 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4') ?>" alt="Course" class="course-image">
+                <img src="<?= htmlspecialchars($course['thumbnail_url'] != '' ? $course['thumbnail_url'] : 'assets/images/course.png') ?>" alt="Course" class="course-image">
                 <div class="course-details">
                     <h3 class="course-title"><?= htmlspecialchars($course['title']) ?></h3>
-                    <p class="course-description"><?= htmlspecialchars(substr($course['description'],0,140)) ?>...</p>
-                    <a href="course.php?id=<?= (int)$course['id'] ?>" class="course-button">Learn More</a>
+                    <p class="course-description"><?= htmlspecialchars(substr($course['description'], 0, 140)) ?>...</p>
+                    <a href="course.php?id=<?= $course['id'] ?>" class="course-button">Learn More</a>
                 </div>
             </div>
             <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -175,17 +180,19 @@ $stmt->close();
         <div class="section-title">
             <h2 class="section-name">Meet Our Instructors</h2>
         </div>
-        
-        <div class="courses"> 
-            <?php foreach($instructors as $instructor):  ?>
+
+        <div class="courses">
+            <?php if ($instructors): ?>
+            <?php foreach ($instructors as $instructor): ?>
             <div class="course">
-                <img src="<?= htmlspecialchars($instructor['profile_image_url'] ?? 'https://via.placeholder.com/300x300?text=Instructor') ?>" alt="<?= htmlspecialchars($instructor['fname']) ?>" class="course-image">
+                <img src="<?= htmlspecialchars($instructor['avatar'] != '' ? $instructor['avatar'] : 'assets/images/user.png') ?>" alt="<?= htmlspecialchars($instructor['fname']) ?>" class="course-image">
                 <div class="course-details">
-                    <h3 class="course-title"><?php echo htmlspecialchars($instructor['fname'] . " " . $instructor['lname']) ?></h3>
-                    <p class="course-description"><?= htmlspecialchars($instructor['bio'] ?? 'Experienced Instructor') ?></p>
+                    <h3 class="course-title"><?= htmlspecialchars($instructor['fname'] . " " . $instructor['lname']) ?></h3>
+                    <p class="course-description">Experienced Instructor</p>
                 </div>
             </div>
-            <?php endforeach ?>
+            <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 

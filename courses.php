@@ -1,71 +1,40 @@
 <?php
 session_start();
-include_once 'conn.php';
+require 'conn.php';
 
-// Only set $userId if session exists
-$userId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
+// Fetch courses
+$sql = "SELECT c.id, c.title, c.description, c.price, c.thumbnail_url, u.fname, u.lname, u.avatar FROM courses c JOIN users u ON c.instructor_id = u.id WHERE c.status = 1 ORDER BY c.created_at DESC";
+$result = $conn->query($sql);
+$courses = $result->fetch_all(MYSQLI_ASSOC);
 
-// Get courses with instructor information
-$stmt = $conn->prepare("SELECT c.id, c.title, c.description, c.price, c.thumbnail_url, c.instructor_id, u.fname, u.lname, u.bio FROM courses c JOIN users u ON c.instructor_id = u.id WHERE c.is_published = 1 ORDER BY c.created_at DESC");
-$stmt->execute();
-$courses = $stmt->get_result();
-$stmt->close();
+// Handle Add To Cart
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-if($_SERVER['REQUEST_METHOD'] === 'POST'){
-    // Require login to add to cart
     if (!isset($_SESSION['userId'])) {
         header('Location: login.php');
         exit();
     }
 
-    
-    $courseID = isset($_POST['course_id']) ? intval($_POST['course_id']) : 0;
-    if ($courseID <= 0) {
-        header('Location: courses.php');
+    $userId = $_SESSION['userId'];
+    $courseId = $_POST['course_id'];
+
+    $check = $conn->query("SELECT id FROM cart WHERE user_id = $userId AND course_id = $courseId");
+    if ($check->num_rows > 0) {
+        header('Location: cart.php');
         exit();
     }
 
-    // Avoid duplicate cart items: check cart and enrollments separately and close statements
-    $checkCart = $conn->prepare("SELECT 1 FROM cart WHERE user_id = ? AND course_id = ? LIMIT 1");
-    $checkCart->bind_param('ii', $userId, $courseID);
-    $checkCart->execute();
-    $cartRes = $checkCart->get_result();
-    $inCart = $cartRes && $cartRes->num_rows > 0;
-    $checkCart->close();
-
-    $checkEnroll = $conn->prepare("SELECT 1 FROM enrollments WHERE user_id = ? AND course_id = ? LIMIT 1");
-    $checkEnroll->bind_param('ii', $userId, $courseID);
-    $checkEnroll->execute();
-    $enrollRes = $checkEnroll->get_result();
-    $inCourses = $enrollRes && $enrollRes->num_rows > 0;
-    $checkEnroll->close();
-
-    if ($inCart) {
-        // Already in cart, redirect back
-        header('Location: cart.php');
-        exit();
-    } else if ($inCourses) {
-        // Already enrolled, redirect back
+    $check2 = $conn->query("SELECT id FROM enrollments WHERE user_id = $userId AND course_id = $courseId");
+    if ($check2->num_rows > 0) {
         header('Location: my-courses.php');
         exit();
     }
 
-    if (!$inCart && !$inCourses) {
-        // include `addedAt` (use SQL CURDATE()) because the column is NOT NULL in the schema
-        $stmt = $conn->prepare("INSERT INTO cart (user_id, course_id, added_at) VALUES (?, ?, NOW())");
-        $stmt->bind_param('ii', $userId, $courseID);
-        if (!$stmt->execute()) {
-            echo "Error adding to cart: " . $stmt->error;
-        } else {
-            // Redirect back to courses after handling
-            header('Location: courses.php');
-            exit();
-        }
-        $stmt->close();
-    }
+    $conn->query("INSERT INTO cart (user_id, course_id, added_at) VALUES ($userId, $courseId, NOW())");
+    header('Location: courses.php');
+    exit();
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -83,38 +52,44 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 </head>
 
 <body>
-    <?php include("components/navbar.php") ?>
 
-    <div class="section-title">
-        <h1 class="section-name">Courses</h1>
-        <p class="section-description">Catch Up</p>
-    </div>
-    
-    <div class="courses">
-        <?php foreach($courses as $course): ?>
+<?php include("components/navbar.php"); ?>
+
+<div class="section-title">
+    <h1 class="section-name">Courses</h1>
+    <p class="section-description">Catch Up</p>
+</div>
+
+<div class="courses">
+    <?php foreach ($courses as $course): ?>
         <div class="course">
-            <img src="<?= htmlspecialchars($course['thumbnail_url'] ?? 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4') ?>" alt="course" class="course-image">
+            <img src="<?= $course['thumbnail_url'] != '' ? $course['thumbnail_url'] : 'assets/images/course.png' ?>" class="course-image">
+
             <div class="course-details">
                 <h3 class="course-title"><?= htmlspecialchars($course['title']) ?></h3>
                 <p class="course-description"><?= htmlspecialchars($course['description']) ?></p>
-                <p style="font-size: 12px; color: #666; margin: 8px 0;"><strong>Instructor:</strong> <?= htmlspecialchars($course['fname'] . ' ' . $course['lname']) ?></p>
-                <p style="font-size: 12px; color: #666; margin: 8px 0;"><strong>Bio:</strong> <?= htmlspecialchars($course['bio'] ?? 'No bio provided') ?></p>
-                <span class="course-price">$<?= number_format((float)$course['price'],2) ?></span>
-                <a href="course.php?id=<?= (int)$course['id'] ?>" class="course-button">Learn More</a>
-                <!-- Form to handle Add To Cart -->
-                <form action="courses.php" method="post">
-                    <input type="hidden" name="course_id" value="<?= (int)$course['id'] ?>">
+
+                <p style="font-size:12px;color:#666;margin:8px 0;">
+                    <strong>Instructor:</strong>
+                    <?= htmlspecialchars($course['fname'] . ' ' . $course['lname']) ?>
+                </p>
+
+                <span class="course-price">$<?= number_format($course['price'], 2) ?></span>
+
+                <a href="course.php?id=<?= $course['id'] ?>" class="course-button">Learn More</a>
+
+                <form method="post">
+                    <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
                     <button type="submit" class="course-button">Add To Cart</button>
                 </form>
             </div>
         </div>
-        <?php endforeach; ?>
-    </div>
+    <?php endforeach; ?>
+</div>
 
-    <div class="footer">
-        <p class="footer-description">2025 &copy; All Right Reserved By Lerno</p>
-    </div>
+<div class="footer">
+    <p class="footer-description">2025 &copy; All Right Reserved By Lerno</p>
+</div>
+
 </body>
-
 </html>
-

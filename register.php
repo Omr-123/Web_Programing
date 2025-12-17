@@ -2,43 +2,39 @@
 session_start();
 require 'conn.php'; // Database connection
 
-// Check database connection
-if ($conn->connect_error) {
-    die('Database connection failed: ' . $conn->connect_error);
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $first_name = $_POST['first_name'];
-    $last_name = $_POST['last_name'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
+    $first_name = isset($_POST['first_name']) ? trim($_POST['first_name']) : '';
+    $last_name = isset($_POST['last_name']) ? trim($_POST['last_name']) : '';
+    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+    $password = isset($_POST['password']) ? $_POST['password'] : '';
+    $confirm_password = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : '';
     $role = isset($_POST['role']) && $_POST['role'] === 'instructor' ? 2 : 1; // Default role is student
-    $profile_image_url = (isset($_POST['profile_image_url']) && !empty($_POST['profile_image_url'])) ? $_POST['profile_image_url'] : 'https://ui-avatars.com/api/?name=' . urlencode($first_name . '+' . $last_name) . '&size=200&background=9a0176&color=fff';
-    $instructor_bio = (isset($_POST['instructor_bio']) && !empty($_POST['instructor_bio'])) ? $_POST['instructor_bio'] : null;
+    $pfp = (isset($_POST['pfp']) && !empty($_POST['pfp'])) ? trim($_POST['pfp']) : 'https://ui-avatars.com/api/?name=' . urlencode($first_name . '+' . $last_name) . '&size=200&background=9a0176&color=fff';
 
     // Validate input
     if (empty($first_name) || empty($last_name) || empty($email) || empty($password) || empty($confirm_password)) {
-        die('All fields are required.');
+        $error = 'All fields are required.';
+    } elseif ($password !== $confirm_password) {
+        $error = 'Passwords do not match.';
+    } else {
+        // Hash the password
+        $password_hash = password_hash($password, PASSWORD_BCRYPT);
+
+        $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, password, role_id, pfp, joined_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+        if ($stmt) {
+            $stmt->bind_param('sssiss', $first_name, $last_name, $email, $password_hash, $role, $pfp);
+            $ok = $stmt->execute();
+            $stmt->close();
+            if ($ok) {
+                header('Location: login.php');
+                exit();
+            } else {
+                $error = 'Registration failed.';
+            }
+        } else {
+            $error = 'Database error.';
+        }
     }
-
-    // Photo and bio are optional for all roles
-
-    if ($password !== $confirm_password) {
-        die('Passwords do not match.');
-    }
-
-    // Hash the password
-    $password_hash = password_hash($password, PASSWORD_BCRYPT);
-
-    // Insert user with optional profile image and bio for both roles
-    $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, password, role_id, profile_image_url, bio, joined_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
-    if (!$stmt) { die('Prepare failed: ' . $conn->error); }
-    $stmt->bind_param("ssssiss", $first_name, $last_name, $email, $password_hash, $role, $profile_image_url, $instructor_bio);
-    if ($stmt->execute()) {
-        header('Location: login.php');
-        exit();
-    } else { die('Registration failed: ' . $stmt->error); }
 }
 ?>
 
@@ -75,6 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="form-box">
+                <?php if (!empty($error)): ?>
+                    <div class="auth-error" style="color:#c53030;margin-bottom:12px;"><?= htmlspecialchars($error) ?></div>
+                <?php endif; ?>
                 <form id="registerForm" action="register.php" method="post" novalidate>
                     <div class="input-group">
                         <label>First Name</label>
@@ -107,11 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="input-group">
                         <label>Profile Image URL (optional)</label>
-                        <input type="url" name="profile_image_url" placeholder="https://example.com/image.jpg">
-                    </div>
-                    <div class="input-group">
-                        <label>Bio (optional)</label>
-                        <textarea name="instructor_bio" placeholder="Tell us about yourself..." rows="4"></textarea>
+                        <input type="url" name="pfp" placeholder="https://example.com/image.jpg">
                     </div>
                     <button type="submit" class="submit-btn">Create Account</button>
                 </form>

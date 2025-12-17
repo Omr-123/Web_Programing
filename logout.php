@@ -1,8 +1,9 @@
 <?php
 session_start();
+require 'conn.php';
 
 // Unset all session variables
-$_SESSION = [];
+foreach (array_keys($_SESSION) as $k) { unset($_SESSION[$k]); }
 
 // Destroy the session cookie if it exists
 if (ini_get("session.use_cookies")) {
@@ -16,7 +17,6 @@ if (ini_get("session.use_cookies")) {
 // Destroy the session
 session_destroy();
 
-// Redirect to home page
 header('Location: index.php');
 exit();
 ?>

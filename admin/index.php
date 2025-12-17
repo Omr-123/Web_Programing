@@ -1,12 +1,12 @@
 <?php
 session_start();
-require_once __DIR__ . '/../conn.php';
+require __DIR__ . '/../conn.php';
 
 // Access control: only admins (role_id = 3)
-if (!isset($_SESSION['userId']) || (int)($_SESSION['role'] ?? 0) !== 3) {
+if (!isset($_SESSION['userId']) || (isset($_SESSION['role']) ? (int)$_SESSION['role'] : 0) !== 3) {
 	header('Location: ../index.php');
 	exit();
-}
+} 
 
 header_remove('X-Powered-By');
 
@@ -25,16 +25,16 @@ function json_response($data, int $status = 200): void {
 // Handle admin actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 	$action = $_POST['action'];
-	$adminId = (int)($_SESSION['userId'] ?? 0);
+	$adminId = isset($_SESSION['userId']) ? (int)$_SESSION['userId'] : 0;
 
 	if ($action === 'add_course') {
-		$title = trim($_POST['title'] ?? '');
-		$description = trim($_POST['description'] ?? '');
-		$instructorId = (int)($_POST['instructor_id'] ?? 0);
-		$price = (float)($_POST['price'] ?? 0);
-		$level = $_POST['level'] ?? 'beginner';
-		$language = $_POST['language'] ?? 'en';
-		$thumbnailUrl = trim($_POST['thumbnail_url'] ?? '');
+		$title = isset($_POST['title']) ? trim($_POST['title']) : '';
+		$description = isset($_POST['description']) ? trim($_POST['description']) : '';
+		$instructorId = isset($_POST['instructor_id']) ? (int)$_POST['instructor_id'] : 0;
+		$price = isset($_POST['price']) ? (float)$_POST['price'] : 0;
+		$level = isset($_POST['level']) ? $_POST['level'] : 'beginner';
+		$language = isset($_POST['language']) ? $_POST['language'] : 'en';
+		$thumbnailUrl = isset($_POST['thumbnail_url']) ? trim($_POST['thumbnail_url']) : '';
 		
 		if ($title && $description && $instructorId > 0) {
 			// Create slug from title
@@ -45,17 +45,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 			$checkStmt = $conn->prepare('SELECT COUNT(*) as c FROM courses WHERE slug = ?');
 			$checkStmt->bind_param('s', $slug);
 			$checkStmt->execute();
-			$result = $checkStmt->get_result()->fetch_assoc();
-			if ($result['c'] > 0) {
+			$checkRes = $checkStmt->get_result();
+			$existing = $checkRes ? $checkRes->fetch_assoc() : null;
+			$checkStmt->close();
+			if (!empty($existing['c'])) {
 				$slug .= '-' . time();
 			}
-			$checkStmt->close();
 			
-			$stmt = $conn->prepare('INSERT INTO courses (instructor_id, title, slug, description, thumbnail_url, language, level, price, is_published) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)');
+			// Use `status` column (schema has `status` tinyint) instead of `is_published`.
+			$stmt = $conn->prepare('INSERT INTO courses (instructor_id, title, slug, description, thumbnail_url, language, level, price, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)');
 			$stmt->bind_param('issssssd', $instructorId, $title, $slug, $description, $thumbnailUrl, $language, $level, $price);
 			$ok = $stmt->execute();
 			$newId = $conn->insert_id;
 			$stmt->close();
+			
 			
 			if (is_ajax_request()) json_response(['ok' => $ok, 'course_id' => $newId]);
 			header('Location: index.php?added=course');
@@ -67,32 +70,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 	}
 
 	if ($action === 'add_lesson') {
-		$courseId = (int)($_POST['course_id'] ?? 0);
-		$title = trim($_POST['lesson_title'] ?? '');
-		$videoUrl = trim($_POST['video_url'] ?? '');
-		$content = trim($_POST['content'] ?? '');
-		$duration = (int)($_POST['duration_seconds'] ?? 0);
-		$position = (int)($_POST['position'] ?? 0);
-		$isPreview = (int)($_POST['is_preview'] ?? 0);
+		$courseId = isset($_POST['course_id']) ? (int)$_POST['course_id'] : 0;
+		$title = isset($_POST['lesson_title']) ? trim($_POST['lesson_title']) : '';
+		$videoUrl = isset($_POST['video_url']) ? trim($_POST['video_url']) : '';
+		$content = isset($_POST['content']) ? trim($_POST['content']) : '';
+		$duration = isset($_POST['duration_seconds']) ? (int)$_POST['duration_seconds'] : 0;
+		$position = isset($_POST['position']) ? (int)$_POST['position'] : 0;
 		
 		if ($courseId > 0 && $title) {
-			// If position is 0, get next position
+			// If position is 0, get next position (schema uses `order`)
 			if ($position === 0) {
-				$posStmt = $conn->prepare('SELECT COALESCE(MAX(position), 0) + 1 as next_pos FROM lessons WHERE course_id = ?');
-				$posStmt->bind_param('i', $courseId);
-				$posStmt->execute();
-				$posResult = $posStmt->get_result()->fetch_assoc();
-				$position = (int)$posResult['next_pos'];
-				$posStmt->close();
-			}
-			
-			$stmt = $conn->prepare('INSERT INTO lessons (course_id, title, video_url, content, duration_seconds, position, is_preview) VALUES (?, ?, ?, ?, ?, ?, ?)');
-			$stmt->bind_param('isssiis', $courseId, $title, $videoUrl, $content, $duration, $position, $isPreview);
-			$ok = $stmt->execute();
-			$newId = $conn->insert_id;
-			$stmt->close();
-			
-			if (is_ajax_request()) json_response(['ok' => $ok, 'lesson_id' => $newId]);
+					$posStmt = $conn->prepare('SELECT COALESCE(MAX(`order`), 0) + 1 as next_pos FROM lessons WHERE course_id = ?');
+					$posStmt->bind_param('i', $courseId);
+					$posStmt->execute();
+					$posRes = $posStmt->get_result();
+					$posRow = $posRes ? $posRes->fetch_assoc() : null;
+						$position = isset($posRow['next_pos']) ? (int)$posRow['next_pos'] : 1;
+				$ok = $stmt->execute();
+				$newId = $conn->insert_id;
+				$stmt->close();
 			header('Location: index.php?added=lesson');
 			exit();
 		}
@@ -102,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 	}
 
 	if ($action === 'delete_course') {
-		$courseId = (int)($_POST['course_id'] ?? 0);
+		$courseId = isset($_POST['course_id']) ? (int)$_POST['course_id'] : 0;
 		if ($courseId > 0) {
 			$stmt = $conn->prepare('DELETE FROM courses WHERE id = ?');
 			$stmt->bind_param('i', $courseId);
@@ -118,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 	}
 
 	if ($action === 'delete_lesson') {
-		$lessonId = (int)($_POST['lesson_id'] ?? 0);
+		$lessonId = isset($_POST['lesson_id']) ? (int)$_POST['lesson_id'] : 0;
 		if ($lessonId > 0) {
 			$stmt = $conn->prepare('DELETE FROM lessons WHERE id = ?');
 			$stmt->bind_param('i', $lessonId);
@@ -134,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 	}
 
 	if ($action === 'toggle_admin') {
-		$userId = (int)($_POST['user_id'] ?? 0);
+		$userId = isset($_POST['user_id']) ? (int)$_POST['user_id'] : 0;
 		if ($userId > 0) {
 			if ($userId === $adminId) {
 				if (is_ajax_request()) json_response(['ok' => false, 'error' => 'Cannot change your own admin role'], 400);
@@ -158,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 				if (is_ajax_request()) json_response(['ok' => $ok, 'user_id' => $userId, 'role_id' => $newRole]);
 				header('Location: index.php');
 				exit();
-			}
+			} 
 		}
 		if (is_ajax_request()) json_response(['ok' => false, 'error' => 'Invalid user id'], 400);
 		header('Location: index.php?err=user');
@@ -166,11 +162,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 	}
 
 	if ($action === 'set_role_by_email') {
-		$email = trim($_POST['email'] ?? '');
-		$roleId = (int)($_POST['role_id'] ?? 0);
+		$email = isset($_POST['email']) ? trim($_POST['email']) : '';
+		$roleId = isset($_POST['role_id']) ? (int)$_POST['role_id'] : 0;
 		if ($email && in_array($roleId, [1,2,3], true)) {
 			// Prevent self-demotion via this form too
-			$selfEmail = $_SESSION['email'] ?? '';
+			$selfEmail = isset($_SESSION['email']) ? $_SESSION['email'] : '';
 			if (strcasecmp($email, $selfEmail) === 0 && $roleId !== 3) {
 				if (is_ajax_request()) json_response(['ok' => false, 'error' => 'Cannot change your own admin role'], 400);
 				header('Location: index.php?err=self');
@@ -178,10 +174,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 			}
 			$stmt = $conn->prepare('UPDATE users SET role_id = ? WHERE email = ?');
 			$stmt->bind_param('is', $roleId, $email);
-			$ok = $stmt->execute();
+			$stmt->execute();
 			$affected = $stmt->affected_rows;
 			$stmt->close();
-			if (is_ajax_request()) json_response(['ok' => (bool)$ok, 'updated' => $affected]);
+			if (is_ajax_request()) json_response(['ok' => true, 'updated' => $affected]);
 			header('Location: index.php');
 			exit();
 		}
@@ -198,36 +194,29 @@ $stats = [
 	'lessons' => 0,
 	'admins' => 0,
 ];
-
-$q1 = $conn->query('SELECT COUNT(*) AS c FROM users');
-if ($q1) { $stats['users'] = (int)$q1->fetch_assoc()['c']; }
-$q2 = $conn->query('SELECT COUNT(*) AS c FROM courses');
-if ($q2) { $stats['courses'] = (int)$q2->fetch_assoc()['c']; }
-$q3 = $conn->query('SELECT COUNT(*) AS c FROM lessons');
-if ($q3) { $stats['lessons'] = (int)$q3->fetch_assoc()['c']; }
-$q4 = $conn->query('SELECT COUNT(*) AS c FROM users WHERE role_id = 3');
-if ($q4) { $stats['admins'] = (int)$q4->fetch_assoc()['c']; }
+$q1 = $conn->query('SELECT COUNT(*) AS c FROM users'); if ($q1) { $stats['users'] = (int)$q1->fetch_assoc()['c']; }
+$q2 = $conn->query('SELECT COUNT(*) AS c FROM courses'); if ($q2) { $stats['courses'] = (int)$q2->fetch_assoc()['c']; }
+$q3 = $conn->query('SELECT COUNT(*) AS c FROM lessons'); if ($q3) { $stats['lessons'] = (int)$q3->fetch_assoc()['c']; }
+$q4 = $conn->query('SELECT COUNT(*) AS c FROM users WHERE role_id = 3'); if ($q4) { $stats['admins'] = (int)$q4->fetch_assoc()['c']; }
 
 // Fetch courses with instructor
-$courses = [];
-$stmt = $conn->prepare('SELECT c.id, c.title, c.slug, c.price, c.is_published, c.created_at, u.fname, u.lname, u.email
-						FROM courses c
-						JOIN users u ON u.id = c.instructor_id
-						ORDER BY c.created_at DESC');
+$stmt = $conn->prepare('SELECT c.id, c.title, c.slug, c.price, c.status, c.created_at, u.fname, u.lname, u.email
+                        FROM courses c
+                        JOIN users u ON u.id = c.instructor_id
+                        ORDER BY c.created_at DESC');
 if ($stmt) {
 	$stmt->execute();
 	$res = $stmt->get_result();
-	while ($row = $res->fetch_assoc()) { $courses[] = $row; }
+	if ($res) { while ($r = $res->fetch_assoc()) { $courses[] = $r; } }
 	$stmt->close();
 }
-
 // Fetch lessons grouped by course
-$lessonsByCourse = [];
+
 if (!empty($courses)) {
 	$ids = array_map(fn($r) => (int)$r['id'], $courses);
 	$place = implode(',', array_fill(0, count($ids), '?'));
 	$types = str_repeat('i', count($ids));
-	$sql = "SELECT id, course_id, title, position, duration_seconds FROM lessons WHERE course_id IN ($place) ORDER BY course_id, position";
+	$sql = "SELECT id, course_id, title, `order` AS position, duration_seconds FROM lessons WHERE course_id IN ($place) ORDER BY course_id, `order`";
 	$stmt = $conn->prepare($sql);
 	if ($stmt) {
 		$stmt->bind_param($types, ...$ids);
@@ -235,7 +224,7 @@ if (!empty($courses)) {
 		$res = $stmt->get_result();
 		while ($row = $res->fetch_assoc()) {
 			$cid = (int)$row['course_id'];
-			if (!isset($lessonsByCourse[$cid])) $lessonsByCourse[$cid] = [];
+			if (!isset($lessonsByCourse[$cid])) $lessonsByCourse[$cid] = array();
 			$lessonsByCourse[$cid][] = $row;
 		}
 		$stmt->close();
@@ -243,12 +232,12 @@ if (!empty($courses)) {
 }
 
 // Fetch admins
-$admins = [];
+
 $res = $conn->query('SELECT id, fname, lname, email FROM users WHERE role_id = 3 ORDER BY joined_at DESC');
 if ($res) { while ($r = $res->fetch_assoc()) { $admins[] = $r; } }
 
 // Fetch instructors for course creation
-$instructors = [];
+
 $res = $conn->query('SELECT id, fname, lname, email FROM users WHERE role_id IN (2, 3) ORDER BY fname, lname');
 if ($res) { while ($r = $res->fetch_assoc()) { $instructors[] = $r; } }
 
@@ -303,7 +292,7 @@ if ($res) { while ($r = $res->fetch_assoc()) { $instructors[] = $r; } }
 			<div class="top-bar">
 				<div class="page-name"><h3>Admin Dashboard</h3></div>
 				<div class="user-profile">
-					<span><?= htmlspecialchars($_SESSION['fullname'] ?? 'Admin') ?></span>
+					<span><?= htmlspecialchars(isset($_SESSION['fullname']) ? $_SESSION['fullname'] : 'Admin') ?></span>
 					<div class="avatar">A</div>
 				</div>
 			</div>
@@ -416,9 +405,7 @@ if ($res) { while ($r = $res->fetch_assoc()) { $instructors[] = $r; } }
 										</tr>
 										<tr class="lessons-row" data-course-id="<?= (int)$c['id'] ?>" style="display:none;background:#fafafa;">
 											<td colspan="6">
-												<?php $cid = (int)$c['id']; $less = $lessonsByCourse[$cid] ?? []; ?>
-												
-												<!-- Add Lesson Form -->
+							<?php $cid = (int)$c['id']; $less = isset($lessonsByCourse[$cid]) ? $lessonsByCourse[$cid] : array(); ?>
 												<div style="background:#fff;padding:12px;border-radius:6px;margin-bottom:12px;border:1px solid #ddd;">
 													<button class="btn btn-outline show-add-lesson-btn" data-course-id="<?= $cid ?>" style="width:100%;">+ Add Lesson to This Course</button>
 													<form method="post" action="index.php" class="add-lesson-form" data-course-id="<?= $cid ?>" style="display:none;margin-top:12px;">
@@ -446,12 +433,7 @@ if ($res) { while ($r = $res->fetch_assoc()) { $instructors[] = $r; } }
 																<input type="number" name="position" min="0" value="0" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;font-size:13px;" />
 															</div>
 														</div>
-														<div style="margin-bottom:8px;">
-															<label style="display:flex;align-items:center;font-size:13px;">
-																<input type="checkbox" name="is_preview" value="1" style="margin-right:6px;" />
-																<span>Free Preview Lesson</span>
-															</label>
-														</div>
+														<!-- Note: `is_preview` removed from schema; preview control is not available -->
 														<div style="display:flex;gap:8px;">
 															<button type="submit" class="btn" style="background:#02413b;color:#fff;font-size:13px;">Add Lesson</button>
 															<button type="button" class="btn btn-outline cancel-add-lesson-btn" style="font-size:13px;">Cancel</button>

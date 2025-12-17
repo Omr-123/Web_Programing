@@ -3,15 +3,24 @@ session_start();
 require 'conn.php';
 $course = null;
 if (isset($_GET['id'])) {
-    $course_id = (int)$_GET['id'];
+    $courseId = (int)$_GET['id'];
     $stmt = $conn->prepare("SELECT id, title, description, price, level, thumbnail_url FROM courses WHERE id = ?");
-    if ($stmt) { $stmt->bind_param('i', $course_id); $stmt->execute(); $course = $stmt->get_result()->fetch_assoc(); $stmt->close(); }
+    $stmt->bind_param('i', $courseId);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $course = $res ? $res->fetch_assoc() : null;
+    $stmt->close();
 }
 if (!$course) { header('Location: courses.php'); exit(); }
 // Lessons summary
-$lessonCount = 0; $durationTotal = 0;
 $stmt = $conn->prepare("SELECT COUNT(*) as cnt, SUM(duration_seconds) as dur FROM lessons WHERE course_id = ?");
-if ($stmt) { $stmt->bind_param('i', $course['id']); $stmt->execute(); $res = $stmt->get_result()->fetch_assoc(); $lessonCount = (int)$res['cnt']; $durationTotal = (int)$res['dur']; $stmt->close(); }
+$stmt->bind_param('i', $course['id']);
+$stmt->execute();
+$res = $stmt->get_result();
+$stats = $res ? $res->fetch_assoc() : null;
+$lessonCount = isset($stats['cnt']) ? (int)$stats['cnt'] : 0;
+$durationTotal = isset($stats['dur']) ? (int)$stats['dur'] : 0;
+$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -34,7 +43,7 @@ if ($stmt) { $stmt->bind_param('i', $course['id']); $stmt->execute(); $res = $st
 
     <div class="hero">
         <div class="hero-content">
-            <img src="<?= htmlspecialchars($course['thumbnail_url'] ?? 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4') ?>" alt="thumbnail" style="max-width:240px;border-radius:8px;margin-bottom:12px;" />
+            <img src="<?= htmlspecialchars(isset($course['thumbnail_url']) && $course['thumbnail_url'] !== '' ? $course['thumbnail_url'] : 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4') ?>" alt="thumbnail" style="max-width:240px;border-radius:8px;margin-bottom:12px;" />
             <h1><?= htmlspecialchars($course['title']) ?></h1>
             <div class="course-desc">
                 <?= nl2br(htmlspecialchars($course['description'])) ?>
@@ -54,9 +63,12 @@ if ($stmt) { $stmt->bind_param('i', $course['id']); $stmt->execute(); $res = $st
 
             <div class="curriculum-title">Curriculum</div>
             <?php
-            $items = [];
-            $stmt = $conn->prepare("SELECT position, title, duration_seconds FROM lessons WHERE course_id = ? ORDER BY position ASC");
-            if ($stmt) { $stmt->bind_param('i', $course['id']); $stmt->execute(); $res = $stmt->get_result(); while ($row=$res->fetch_assoc()) { $items[]=$row; } $stmt->close(); }
+            $stmt = $conn->prepare("SELECT `order` AS position, title, duration_seconds FROM lessons WHERE course_id = ? ORDER BY `order` ASC");
+            $stmt->bind_param('i', $course['id']);
+            $stmt->execute();
+            $res = $stmt->get_result();
+            if ($res) { while ($r = $res->fetch_assoc()) { $items[] = $r; } }
+            $stmt->close();
             ?>
             <div class="curriculum-list">
                 <?php foreach ($items as $it): ?>
@@ -74,7 +86,7 @@ if ($stmt) { $stmt->bind_param('i', $course['id']); $stmt->execute(); $res = $st
         <div class="sidebar">
 
             <div class="box">
-                <div class="price-title">$<?= number_format((float)($course['price'] ?? 0),2) ?></div>
+                <div class="price-title">$<?= number_format((float)(isset($course['price']) ? $course['price'] : 0),2) ?></div>
                 <div class="small-note">Get a certificate after completing this course</div>
 
                 <form action="enroll.php" method="post">
