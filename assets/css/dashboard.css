@@ -209,3 +209,10 @@ tbody tr:hover { background-color: #f9fafb; }
 
 .mt-4 { margin-top: 24px; }
 .mb-2 { margin-bottom: 8px; }
+
+.profile-preview {
+    width: 240px;
+    height: 150px;
+    border-radius: 8px;
+    object-fit: cover;
+}

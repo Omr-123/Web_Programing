@@ -73,7 +73,6 @@
                             <?php endif; ?>
                             <form method="post" action="index.php">
                                 <input type="hidden" name="action" value="change_student_password">
-                                <input type="hidden" name="email" value="<?= htmlspecialchars($_SESSION['email']) ?>">
                                 <input type="password" name="current_password" placeholder="Current password" required style="width:100%;padding:8px;margin-bottom:8px;border:1px solid #ddd;border-radius:6px;">
                                 <input type="password" name="new_password" placeholder="New password" required style="width:100%;padding:8px;margin-bottom:8px;border:1px solid #ddd;border-radius:6px;">
                                 <button type="submit" class="btn">Change</button>

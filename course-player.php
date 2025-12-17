@@ -34,8 +34,8 @@ $result = $conn->query($sql);
 $lessons = $result->fetch_all(MYSQLI_ASSOC);
 
 // Active lesson
-$lessonId = $_GET['lesson_id'] ?? $lessons[0]['id'];
-$activeLesson = $lessons[0];
+$lessonId = $_GET['lesson_id'] ?? null;
+$activeLesson = $lessons[0] ?? null;
 $activeLessonIndex = 0;
 
 foreach ($lessons as $index => $lesson) {
@@ -133,8 +133,7 @@ $nextLesson = $activeLessonIndex < count($lessons) - 1 ? $lessons[$activeLessonI
     </div>
     <?php else: ?>
         <div class="no-course-message">
-            <h2>Course not found.</h2>
-            <p>The course you are looking for does not exist.</p>
+            <h2 style="text-align:center; margin-top: 20px;">Course not found.</h2>
         </div> 
     <?php endif; ?>
 </body>
