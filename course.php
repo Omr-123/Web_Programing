@@ -70,8 +70,8 @@ $stmt->close();
             if ($res) { while ($r = $res->fetch_assoc()) { $items[] = $r; } }
             $stmt->close();
             ?>
-            <?php if (!empty($items)): ?>
             <div class="curriculum-list">
+                <?php if (!empty($items)): ?>
                 <?php foreach ($items as $it): ?>
                 <div class="curriculum-item">
                     <div class="circle"><?= $it['position'] ?></div>
@@ -81,9 +81,9 @@ $stmt->close();
                     </div>
                 </div>
                 <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
-        <?php endif; ?>
 
         <div class="sidebar">
 
