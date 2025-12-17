@@ -3,7 +3,7 @@ session_start();
 require '../conn.php';
 
 /* admin only */
-if (!isset($_SESSION['userId']) ||  ($_SESSION['role'] ?? 0) !== 3) {
+if (!isset($_SESSION['userId']) ||  ($_SESSION['role'] ?? 0) != 3) {
     header('Location: ../index.php');
     exit();
 }
@@ -139,10 +139,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     /* set role by email */
     if ($_POST['action'] === 'set_role_by_email') {
         $email = trim($_POST['email'] ?? '');
-        $role_id =  ($_POST['role_id'] ?? 0);
-        $allowed = [1,2,3];
+        $role_id =  $_POST['role_id'];
 
-        if (!$email || !in_array($role_id, $allowed, true)) {
+        if (!$email) {
             if (is_ajax_request()) json_response(['ok' => false, 'error' => 'Invalid input'], 400);
             header('Location: index.php?role_error=invalid');
             exit();
@@ -168,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $myRole =  ($_SESSION['role'] ?? 0);
 
         // Prevent demoting your own admin role
-        if ($myId === $targetUserId && $myRole === 3 && $role_id !== 3) {
+        if ($myId == $targetUserId && $myRole == 3 && $role_id != 3) {
             if (is_ajax_request()) json_response(['ok' => false, 'error' => 'Cannot demote yourself'], 403);
             header('Location: index.php?role_error=cannot_demote_self');
             exit();
