@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <div class="form-box">
 
-            <?php if ($error): ?>
+            <?php if (!empty($error)): ?>
                 <div class="auth-error" style="color:#c53030;margin-bottom:12px;"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
 

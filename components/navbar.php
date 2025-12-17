@@ -9,6 +9,9 @@
             <li class="nav-link"><a href="courses.php">Courses</a></li>
             <li class="nav-link"><a href="my-courses.php">My Courses</a></li>
 
+
+            <?php if (isset($_SESSION['userId'])): ?>
+                
             <?php if ($_SESSION['role'] == 2): ?>
                 <li class="nav-link"><a href="dashboard.php">Dashboard</a></li>
             <?php endif; ?>
@@ -16,8 +19,6 @@
             <?php if ($_SESSION['role'] == 3): ?>
                 <li class="nav-link"><a href="admin/">Admin</a></li>
             <?php endif; ?>
-
-            <?php if (isset($_SESSION['userId'])): ?>
                 <li class="nav-link"><a href="cart.php">Cart</a></li>
 
             <?php

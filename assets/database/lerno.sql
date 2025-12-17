@@ -97,7 +97,8 @@ CREATE TABLE `lessons` (
   `order` int(10) UNSIGNED NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+INSERT INTO `lessons` (`id`, `course_id`, `title`, `video_url`, `content`, `duration_seconds`, `order`, `created_at`) VALUES
+(5, 5, 'PHP Design Patterns: Advanced Concepts', 'https://www.example.com/videos/php-design-patterns-advanced.mp4', 'Explore advanced design patterns in PHP, including Dependency Injection, Service Locator, and more.', 2700, 5, '2025-12-14 17:32:41');
 -- --------------------------------------------------------
 
 --

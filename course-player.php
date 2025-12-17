@@ -76,7 +76,7 @@ $nextLesson = $activeLessonIndex < count($lessons) - 1 ? $lessons[$activeLessonI
 <body>
 
     <?php include("components/navbar.php"); ?>
-
+    <?php if ($activeLesson): ?>
     <div class="player-wrapper">
 
         <div class="video-section">
@@ -131,6 +131,12 @@ $nextLesson = $activeLessonIndex < count($lessons) - 1 ? $lessons[$activeLessonI
             </div>
         </div>
     </div>
+    <?php else: ?>
+        <div class="no-course-message">
+            <h2>Course not found.</h2>
+            <p>The course you are looking for does not exist.</p>
+        </div> 
+    <?php endif; ?>
 </body>
 
 </html>
