@@ -10,8 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
     $role = ($_POST['role'] == 'instructor') ? 2 : 1;
-
-    $avatar = trim($_POST['avatar']) ?: null;
+    $avatar = trim($_POST['avatar']);
 
     // Simple validation
     if (!$first_name || !$last_name || !$email || !$password || !$confirm_password) {

@@ -21,16 +21,11 @@
                 <li class="nav-link"><a href="cart.php">Cart</a></li>
 
                 <?php
-                // Get user avatar
                 $userId = $_SESSION['userId'];
-                $avatarUrl = 'assets/images/user.png';
-
                 $result = $conn->query("SELECT avatar FROM users WHERE id = $userId");
-                if ($result && $row = $result->fetch_assoc()) {
-                    if ($row['avatar'] != '') {
-                        $avatarUrl = $row['avatar'];
-                    }
-                }
+                $result = $result->fetch_assoc();
+                $avatar = $result['avatar'];
+
                 ?>
 
                 <li class="nav-link">
@@ -39,7 +34,7 @@
 
                 <li class="nav-link user-profile">
                     <a href="profile.php" class="profile-anchor">
-                        <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="Avatar" class="user-avatar">
+                        <img src="<?= $avatar ?: "assets/images/avatar.jpg" ?>" alt="Avatar" class="user-avatar">
                         <span class="profile-name"><?= htmlspecialchars($_SESSION['fullname']) ?></span>
                     </a>
 

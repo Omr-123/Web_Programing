@@ -86,7 +86,7 @@ $stmt->close();
         <div class="sidebar">
 
             <div class="box">
-                <div class="price-title">$<?= number_format((float)(isset($course['price']) ? $course['price'] : 0),2) ?></div>
+                <div class="price-title"><?= $course['price'] > 0 ? '$' . number_format($course['price'],2) : 'Free' ?></div>
                 <div class="small-note">Get a certificate after completing this course</div>
 
                 <form action="enroll.php" method="post">

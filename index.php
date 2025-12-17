@@ -196,8 +196,6 @@ $featured = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         </div>
     </div>
 
-<?php include("components/footer.php") ?>
-
+    <?php include("components/footer.php") ?>
 </body>
-
 </html>

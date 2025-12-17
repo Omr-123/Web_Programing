@@ -3,7 +3,7 @@ session_start();
 require 'conn.php';
 
 // Fetch courses
-$sql = "SELECT c.id, c.title, c.description, c.price, c.thumbnail_url, u.fname, u.lname, u.avatar FROM courses c JOIN users u ON c.instructor_id = u.id WHERE c.status = 1 ORDER BY c.created_at DESC";
+$sql = "SELECT c.*, u.fname, u.lname FROM courses c JOIN users u ON c.instructor_id = u.id WHERE c.status = 1 ORDER BY c.created_at DESC";
 $result = $conn->query($sql);
 $courses = $result->fetch_all(MYSQLI_ASSOC);
 
@@ -29,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header('Location: my-courses.php');
         exit();
     }
+
+    var_dump($userId, $courseId);
 
     $conn->query("INSERT INTO cart (user_id, course_id, added_at) VALUES ($userId, $courseId, NOW())");
     header('Location: courses.php');
@@ -74,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <?= htmlspecialchars($course['fname'] . ' ' . $course['lname']) ?>
                 </p>
 
-                <span class="course-price">$<?= number_format($course['price'], 2) ?></span>
+                <span class="course-price"><?= $course['price'] > 0 ? '$' . number_format($course['price'], 2) : 'Free' ?></span>
 
                 <a href="course.php?id=<?= $course['id'] ?>" class="course-button">Learn More</a>
 
