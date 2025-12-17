@@ -21,6 +21,7 @@
 </head>
 
 <body>
+    <?php include("components/navbar.php") ?>
 
     <div class="auth-wrapper">
         <div class="auth-container">
@@ -42,7 +43,9 @@
             </div>
         </div>
     </div>
-<?php include("components/footer.php") ?>
+
+    <?php include("components/footer.php") ?>
+    
     <script>
         function handleReset(e) {
             e.preventDefault();

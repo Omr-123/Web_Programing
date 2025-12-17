@@ -63,6 +63,7 @@ $nextLesson = $activeLessonIndex < count($lessons) - 1 ? $lessons[$activeLessonI
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Playing: <?= htmlspecialchars($course['title']) ?> - Lerno</title>
@@ -74,63 +75,62 @@ $nextLesson = $activeLessonIndex < count($lessons) - 1 ? $lessons[$activeLessonI
 
 <body>
 
-<?php include("components/navbar.php"); ?>
+    <?php include("components/navbar.php"); ?>
 
-<div class="player-wrapper">
+    <div class="player-wrapper">
 
-    <div class="video-section">
-        <div class="video-container">
-            <iframe src="<?= htmlspecialchars($activeLesson['video_url']) ?>" allowfullscreen></iframe>
-        </div>
-
-        <div class="video-info">
-            <h1><?= $activeLesson['position'] ?>. <?= htmlspecialchars($activeLesson['title']) ?></h1>
-
-            <div class="video-actions">
-                <?php if ($prevLesson): ?>
-                    <a href="course-player.php?course_id=<?= $courseId ?>&lesson_id=<?= $prevLesson['id'] ?>" class="action-btn">Previous Lesson</a>
-                <?php else: ?>
-                    <a href="#" class="action-btn disabled">Previous Lesson</a>
-                <?php endif; ?>
-
-                <form method="post" style="display:inline">
-                    <input type="hidden" name="lesson_id" value="<?= $activeLesson['id'] ?>">
-                    <button type="submit" name="mark_complete" class="action-btn primary">Mark as Complete</button>
-                </form>
-
-                <?php if ($nextLesson): ?>
-                    <a href="course-player.php?course_id=<?= $courseId ?>&lesson_id=<?= $nextLesson['id'] ?>" class="action-btn">Next Lesson</a>
-                <?php else: ?>
-                    <a href="#" class="action-btn disabled">Next Lesson</a>
-                <?php endif; ?>
+        <div class="video-section">
+            <div class="video-container">
+                <iframe src="<?= htmlspecialchars($activeLesson['video_url']) ?>" allowfullscreen></iframe>
             </div>
 
-            <div class="lesson-desc">
-                <h3>About this lesson</h3>
-                <p><?= htmlspecialchars($activeLesson['content']) ?></p>
+            <div class="video-info">
+                <h1><?= $activeLesson['position'] . '. ' . htmlspecialchars($activeLesson['title']) ?></h1>
+
+                <div class="video-actions">
+                    <?php if ($prevLesson): ?>
+                        <a href="course-player.php?course_id=<?= $courseId ?>&lesson_id=<?= $prevLesson['id'] ?>" class="action-btn">Previous Lesson</a>
+                    <?php else: ?>
+                        <a href="#" class="action-btn disabled">Previous Lesson</a>
+                    <?php endif; ?>
+
+                    <form method="post" style="display:inline">
+                        <input type="hidden" name="lesson_id" value="<?= $activeLesson['id'] ?>">
+                        <button type="submit" name="mark_complete" class="action-btn primary">Mark as Complete</button>
+                    </form>
+
+                    <?php if ($nextLesson): ?>
+                        <a href="course-player.php?course_id=<?= $courseId ?>&lesson_id=<?= $nextLesson['id'] ?>" class="action-btn">Next Lesson</a>
+                    <?php else: ?>
+                        <a href="#" class="action-btn disabled">Next Lesson</a>
+                    <?php endif; ?>
+                </div>
+
+                <div class="lesson-desc">
+                    <h3>About this lesson</h3>
+                    <p><?= htmlspecialchars($activeLesson['content']) ?></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="playlist-section">
+            <div class="playlist-header">
+                <h3>Course Content</h3>
+            </div>
+
+            <div class="playlist-items">
+                <?php foreach ($lessons as $lesson): ?>
+                    <a href="course-player.php?course_id=<?= $courseId ?>&lesson_id=<?= $lesson['id'] ?>" class="lesson-item <?= $lesson['id'] == $activeLesson['id'] ? 'active' : '' ?>">
+                        <div class="checkbox"><?= isset($progressMap[$lesson['id']]) ? '✓' : '' ?></div>
+                        <div class="lesson-details">
+                            <span class="lesson-name"><?= $lesson['position'] ?>. <?= htmlspecialchars($lesson['title']) ?></span>
+                            <span class="lesson-time"><?= $lesson['duration_seconds'] ? gmdate('i:s', $lesson['duration_seconds']) : '' ?></span>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
-
-    <div class="playlist-section">
-        <div class="playlist-header">
-            <h3>Course Content</h3>
-        </div>
-
-        <div class="playlist-items">
-            <?php foreach ($lessons as $lesson): ?>
-                <a href="course-player.php?course_id=<?= $courseId ?>&lesson_id=<?= $lesson['id'] ?>" class="lesson-item <?= $lesson['id'] == $activeLesson['id'] ? 'active' : '' ?>">
-                    <div class="checkbox"><?= isset($progressMap[$lesson['id']]) ? '✓' : '' ?></div>
-                    <div class="lesson-details">
-                        <span class="lesson-name"><?= $lesson['position'] ?>. <?= htmlspecialchars($lesson['title']) ?></span>
-                        <span class="lesson-time"><?= $lesson['duration_seconds'] ? gmdate('i:s', $lesson['duration_seconds']) : '' ?></span>
-                    </div>
-                </a>
-            <?php endforeach; ?>
-        </div>
-    </div>
-
-</div>
-
 </body>
+
 </html>

@@ -67,14 +67,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="password" name="password" placeholder="Enter your password" required>
                     </div>
                     <div class="form-options">
-                        <label><input type="checkbox"> Remember me</label>
-                        <a href="reset-password.html">Reset Password</a>
+                        <label>Forgot Password?</label>
+                        <a href="reset-password.php">Reset Password</a>
                     </div>
                     <button type="submit" class="submit-btn">Sign In</button>
                 </form>
 
                 <div class="auth-footer-text">
-                    Don't have an account? <a href="register.html">Sign Up</a>
+                    Don't have an account? <a href="register.php">Sign Up</a>
                 </div>
             </div>
         </div>

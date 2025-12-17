@@ -308,7 +308,7 @@ while ($c = $courses->fetch_assoc()) {
                             <button type="button" class="btn btn-sm btn-outline toggle-lessons-btn" data-course-id="<?= (int)$c['id'] ?>">
                                 Lessons
                             </button>
-                            <form method="post" class="inline-form">
+                            <form method="post" class="inline-form" style="display: inline;">
                                 <input type="hidden" name="action" value="delete_course" />
                                 <input type="hidden" name="course_id" value="<?= (int)$c['id'] ?>" />
                                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this course?')">Delete</button>

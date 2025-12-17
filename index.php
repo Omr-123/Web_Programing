@@ -52,17 +52,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                 $user = $res->fetch_assoc();
                 $stmt->close();
 
-                if ($user && password_verify($current_password, $user['password'])) {
-                    $new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
-                    $up = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-                    $up->bind_param('si', $new_password_hash, $userId);
-                    $up->execute();
-                    $up->close();
+                if (!$user) {
+                    header('Location: index.php?pass_status=notfound');
+                    exit();
                 }
 
-                header('Location: index.php');
+                if (!password_verify($current_password, $user['password'])) {
+                    header('Location: index.php?pass_status=wrong_current');
+                    exit();
+                }
+
+                $new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
+                $up = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+                $up->bind_param('si', $new_password_hash, $userId);
+                $ok = $up->execute();
+                $up->close();
+
+                if ($ok) {
+                    header('Location: index.php?pass_status=success');
+                } else {
+                    header('Location: index.php?pass_status=error');
+                }
                 exit();
             }
+
+            // invalid input
+            header('Location: index.php?pass_status=invalid');
+            exit();
         }
     }
 }
@@ -105,6 +121,7 @@ $featured = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         </div>
     </div>
 
+    <?php if ($featured): ?>
     <div class="section-container">
         <div class="section-title">
             <h2 class="section-name">Featured Courses</h2>
@@ -112,7 +129,6 @@ $featured = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         </div>
 
         <div class="courses">
-            <?php if ($featured): ?>
             <?php foreach ($featured as $course): ?>
             <div class="course">
                 <img src="<?= htmlspecialchars($course['thumbnail_url'] != '' ? $course['thumbnail_url'] : 'assets/images/course.png') ?>" alt="Course" class="course-image">
@@ -123,10 +139,10 @@ $featured = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
                 </div>
             </div>
             <?php endforeach; ?>
-            <?php endif; ?>
         </div>
     </div>
-
+    <?php endif; ?>
+    
     <div class="section-container bg-light">
         <div class="section-title">
             <h2 class="section-name">What Our Students Say</h2>
@@ -134,7 +150,7 @@ $featured = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
         <div class="testimonial-wrapper">
             <div class="testimonial active">
-                <img src="https://via.placeholder.com/100x100?text=Student" alt="Student" class="student-img">
+                <img src="assets/images/avatar.jpg" alt="Student" class="student-img">
                 <p>"This platform changed the way I learn! Highly recommend."</p>
                 <div class="stars">★★★★★</div>
                 <h4>Ahmed A.</h4>
@@ -173,28 +189,27 @@ $featured = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     <div class="cta-banner">
         <h2>Join Thousands of Learners Today</h2>
         <p>Start your learning journey with our top-quality courses.</p>
-        <a href="index.php" class="cta-btn">Get Started</a>
+        <a href="courses.php" class="cta-btn">Get Started</a>
     </div>
 
+    <?php if ($instructors): ?>
     <div class="section-container">
         <div class="section-title">
             <h2 class="section-name">Meet Our Instructors</h2>
         </div>
 
         <div class="courses">
-            <?php if ($instructors): ?>
             <?php foreach ($instructors as $instructor): ?>
             <div class="course">
-                <img src="<?= htmlspecialchars($instructor['avatar'] != '' ? $instructor['avatar'] : 'assets/images/user.png') ?>" alt="<?= htmlspecialchars($instructor['fname']) ?>" class="course-image">
+                <img src="<?= htmlspecialchars($instructor['avatar'] != '' ? $instructor['avatar'] : 'assets/images/avatar.jpg') ?>" alt="<?= htmlspecialchars($instructor['fname']) ?>" class="course-image">
                 <div class="course-details">
                     <h3 class="course-title"><?= htmlspecialchars($instructor['fname'] . " " . $instructor['lname']) ?></h3>
-                    <p class="course-description">Experienced Instructor</p>
                 </div>
             </div>
             <?php endforeach; ?>
-            <?php endif; ?>
         </div>
     </div>
+    <?php endif; ?>
 
     <?php include("components/footer.php") ?>
 </body>

@@ -9,6 +9,10 @@ body {
     min-height: 100vh;
 }
 
+.notice {
+    font-size: 10px;
+}
+
 
 /* Section */
 
@@ -204,7 +208,7 @@ body {
 .avatar-dropdown-menu {
     display: none;
     position: absolute;
-    top: calc(100% + 15px);
+    top: 100%;
     right: 0;
     background-color: white;
     min-width: 280px;
