@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Generation Time: Dec 17, 2025 at 08:04 PM
--- Server version: 8.4.7
--- PHP Version: 8.3.28
+-- Host: localhost
+-- Generation Time: Dec 17, 2025 at 09:16 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -27,17 +27,12 @@ SET time_zone = "+00:00";
 -- Table structure for table `cart`
 --
 
-DROP TABLE IF EXISTS `cart`;
-CREATE TABLE IF NOT EXISTS `cart` (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_id` int UNSIGNED NOT NULL,
-  `course_id` int UNSIGNED NOT NULL,
-  `added_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_user_course` (`user_id`,`course_id`),
-  KEY `user_id` (`user_id`),
-  KEY `course_id` (`course_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE `cart` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `course_id` int(10) UNSIGNED NOT NULL,
+  `added_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -45,32 +40,29 @@ CREATE TABLE IF NOT EXISTS `cart` (
 -- Table structure for table `courses`
 --
 
-DROP TABLE IF EXISTS `courses`;
-CREATE TABLE IF NOT EXISTS `courses` (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `instructor_id` int UNSIGNED NOT NULL,
-  `title` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `thumbnail_url` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `language` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT 'en',
-  `level` enum('beginner','intermediate','advanced') COLLATE utf8mb4_unicode_ci DEFAULT 'beginner',
-  `price` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `status` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `instructor_id` (`instructor_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE `courses` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `instructor_id` int(10) UNSIGNED NOT NULL,
+  `title` varchar(200) NOT NULL,
+  `description` text NOT NULL,
+  `thumbnail_url` varchar(500) DEFAULT NULL,
+  `language` varchar(40) DEFAULT 'en',
+  `level` enum('beginner','intermediate','advanced') DEFAULT 'beginner',
+  `price` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `courses`
 --
 
 INSERT INTO `courses` (`id`, `instructor_id`, `title`, `description`, `thumbnail_url`, `language`, `level`, `price`, `status`, `created_at`, `updated_at`) VALUES
-(1, 2, 'Mastering JavaScript', 'An in-depth course on modern JavaScript development.', 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d', 'en', 'intermediate', 49.99, 1, '2025-12-10 08:00:00', NULL),
-(2, 2, 'HTML & CSS for Beginners', 'Learn the basics of web design with HTML and CSS.', 'https://images.unsplash.com/photo-1522071820081-009f0129c71c', 'en', 'beginner', 29.99, 1, '2025-12-11 09:30:00', NULL),
-(3, 2, 'Full-Stack Web Development', 'Become a full-stack web developer with this comprehensive course.', 'https://images.unsplash.com/photo-1498050108023-c5249f4df085', 'en', 'advanced', 99.99, 1, '2025-12-12 12:15:00', NULL),
-(4, 2, 'React.js Essentials', 'Get started with React.js and build dynamic web applications.', 'https://images.unsplash.com/photo-1519389950473-47ba0277781c', 'en', 'intermediate', 59.99, 1, '2025-12-13 07:45:00', NULL);
+(1, 2, 'Mastering JavaScript', 'An in-depth course on modern JavaScript development.', 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d', 'en', 'intermediate', 0.00, 1, '2025-12-10 08:00:00', NULL),
+(2, 2, 'HTML & CSS for Beginners', 'Learn the basics of web design with HTML and CSS.', 'https://images.unsplash.com/photo-1522071820081-009f0129c71c', 'en', 'beginner', 0.00, 1, '2025-12-11 09:30:00', NULL),
+(3, 2, 'Full-Stack Web Development', 'Become a full-stack web developer with this comprehensive course.', 'https://images.unsplash.com/photo-1498050108023-c5249f4df085', 'en', 'advanced', 0.00, 1, '2025-12-12 12:15:00', NULL),
+(4, 2, 'React.js Essentials', 'Get started with React.js and build dynamic web applications.', 'https://images.unsplash.com/photo-1519389950473-47ba0277781c', 'en', 'intermediate', 0.00, 1, '2025-12-13 07:45:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -78,17 +70,12 @@ INSERT INTO `courses` (`id`, `instructor_id`, `title`, `description`, `thumbnail
 -- Table structure for table `enrollments`
 --
 
-DROP TABLE IF EXISTS `enrollments`;
-CREATE TABLE IF NOT EXISTS `enrollments` (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_id` int UNSIGNED NOT NULL,
-  `course_id` int UNSIGNED NOT NULL,
-  `enrolled_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_user_course` (`user_id`,`course_id`),
-  KEY `user_id` (`user_id`),
-  KEY `course_id` (`course_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE `enrollments` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `course_id` int(10) UNSIGNED NOT NULL,
+  `enrolled_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `enrollments`
@@ -103,19 +90,16 @@ INSERT INTO `enrollments` (`id`, `user_id`, `course_id`, `enrolled_at`) VALUES
 -- Table structure for table `lessons`
 --
 
-DROP TABLE IF EXISTS `lessons`;
-CREATE TABLE IF NOT EXISTS `lessons` (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `course_id` int UNSIGNED NOT NULL,
-  `title` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `video_url` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `content` text COLLATE utf8mb4_unicode_ci,
-  `duration_seconds` int UNSIGNED DEFAULT '0',
-  `order` int UNSIGNED NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `course_id` (`course_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE `lessons` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `course_id` int(10) UNSIGNED NOT NULL,
+  `title` varchar(200) NOT NULL,
+  `video_url` varchar(500) DEFAULT NULL,
+  `content` text DEFAULT NULL,
+  `duration_seconds` int(10) UNSIGNED DEFAULT 0,
+  `order` int(10) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `lessons`
@@ -146,17 +130,12 @@ INSERT INTO `lessons` (`id`, `course_id`, `title`, `video_url`, `content`, `dura
 -- Table structure for table `lessons_progress`
 --
 
-DROP TABLE IF EXISTS `lessons_progress`;
-CREATE TABLE IF NOT EXISTS `lessons_progress` (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_id` int UNSIGNED NOT NULL,
-  `lesson_id` int UNSIGNED NOT NULL,
-  `completed_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_user_lesson` (`user_id`,`lesson_id`),
-  KEY `user_id` (`user_id`),
-  KEY `lesson_id` (`lesson_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE `lessons_progress` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `lesson_id` int(10) UNSIGNED NOT NULL,
+  `completed_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `lessons_progress`
@@ -164,7 +143,9 @@ CREATE TABLE IF NOT EXISTS `lessons_progress` (
 
 INSERT INTO `lessons_progress` (`id`, `user_id`, `lesson_id`, `completed_at`) VALUES
 (8, 5, 7, '2025-12-17 21:07:33'),
-(9, 6, 7, '2025-12-17 21:21:53');
+(9, 6, 7, '2025-12-17 21:21:53'),
+(10, 5, 1, '2025-12-17 22:15:34'),
+(11, 5, 2, '2025-12-17 22:15:48');
 
 -- --------------------------------------------------------
 
@@ -172,12 +153,9 @@ INSERT INTO `lessons_progress` (`id`, `user_id`, `lesson_id`, `completed_at`) VA
 -- Table structure for table `roles`
 --
 
-DROP TABLE IF EXISTS `roles`;
-CREATE TABLE IF NOT EXISTS `roles` (
-  `id` tinyint UNSIGNED NOT NULL,
-  `name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
+CREATE TABLE `roles` (
+  `id` tinyint(3) UNSIGNED NOT NULL,
+  `name` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -195,30 +173,125 @@ INSERT INTO `roles` (`id`, `name`) VALUES
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `fname` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `lname` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `role_id` tinyint UNSIGNED NOT NULL,
-  `joined_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`),
-  KEY `role_id` (`role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE `users` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `fname` varchar(50) NOT NULL,
+  `lname` varchar(50) NOT NULL,
+  `email` varchar(120) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
+  `role_id` tinyint(3) UNSIGNED NOT NULL,
+  `joined_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `fname`, `lname`, `email`, `password`, `avatar`, `role_id`, `joined_at`) VALUES
-(2, 'Ali', 'Nasser', 'ali@gmail.com', '$2y$10$6dNwDTGF.PtLBlAB0B3au.9/5naT5QGduVL4F20HF4dC.H6b0UjtW', 'https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D', 2, '2025-12-14 19:02:41'),
-(4, 'seif', 'Emad', 'Seif@gamil.com', '$2y$10$6dNwDTGF.PtLBlAB0B3au.9/5naT5QGduVL4F20HF4dC.H6b0UjtW', '', 1, '2025-12-17 20:28:31'),
-(5, 'Omar', 'Emad', 'Omar@gmail.com', '$2y$10$jTDhObCXuWuvKGAKyCjk5O.ft7fAaadHeWTM0ELvh3LRWfrQUFinG', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyTTDr-b3Q1sQsRRcmzjq0PHdImZfTpyq5KBTB1YuUAhirr1OpeFVhd_Ll2nw7qzI2iSM-0Pwu6YxDNINKTpWGPYJr1tIBkEkKUIjXhLXDoQ&s=10', 3, '2025-12-17 21:01:51'),
-(6, 'Omar', 'Emad', 'Omar1@gmail.com', '$2y$10$YuQCkiWsSZR2GZb5O.nPn.rJ7JKwT61ftWwJQ5dZ/oNWcpcgmhoeW', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROHxYft1f_Ln_y_scKnh8-g5rLMmce7JKyPQ&s', 1, '2025-12-17 21:20:18');
+(2, 'Ali', 'Nasser', 'ali@gmail.com', '$2y$10$jTDhObCXuWuvKGAKyCjk5O.ft7fAaadHeWTM0ELvh3LRWfrQUFinG', 'https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D', 2, '2025-12-14 19:02:41'),
+(4, 'Seif', 'Emad', 'seif@gamil.com', '$2y$10$jTDhObCXuWuvKGAKyCjk5O.ft7fAaadHeWTM0ELvh3LRWfrQUFinG', 'https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D', 1, '2025-12-17 20:28:31'),
+(5, 'Omar', 'Emad', 'omar@gmail.com', '$2y$10$jTDhObCXuWuvKGAKyCjk5O.ft7fAaadHeWTM0ELvh3LRWfrQUFinG', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyTTDr-b3Q1sQsRRcmzjq0PHdImZfTpyq5KBTB1YuUAhirr1OpeFVhd_Ll2nw7qzI2iSM-0Pwu6YxDNINKTpWGPYJr1tIBkEkKUIjXhLXDoQ&s=10', 3, '2025-12-17 21:01:51');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `cart`
+--
+ALTER TABLE `cart`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_user_course` (`user_id`,`course_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `course_id` (`course_id`);
+
+--
+-- Indexes for table `courses`
+--
+ALTER TABLE `courses`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `instructor_id` (`instructor_id`);
+
+--
+-- Indexes for table `enrollments`
+--
+ALTER TABLE `enrollments`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_user_course` (`user_id`,`course_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `course_id` (`course_id`);
+
+--
+-- Indexes for table `lessons`
+--
+ALTER TABLE `lessons`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `course_id` (`course_id`);
+
+--
+-- Indexes for table `lessons_progress`
+--
+ALTER TABLE `lessons_progress`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_user_lesson` (`user_id`,`lesson_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `lesson_id` (`lesson_id`);
+
+--
+-- Indexes for table `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `role_id` (`role_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `cart`
+--
+ALTER TABLE `cart`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `courses`
+--
+ALTER TABLE `courses`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `enrollments`
+--
+ALTER TABLE `enrollments`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `lessons`
+--
+ALTER TABLE `lessons`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `lessons_progress`
+--
+ALTER TABLE `lessons_progress`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
@@ -260,4 +333,3 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
--- Dump completed on 2025-12-17 20:04:21
