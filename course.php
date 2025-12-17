@@ -90,6 +90,7 @@ $stmt->close();
                 <div class="small-note">Get a certificate after completing this course</div>
 
                 <form action="enroll.php" method="post">
+                    <input type="hidden" name="farward">
                     <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
                     <button type="submit" class="enroll-btn">Enroll Now</button>
                 </form>
