@@ -43,7 +43,7 @@ $stmt->close();
 
     <div class="hero">
         <div class="hero-content">
-            <img src="<?= htmlspecialchars(isset($course['thumbnail_url']) && $course['thumbnail_url'] !== '' ? $course['thumbnail_url'] : 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4') ?>" alt="thumbnail" style="max-width:240px;border-radius:8px;margin-bottom:12px;" />
+            <img src="<?= htmlspecialchars(isset($course['thumbnail_url']) && $course['thumbnail_url'] !== '' ? $course['thumbnail_url'] : 'assets/images/image.jpg') ?>" alt="thumbnail" style="max-width:240px;border-radius:8px;margin-bottom:12px;" />
             <h1><?= htmlspecialchars($course['title']) ?></h1>
             <div class="course-desc">
                 <?= nl2br(htmlspecialchars($course['description'])) ?>

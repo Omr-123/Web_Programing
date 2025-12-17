@@ -120,66 +120,6 @@ body {
     display: block;
 }
 
-/* Responsive navbar adjustments */
-@media (max-width: 768px) {
-    .header .nav {
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-        padding: 8px 16px;
-    }
-
-    .header .nav-logo {
-        margin-bottom: 8px;
-    }
-
-    .header .nav-links {
-        flex-direction: column;
-        gap: 8px;
-        width: 100%;
-        padding-bottom: 8px;
-    }
-
-    .header .nav-links .nav-link {
-        width: 100%;
-    }
-
-    .header .nav-links .nav-link a {
-        display: inline-block;
-        padding: 8px 0;
-        width: 100%;
-    }
-
-    .user-profile {
-        align-self: flex-end;
-    }
-
-    .avatar-dropdown-menu {
-        right: 16px;
-        left: auto;
-    }
-}
-
-/* Compact adjustments for very small screens */
-@media (max-width: 420px) {
-    .header .nav {
-        padding: 8px 12px;
-    }
-
-    .header .nav-logo img {
-        height: 36px;
-    }
-
-    .user-avatar {
-        width: 32px;
-        height: 32px;
-    }
-
-    .header .nav-links {
-        gap: 6px;
-    }
-}
-
 /* Avatar Dropdown */
 
 /* Ensure nav items are vertically centered */
