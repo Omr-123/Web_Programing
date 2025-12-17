@@ -70,6 +70,7 @@ $stmt->close();
             if ($res) { while ($r = $res->fetch_assoc()) { $items[] = $r; } }
             $stmt->close();
             ?>
+            <?php if (!empty($items)): ?>
             <div class="curriculum-list">
                 <?php foreach ($items as $it): ?>
                 <div class="curriculum-item">
@@ -82,6 +83,7 @@ $stmt->close();
                 <?php endforeach; ?>
             </div>
         </div>
+        <?php endif; ?>
 
         <div class="sidebar">
 
