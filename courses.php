@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="courses">
     <?php foreach ($courses as $course): ?>
         <div class="course">
-            <img src="<?= $course['thumbnail_url'] != '' ? $course['thumbnail_url'] : 'assets/images/image.jpggit ' ?>" class="course-image">
+            <img src="<?= $course['thumbnail_url'] != '' ? $course['thumbnail_url'] : 'assets/images/image.jpg ' ?>" class="course-image">
 
             <div class="course-details">
                 <h3 class="course-title"><?= htmlspecialchars($course['title']) ?></h3>
