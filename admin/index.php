@@ -587,12 +587,6 @@ while ($r = $res->fetch_assoc()) {
                                                                     <input type="number" name="position" min="0" value="0" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;font-size:13px;" />
                                                                 </div>
                                                             </div>
-                                                            <div style="margin-bottom:8px;">
-                                                                <label style="display:flex;align-items:center;font-size:13px;">
-                                                                    <input type="checkbox" name="is_preview" value="1" style="margin-right:6px;" />
-                                                                    <span>Free Preview Lesson</span>
-                                                                </label>
-                                                            </div>
                                                             <div style="display:flex;gap:8px;">
                                                                 <button type="submit" class="btn" style="background:#02413b;color:#fff;font-size:13px;">Add Lesson</button>
                                                                 <button type="button" class="btn btn-outline cancel-add-lesson-btn" style="font-size:13px;">Cancel</button>
