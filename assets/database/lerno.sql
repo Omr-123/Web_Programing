@@ -120,26 +120,25 @@ CREATE TABLE IF NOT EXISTS `lessons` (
 --
 -- Dumping data for table `lessons`
 --
-
 INSERT INTO `lessons` (`id`, `course_id`, `title`, `video_url`, `content`, `duration_seconds`, `order`, `created_at`) VALUES
-(1, 4, 'React js Essentials', 'https://www.youtube.com/playlist?list=PL0Zuz27SZ-6PrE9srvEn8nbhOOyxnWXfp', 'Using React js to Be Advanced.', 900, 1, '2025-12-14 17:05:00'),
-(2, 4, 'Components and Props', 'https://www.youtube.com/playlist?list=PLZPZq0r_RZOMQArzyI32mVndGBZ3D99XQ', 'Understanding Components and Props in React js.', 1200, 2, '2025-12-14 17:10:00'),
-(3, 4, 'State and Lifecycle', 'https://www.youtube.com/playlist?list=PLC3y8-rFHvwgg3vaYJgHGnModB54rxOk3', 'Managing State and Lifecycle Methods in React js.', 1500, 3, '2025-12-14 17:15:00'),
-(4, 4, 'Handling Events', 'https://www.youtube.com/playlist?list=PLEiEAq2VkUUKMie-cEUnkHRxiFKDZJGqO', 'Event Handling in React js Applications.', 1100, 4, '2025-12-14 17:20:00'),
-(5, 4, 'React Router Basics', 'https://www.youtube.com/playlist?list=PL4cUxeGkcC9gZD-Tvwfod2gaISzfRiP9d', 'Implementing Routing with React Router.', 1300, 5, '2025-12-14 17:25:00'),
-(6, 3, 'Full-Stack Project Setup', 'https://www.youtube.com/playlist?list=PLEiEAq2VkUULCC3eEATL4zzuapTjmo1Z_', 'Setting up a full-stack web development project.', 1800, 1, '2025-12-14 18:00:00'),
-(7, 3, 'Backend Development with Node.js', 'https://www.youtube.com/watch?v=f2EqECiTBL8', 'Building the backend using Node.js and Express.', 2400, 2, '2025-12-14 18:30:00'),
-(8, 3, 'Frontend Development with React', 'https://www.youtube.com/watch?v=RVFAyFWO4go', 'Creating the frontend with React.js.', 2100, 3, '2025-12-14 19:00:00'),
-(9, 3, 'Database Integration', 'https://www.youtube.com/watch?v=fPuLnzSjPLE', 'Integrating a database into the full-stack application.', 1500, 4, '2025-12-14 19:30:00'),
-(10, 3, 'Deployment and Hosting', 'https://www.youtube.com/playlist?list=PL0Zuz27SZ-6PrE9srvEn8nbhOOyxnWXfp', 'Deploying and hosting the full-stack application.', 1200, 5, '2025-12-14 20:00:00'),
-(11, 2, 'HTML Basics', 'https://www.youtube.com/watch?v=zJSY8tbf_ys', 'Introduction to HTML and its basic structure.', 800, 1, '2025-12-14 16:00:00'),
-(12, 2, 'CSS Fundamentals', 'https://www.youtube.com/watch?v=zJSY8tbf_ys', 'Learning the fundamentals of CSS for styling web pages.', 1000, 2, '2025-12-14 16:20:00'),
-(13, 2, 'Responsive Design', 'https://www.youtube.com/watch?v=zJSY8tbf_ys', 'Creating responsive web designs using CSS media queries.', 1100, 3, '2025-12-14 16:40:00'),
-(14, 2, 'Flexbox and Grid', 'https://www.youtube.com/watch?v=zJSY8tbf_ys', 'Using Flexbox and CSS Grid for layout design.', 1200, 4, '2025-12-14 17:00:00'),
-(15, 1, 'JavaScript Fundamentals', 'https://www.youtube.com/watch?v=zJSY8tbf_ys', 'Understanding the fundamentals of JavaScript programming.', 1300, 1, '2025-12-14 15:00:00'),
-(16, 1, 'DOM Manipulation', 'https://www.youtube.com/watch?v=zJSY8tbf_ys', 'Manipulating the Document Object Model (DOM) with JavaScript.', 1400, 2, '2025-12-14 15:25:00'),
-(17, 1, 'ES6 Features', 'https://www.youtube.com/watch?v=RVFAyFWO4go', 'Exploring new features introduced in ECMAScript 6 (ES6).', 1500, 3, '2025-12-14 15:50:00'),
-(18, 1, 'Asynchronous JavaScript', 'https://www.youtube.com/watch?v=RVFAyFWO4go', 'Working with asynchronous programming in JavaScript using callbacks, promises, and async/await.', 1600, 4, '2025-12-14 16:15:00');
+(1, 4, 'React js Essentials', 'https://www.youtube.com/embed/dGcsHMXbSOA', 'Using React js to Be Advanced.', 900, 1, '2025-12-14 17:05:00'),
+(2, 4, 'Components and Props', 'https://www.youtube.com/embed/Ke90Tje7VS0', 'Understanding Components and Props in React js.', 1200, 2, '2025-12-14 17:10:00'),
+(3, 4, 'State and Lifecycle', 'https://www.youtube.com/embed/DPnqb74Smug', 'Managing State and Lifecycle Methods in React js.', 1500, 3, '2025-12-14 17:15:00'),
+(4, 4, 'Handling Events', 'https://www.youtube.com/embed/4UZrsTqkcW4', 'Event Handling in React js Applications.', 1100, 4, '2025-12-14 17:20:00'),
+(5, 4, 'React Router Basics', 'https://www.youtube.com/embed/Law7wfdg_ls', 'Implementing Routing with React Router.', 1300, 5, '2025-12-14 17:25:00'),
+(6, 3, 'Full-Stack Project Setup', 'https://www.youtube.com/embed/Zftx68K-1D4', 'Setting up a full‑stack web development project.', 1800, 1, '2025-12-14 18:00:00'),
+(7, 3, 'Backend Development with Node.js', 'https://www.youtube.com/embed/f2EqECiTBL8', 'Building the backend using Node.js and Express.', 2400, 2, '2025-12-14 18:30:00'),
+(8, 3, 'Frontend Development with React', 'https://www.youtube.com/embed/RVFAyFWO4go', 'Creating the frontend with React.js.', 2100, 3, '2025-12-14 19:00:00'),
+(9, 3, 'Database Integration', 'https://www.youtube.com/embed/fPuLnzSjPLE', 'Integrating a database into the full‑stack application.', 1500, 4, '2025-12-14 19:30:00'),
+(10, 3, 'Deployment and Hosting', 'https://www.youtube.com/embed/6ZrJ5URq3jQ', 'Deploying and hosting the full‑stack application.', 1200, 5, '2025-12-14 20:00:00'),
+(11, 2, 'HTML Basics', 'https://www.youtube.com/embed/pQN-pnXPaVg', 'Introduction to HTML and its basic structure.', 800, 1, '2025-12-14 16:00:00'),
+(12, 2, 'CSS Fundamentals', 'https://www.youtube.com/embed/yfoY53QXEnI', 'Learning the fundamentals of CSS for styling web pages.', 1000, 2, '2025-12-14 16:20:00'),
+(13, 2, 'Responsive Design', 'https://www.youtube.com/embed/srvUrASNj0s', 'Creating responsive web designs using CSS media queries.', 1100, 3, '2025-12-14 16:40:00'),
+(14, 2, 'Flexbox and Grid', 'https://www.youtube.com/embed/JJSoEo8JSnc', 'Using Flexbox and CSS Grid for layout design.', 1200, 4, '2025-12-14 17:00:00'),
+(15, 1, 'JavaScript Fundamentals', 'https://www.youtube.com/embed/hdI2bqOjy3c', 'Understanding the fundamentals of JavaScript programming.', 1300, 1, '2025-12-14 15:00:00'),
+(16, 1, 'DOM Manipulation', 'https://www.youtube.com/embed/0ik6X4DJKCc', 'Manipulating the Document Object Model (DOM) with JavaScript.', 1400, 2, '2025-12-14 15:25:00'),
+(17, 1, 'ES6 Features', 'https://www.youtube.com/embed/NCwa_xi0Uuc', 'Exploring new features introduced in ECMAScript 6 (ES6).', 1500, 3, '2025-12-14 15:50:00'),
+(18, 1, 'Asynchronous JavaScript', 'https://www.youtube.com/embed/PoRJizFvM7s', 'Working with asynchronous programming in JavaScript using callbacks, promises, and async/await.', 1600, 4, '2025-12-14 16:15:00');
 
 -- --------------------------------------------------------
 
