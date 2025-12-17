@@ -2,8 +2,17 @@
 session_start();
 require 'conn.php';
 
+// Detect AJAX early so we can return JSON errors instead of redirects
+$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
 /* allow instructors only */
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 2) {
+    if ($isAjax) {
+        header('Content-Type: application/json');
+        http_response_code(403);
+        echo json_encode(['ok' => false, 'error' => 'Unauthorized']);
+        exit();
+    }
     header('Location: login.php');
     exit();
 }
@@ -12,6 +21,7 @@ $userId = $_SESSION['userId'];
 
 /* handle actions */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
     /* create course */
     if ($_POST['action'] === 'create_course') {
@@ -56,7 +66,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $stmt = $conn->prepare("DELETE FROM courses WHERE id = ? AND instructor_id = ?");
         $stmt->bind_param('ii', $course_id, $userId);
         $stmt->execute();
+        $affected = $stmt->affected_rows;
         $stmt->close();
+
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            if ($affected > 0) {
+                echo json_encode(['ok' => true]);
+            } else {
+                echo json_encode(['ok' => false, 'error' => 'Course not found or not owned by you']);
+            }
+            exit();
+        }
     }
 
     /* delete lesson */
@@ -67,7 +88,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $stmt = $conn->prepare("DELETE l FROM lessons l JOIN courses c ON l.course_id = c.id WHERE l.id = ? AND c.instructor_id = ?");
         $stmt->bind_param('ii', $lesson_id, $userId);
         $stmt->execute();
+        $affected = $stmt->affected_rows;
         $stmt->close();
+
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            if ($affected > 0) {
+                echo json_encode(['ok' => true]);
+            } else {
+                echo json_encode(['ok' => false, 'error' => 'Lesson not found or not owned by you']);
+            }
+            exit();
+        }
     }
 
     /* update profile image */
@@ -153,38 +185,33 @@ while ($c = $courses->fetch_assoc()) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Instructor Dashboard</title>
+    <link rel="icon" href="assets/Lerno.png">
     <link rel="stylesheet" href="assets/css/reset.css">
     <link rel="stylesheet" href="assets/css/main.css">
-    <style>
-        .container{max-width:1100px;margin:24px auto;padding:0 16px}
-        .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-        .grid.three-col{grid-template-columns:1fr 1fr 1fr}
-        .grid.four-col{grid-template-columns:1fr 1fr 1fr 1fr}
-        .card{border:1px solid #e5e7eb;border-radius:10px;padding:16px;background:#fff}
-        input,textarea,select{width:100%;padding:10px;margin:6px 0;border:1px solid #d1d5db;border-radius:8px;box-sizing:border-box}
-        button{padding:10px 14px;border-radius:8px;border:none;background:#111827;color:#fff;cursor:pointer}
-        table{width:100%;border-collapse:collapse}
-        th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
-    </style>
+    <link rel="stylesheet" href="assets/css/dashboard.css">
 </head>
 <body>
+
 <?php include('components/navbar.php'); ?>
+
 <div class="container">
-    <h1>Instructor Dashboard</h1>
+    <h1 class="page-title">Instructor Dashboard</h1>
+    
     <div class="grid four-col">
+        
         <div class="card">
             <h2>Update Profile Image</h2>
             <form method="post">
                 <input type="hidden" name="action" value="update_profile_image" />
-                <?php if ($current_profile_image): ?>
-                <div style="margin-bottom: 12px;">
-                    <p style="font-size: 14px; color: #666;">Current Profile Image:</p>
-                    <img src="<?= htmlspecialchars($current_profile_image) ?>" alt="Profile" style="max-width: 150px; border-radius: 8px;">
+                <?php if (!empty($current_profile_image)): ?>
+                <div class="mb-2">
+                    <p class="muted-caption">Current:</p>
+                    <img src="<?= htmlspecialchars($current_profile_image) ?>" alt="Profile" class="profile-preview">
                 </div>
                 <?php endif; ?>
                 <label>Profile Image URL</label>
                 <input type="url" name="avatar" placeholder="https://example.com/image.jpg" value="<?= htmlspecialchars($current_profile_image ?? '') ?>" required />
-                <button type="submit">Update Image</button>
+                <button type="submit" class="btn btn-primary">Update Image</button>
             </form>
         </div>
 
@@ -198,144 +225,172 @@ while ($c = $courses->fetch_assoc()) {
                 <input type="password" name="current_password" placeholder="Current password" required />
                 <label>New Password</label>
                 <input type="password" name="new_password" placeholder="New password (min 6 chars)" required />
-                <button type="submit">Change Password</button>
+                <button type="submit" class="btn btn-primary">Change Password</button>
             </form>
         </div>
+
         <div class="card">
             <h2>Create Course</h2>
             <form method="post">
                 <input type="hidden" name="action" value="create_course" />
                 <label>Title</label>
-                <input name="title" required />
-                <label>Slug</label>
-                <input name="slug" required />
+                <input type="text" name="title" required />
                 <label>Description</label>
                 <textarea name="description" rows="4" required></textarea>
                 <label>Thumbnail URL</label>
-                <input name="thumbnail_url" placeholder="https://images.unsplash.com/..." />
-                <label>Price</label>
-                <input name="price" type="number" step="0.01" value="0" />
-                <label>Level</label>
-                <select name="level">
-                    <option value="beginner">beginner</option>
-                    <option value="intermediate">intermediate</option>
-                    <option value="advanced">advanced</option>
-                </select>
-                <button type="submit">Add Course</button>
+                <input type="text" name="thumbnail_url" placeholder="https://images.unsplash.com/..." />
+                <div class="flex-row">
+                    <div class="flex-1">
+                        <label>Price</label>
+                        <input type="number" name="price" step="0.01" value="0" />
+                    </div>
+                    <div class="flex-1">
+                        <label>Level</label>
+                        <select name="level">
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Course</button>
             </form>
         </div>
+
         <div class="card">
             <h2>Add Lesson</h2>
             <form method="post">
                 <input type="hidden" name="action" value="create_lesson" />
-                <label>Course</label>
+                <label>Select Course</label>
                 <select name="course_id">
-                    <?php foreach ($courses as $c): ?>
+                    <?php if(!empty($courses)): foreach ($courses as $c): ?>
                     <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['title']) ?></option>
-                    <?php endforeach; ?>
+                    <?php endforeach; endif; ?>
                 </select>
-                <label>Title</label>
-                <input name="title" required />
-                <label>Video URL (YouTube embed)</label>
-                <input name="video_url" placeholder="https://www.youtube.com/embed/..." />
+                <label>Lesson Title</label>
+                <input type="text" name="title" required />
+                <label>Video URL (YouTube)</label>
+                <input type="text" name="video_url" placeholder="https://www.youtube.com/embed/..." />
                 <label>Content</label>
-                <textarea name="content" rows="3"></textarea>
-                <label>Position</label>
-                <input name="position" type="number" value="1" />
-                <label>Duration (seconds)</label>
-                <input name="duration_seconds" type="number" value="0" />
-                <button type="submit">Add Lesson</button>
+                <textarea name="content" rows="2"></textarea>
+                <div class="flex-row">
+                    <div class="flex-1">
+                        <label>Position</label>
+                        <input type="number" name="position" value="1" />
+                    </div>
+                    <div class="flex-1">
+                        <label>Duration (s)</label>
+                        <input type="number" name="duration_seconds" value="0" />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Lesson</button>
             </form>
         </div>
     </div>
 
-    <div class="card" style="margin-top:24px">
-        <h2>My Courses</h2>
-        <table>
-            <thead><tr><th>Title</th><th>Slug</th><th>Actions</th></tr></thead>
-            <tbody>
-                <?php foreach ($courses as $c): ?>
-                <tr>
-                    <td><?= htmlspecialchars($c['title']) ?></td>
-                    <td><?= htmlspecialchars($c['slug']) ?></td>
-                    <td>
-                        <a href="course.php?id=<?= (int)$c['id'] ?>">View</a>
-                        | <a href="course-player.php?course_id=<?= (int)$c['id'] ?>">Play</a>
-                        | <button type="button" class="toggle-lessons-btn" data-course-id="<?= (int)$c['id'] ?>" style="background:#3b82f6;padding:4px 8px;font-size:13px;">Show Lessons</button>
-                        | <form method="post" style="display:inline">
-                            <input type="hidden" name="action" value="delete_course" />
-                            <input type="hidden" name="course_id" value="<?= (int)$c['id'] ?>" />
-                            <button type="submit" onclick="return confirm('Delete course?')" style="background:#dc2626;padding:4px 8px;font-size:13px;">Delete</button>
-                          </form>
-                    </td>
-                </tr>
-                <tr class="lessons-row" data-course-id="<?= (int)$c['id'] ?>" style="display:none;">
-                    <td colspan="3" style="background:#f9fafb;padding:16px;">
-                        <h3 style="margin-bottom:12px;font-size:16px;">Lessons for: <?= htmlspecialchars($c['title']) ?></h3>
-                        <?php 
-                        $cid = (int)$c['id'];
-                        $lessons = $lessonsByCourse[$cid] ?? [];
-                        ?>
-                        <?php if (empty($lessons)): ?>
-                            <p style="color:#6b7280;font-style:italic;">No lessons added yet.</p>
-                        <?php else: ?>
-                            <table style="width:100%;background:#fff;">
-                                <thead>
-                                    <tr style="background:#f3f4f6;">
-                                        <th style="padding:8px;">Position</th>
-                                        <th style="padding:8px;">Title</th>
-                                        <th style="padding:8px;">Duration</th>
-                                        <th style="padding:8px;">Video URL</th>
-                                        <th style="padding:8px;">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($lessons as $lesson): ?>
-                                    <tr>
-                                        <td style="padding:8px;"><?= (int)$lesson['position'] ?></td>
-                                        <td style="padding:8px;"><?= htmlspecialchars($lesson['title']) ?></td>
-                                        <td style="padding:8px;"><?= (int)$lesson['duration_seconds'] ?> sec</td>
-                                        <td style="padding:8px;font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                                            <?= htmlspecialchars($lesson['video_url'] ?: 'N/A') ?>
-                                        </td>
-                                        <td style="padding:8px;">
-                                            <form method="post" style="display:inline;">
-                                                <input type="hidden" name="action" value="delete_lesson" />
-                                                <input type="hidden" name="lesson_id" value="<?= (int)$lesson['id'] ?>" />
-                                                <button type="submit" onclick="return confirm('Delete this lesson?')" style="background:#dc2626;padding:4px 8px;font-size:12px;">Delete</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+    <div class="card mt-4 card--no-padding">
+        <h2 class="card-title">My Courses</h2>
+        <div class="table-wrapper table-wrapper--flat">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($courses)): foreach ($courses as $c): ?>
+                    <tr>
+                        <td><strong><?= htmlspecialchars($c['title']) ?></strong></td>
+                        <td class="text-right nowrap">
+                            <a href="course.php?id=<?= (int)$c['id'] ?>" class="action-link">View</a>
+                            <a href="course-player.php?course_id=<?= (int)$c['id'] ?>" class="action-link">Play</a>
+                            <button type="button" class="btn btn-sm btn-outline toggle-lessons-btn" data-course-id="<?= (int)$c['id'] ?>">
+                                Lessons
+                            </button>
+                            <form method="post" class="inline-form">
+                                <input type="hidden" name="action" value="delete_course" />
+                                <input type="hidden" name="course_id" value="<?= (int)$c['id'] ?>" />
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this course?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr class="lessons-row" data-course-id="<?= (int)$c['id'] ?>">
+                        <td colspan="3">
+                            <h3 class="lessons-header">Lessons: <?= htmlspecialchars($c['title']) ?></h3>
+                            <?php 
+                            $cid = (int)$c['id'];
+                            $lessons = $lessonsByCourse[$cid] ?? [];
+                            ?>
+                            <?php if (empty($lessons)): ?>
+                                <p class="muted-italic">No lessons added yet.</p>
+                            <?php else: ?>
+                                <div class="table-wrapper">
+                                    <table class="nested-table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Title</th>
+                                                <th>Duration</th>
+                                                <th>Video URL</th>
+                                                <th class="text-right">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($lessons as $lesson): ?>
+                                            <tr>
+                                                <td><?= (int)$lesson['position'] ?></td>
+                                                <td><?= htmlspecialchars($lesson['title']) ?></td>
+                                                <td><?= (int)$lesson['duration_seconds'] ?>s</td>
+                                                <td class="muted-ellipsis">
+                                                    <?= htmlspecialchars($lesson['video_url'] ?: 'N/A') ?>
+                                                </td>
+                                                <td class="text-right">
+                                                    <form method="post" class="inline-form-inline">
+                                                        <input type="hidden" name="action" value="delete_lesson" />
+                                                        <input type="hidden" name="lesson_id" value="<?= (int)$lesson['id'] ?>" />
+                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this lesson?')">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; else: ?>
+                    <tr><td colspan="3" class="empty-message">No courses found.</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
 <script>
-// Toggle lessons visibility
+// Toggle lessons visibility with simple animation logic
 document.querySelectorAll('.toggle-lessons-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const courseId = btn.getAttribute('data-course-id');
         const lessonsRow = document.querySelector(`.lessons-row[data-course-id="${courseId}"]`);
+        
         if (lessonsRow) {
-            if (lessonsRow.style.display === 'none') {
-                lessonsRow.style.display = '';
-                btn.textContent = 'Hide Lessons';
-                btn.style.background = '#6b7280';
+            const visible = lessonsRow.classList.toggle('visible');
+            if (visible) {
+                btn.textContent = 'Hide';
+                btn.style.backgroundColor = '#02413b';
+                btn.style.color = '#fff';
             } else {
-                lessonsRow.style.display = 'none';
-                btn.textContent = 'Show Lessons';
-                btn.style.background = '#3b82f6';
+                btn.textContent = 'Lessons';
+                btn.style.backgroundColor = 'transparent';
+                btn.style.color = '#02413b';
             }
         }
     });
 });
 </script>
+
 </body>
 </html>

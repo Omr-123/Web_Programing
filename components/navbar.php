@@ -14,7 +14,7 @@
             <?php endif; ?>
 
             <?php if ($_SESSION['role'] == 3): ?>
-                <li class="nav-link"><a href="admin/index.php">Admin</a></li>
+                <li class="nav-link"><a href="admin/">Admin</a></li>
             <?php endif; ?>
 
             <?php if (isset($_SESSION['userId'])): ?>
@@ -25,7 +25,6 @@
                 $result = $conn->query("SELECT avatar FROM users WHERE id = $userId");
                 $result = $result->fetch_assoc();
                 $avatar = $result['avatar'];
-
                 ?>
 
                 <li class="nav-link">
