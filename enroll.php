@@ -15,7 +15,7 @@ if ($courseId <= 0) {
     exit();
 }
 
-$userId = (int)$_SESSION['userId'];
+$userId = $_SESSION['userId'];
 
 // Enroll if not already enrolled
 $ins = $conn->prepare("INSERT INTO enrollments (user_id, course_id, enrolled_at)

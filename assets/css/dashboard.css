@@ -186,6 +186,16 @@ tbody tr:hover { background-color: #f9fafb; }
 .action-link:hover { text-decoration: underline; }
 
 /* --- Lessons Nested Table --- */
+
+.lessons-row {
+    background-color: red;
+}
+
+.lessons-row.visivle {
+    display: block;
+    background-color: blue;
+}
+
 .lessons-row td {
     background-color: #f8fafc;
     padding: 20px;

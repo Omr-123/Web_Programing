@@ -3,7 +3,7 @@ session_start();
 require 'conn.php';
 $course = null;
 if (isset($_GET['id'])) {
-    $courseId = (int)$_GET['id'];
+    $courseId = $_GET['id'];
     $stmt = $conn->prepare("SELECT id, title, description, price, level, thumbnail_url FROM courses WHERE id = ?");
     $stmt->bind_param('i', $courseId);
     $stmt->execute();
@@ -18,8 +18,8 @@ $stmt->bind_param('i', $course['id']);
 $stmt->execute();
 $res = $stmt->get_result();
 $stats = $res ? $res->fetch_assoc() : null;
-$lessonCount = isset($stats['cnt']) ? (int)$stats['cnt'] : 0;
-$durationTotal = isset($stats['dur']) ? (int)$stats['dur'] : 0;
+$lessonCount = isset($stats['cnt']) ? $stats['cnt'] : 0;
+$durationTotal = isset($stats['dur']) ? $stats['dur'] : 0;
 $stmt->close();
 ?>
 
@@ -73,10 +73,10 @@ $stmt->close();
             <div class="curriculum-list">
                 <?php foreach ($items as $it): ?>
                 <div class="curriculum-item">
-                    <div class="circle"><?= (int)$it['position'] ?></div>
+                    <div class="circle"><?= $it['position'] ?></div>
                     <div class="text">
                         <h3><?= htmlspecialchars($it['title']) ?></h3>
-                        <p><?= (int)$it['duration_seconds'] ? gmdate('i:s', (int)$it['duration_seconds']) : '' ?></p>
+                        <p><?= $it['duration_seconds'] ? gmdate('i:s', $it['duration_seconds']) : '' ?></p>
                     </div>
                 </div>
                 <?php endforeach; ?>
@@ -90,7 +90,7 @@ $stmt->close();
                 <div class="small-note">Get a certificate after completing this course</div>
 
                 <form action="enroll.php" method="post">
-                    <input type="hidden" name="course_id" value="<?= (int)$course['id'] ?>">
+                    <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
                     <button type="submit" class="enroll-btn">Enroll Now</button>
                 </form>
                 <button class="secondary-btn">♡ Add to Wishlist</button>

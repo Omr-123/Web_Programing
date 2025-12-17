@@ -8,78 +8,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
     $userId = $_SESSION['userId'];
     $userRole = $_SESSION['role'];
 
-    // Only allow students to update their profile
-    if ($userRole == 1) {
+    if ($_POST['action'] == 'update_student_photo') {
 
-        if ($_POST['action'] == 'update_student_photo') {
+        $photo_url = trim($_POST['avatar']);
 
-            $photo_url = trim($_POST['avatar']);
-
-            if ($photo_url && filter_var($photo_url, FILTER_VALIDATE_URL)) {
-                $up = $conn->prepare("UPDATE users SET avatar = ? WHERE id = ?");
-                $up->bind_param('si', $photo_url, $userId);
-                $up->execute();
-                $up->close();
-            }
-
-            header('Location: index.php');
-            exit();
-
-        } elseif ($_POST['action'] == 'delete_student_photo') {
-
-            // Remove photo from database (fallback will be local image in HTML)
-            $up = $conn->prepare("UPDATE users SET avatar = '' WHERE id = ?");
-            $up->bind_param('i', $userId);
+        if ($photo_url && filter_var($photo_url, FILTER_VALIDATE_URL)) {
+            $up = $conn->prepare("UPDATE users SET avatar = ? WHERE id = ?");
+            $up->bind_param('si', $photo_url, $userId);
             $up->execute();
             $up->close();
+        }
 
-            header('Location: index.php');
-            exit();
+        header('Location: index.php');
+        exit();
 
-        } elseif ($_POST['action'] == 'change_student_password') {
+    } elseif ($_POST['action'] == 'delete_student_photo') {
 
-            $email = trim($_POST['email']);
-            $current_password = $_POST['current_password'];
-            $new_password = $_POST['new_password'];
+        // Remove photo from database (fallback will be local image in HTML)
+        $up = $conn->prepare("UPDATE users SET avatar = '' WHERE id = ?");
+        $up->bind_param('i', $userId);
+        $up->execute();
+        $up->close();
 
-            if ($email && $current_password && $new_password && strlen($new_password) >= 6) {
+        header('Location: index.php');
+        exit();
 
-                // Verify email and current password
-                $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ? AND id = ?");
-                $stmt->bind_param('si', $email, $userId);
-                $stmt->execute();
-                $res = $stmt->get_result();
-                $user = $res->fetch_assoc();
-                $stmt->close();
+    } elseif ($_POST['action'] == 'change_student_password') {
 
-                if (!$user) {
-                    header('Location: index.php?pass_status=notfound');
-                    exit();
-                }
+        $email = trim($_POST['email']);
+        $current_password = $_POST['current_password'];
+        $new_password = $_POST['new_password'];
 
-                if (!password_verify($current_password, $user['password'])) {
-                    header('Location: index.php?pass_status=wrong_current');
-                    exit();
-                }
+        if ($email && $current_password && $new_password && strlen($new_password) >= 6) {
 
-                $new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
-                $up = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-                $up->bind_param('si', $new_password_hash, $userId);
-                $ok = $up->execute();
-                $up->close();
+            // Verify email and current password
+            $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ? AND id = ?");
+            $stmt->bind_param('si', $email, $userId);
+            $stmt->execute();
+            $res = $stmt->get_result();
+            $user = $res->fetch_assoc();
+            $stmt->close();
 
-                if ($ok) {
-                    header('Location: index.php?pass_status=success');
-                } else {
-                    header('Location: index.php?pass_status=error');
-                }
+            if (!$user) {
+                header('Location: index.php?pass_status=notfound');
                 exit();
             }
 
-            // invalid input
-            header('Location: index.php?pass_status=invalid');
+            if (!password_verify($current_password, $user['password'])) {
+                header('Location: index.php?pass_status=wrong_current');
+                exit();
+            }
+
+            $new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
+            $up = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+            $up->bind_param('si', $new_password_hash, $userId);
+            $ok = $up->execute();
+            $up->close();
+
+            if ($ok) {
+                header('Location: index.php?pass_status=success');
+            } else {
+                header('Location: index.php?pass_status=error');
+            }
             exit();
         }
+
+        // invalid input
+        header('Location: index.php?pass_status=invalid');
+        exit();
     }
 }
 

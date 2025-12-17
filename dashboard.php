@@ -264,7 +264,7 @@ while ($c = $courses->fetch_assoc()) {
                 <label>Select Course</label>
                 <select name="course_id">
                     <?php if(!empty($courses)): foreach ($courses as $c): ?>
-                    <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['title']) ?></option>
+                    <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['title']) ?></option>
                     <?php endforeach; endif; ?>
                 </select>
                 <label>Lesson Title</label>
@@ -303,23 +303,23 @@ while ($c = $courses->fetch_assoc()) {
                     <tr>
                         <td><strong><?= htmlspecialchars($c['title']) ?></strong></td>
                         <td class="text-right nowrap">
-                            <a href="course.php?id=<?= (int)$c['id'] ?>" class="action-link">View</a>
-                            <a href="course-player.php?course_id=<?= (int)$c['id'] ?>" class="action-link">Play</a>
-                            <button type="button" class="btn btn-sm btn-outline toggle-lessons-btn" data-course-id="<?= (int)$c['id'] ?>">
+                            <a href="course.php?id=<?= $c['id'] ?>" class="action-link">View</a>
+                            <a href="course-player.php?course_id=<?= $c['id'] ?>" class="action-link">Play</a>
+                            <button type="button" class="btn btn-sm btn-outline toggle-lessons-btn" data-course-id="<?= $c['id'] ?>">
                                 Lessons
                             </button>
                             <form method="post" class="inline-form" style="display: inline;">
                                 <input type="hidden" name="action" value="delete_course" />
-                                <input type="hidden" name="course_id" value="<?= (int)$c['id'] ?>" />
+                                <input type="hidden" name="course_id" value="<?= $c['id'] ?>" />
                                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this course?')">Delete</button>
                             </form>
                         </td>
                     </tr>
-                    <tr class="lessons-row" data-course-id="<?= (int)$c['id'] ?>">
+                    <tr class="lessons-row" data-course-id="<?= $c['id'] ?>">
                         <td colspan="3">
                             <h3 class="lessons-header">Lessons: <?= htmlspecialchars($c['title']) ?></h3>
                             <?php 
-                            $cid = (int)$c['id'];
+                            $cid = $c['id'];
                             $lessons = $lessonsByCourse[$cid] ?? [];
                             ?>
                             <?php if (empty($lessons)): ?>
@@ -339,16 +339,16 @@ while ($c = $courses->fetch_assoc()) {
                                         <tbody>
                                             <?php foreach ($lessons as $lesson): ?>
                                             <tr>
-                                                <td><?= (int)$lesson['position'] ?></td>
+                                                <td><?= $lesson['position'] ?></td>
                                                 <td><?= htmlspecialchars($lesson['title']) ?></td>
-                                                <td><?= (int)$lesson['duration_seconds'] ?>s</td>
+                                                <td><?= $lesson['duration_seconds'] ?>s</td>
                                                 <td class="muted-ellipsis">
                                                     <?= htmlspecialchars($lesson['video_url'] ?: 'N/A') ?>
                                                 </td>
                                                 <td class="text-right">
                                                     <form method="post" class="inline-form-inline">
                                                         <input type="hidden" name="action" value="delete_lesson" />
-                                                        <input type="hidden" name="lesson_id" value="<?= (int)$lesson['id'] ?>" />
+                                                        <input type="hidden" name="lesson_id" value="<?= $lesson['id'] ?>" />
                                                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this lesson?')">Delete</button>
                                                     </form>
                                                 </td>

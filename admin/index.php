@@ -3,7 +3,7 @@ session_start();
 require '../conn.php';
 
 /* admin only */
-if (!isset($_SESSION['userId']) || (int) ($_SESSION['role'] ?? 0) !== 3) {
+if (!isset($_SESSION['userId']) ||  ($_SESSION['role'] ?? 0) !== 3) {
     header('Location: ../index.php');
     exit();
 }
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         $title = trim($_POST['title']);
         $description = trim($_POST['description']);
-        $instructorId = (int) $_POST['instructor_id'];
+        $instructorId =  $_POST['instructor_id'];
         $price = (float) $_POST['price'];
         $level = $_POST['level'];
         $language = $_POST['language'];
@@ -73,12 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     /* add lesson */
     if ($_POST['action'] === 'add_lesson') {
 
-        $courseId = (int) $_POST['course_id'];
+        $courseId =  $_POST['course_id'];
         $title = trim($_POST['lesson_title']);
         $video = trim($_POST['video_url']);
         $content = trim($_POST['content']);
-        $duration = (int) $_POST['duration_seconds'];
-        $order = (int) $_POST['position'];
+        $duration =  $_POST['duration_seconds'];
+        $order =  $_POST['position'];
 
         if ($courseId && $title) {
 
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $pos->bind_param('i', $courseId);
                 $pos->execute();
                 $row = $pos->get_result()->fetch_assoc();
-                $order = (int) $row['next_pos'];
+                $order =  $row['next_pos'];
                 $pos->close();
             }
 
@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     /* delete course */
     if ($_POST['action'] === 'delete_course') {
 
-        $id = (int) $_POST['course_id'];
+        $id =  $_POST['course_id'];
         $stmt = $conn->prepare("DELETE FROM courses WHERE id = ?");
         $stmt->bind_param('i', $id);
         $stmt->execute();
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     /* delete lesson */
     if ($_POST['action'] === 'delete_lesson') {
 
-        $id = (int) $_POST['lesson_id'];
+        $id =  $_POST['lesson_id'];
         $stmt = $conn->prepare("DELETE FROM lessons WHERE id = ?");
         $stmt->bind_param('i', $id);
         $stmt->execute();
@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     /* set role by email */
     if ($_POST['action'] === 'set_role_by_email') {
         $email = trim($_POST['email'] ?? '');
-        $role_id = (int) ($_POST['role_id'] ?? 0);
+        $role_id =  ($_POST['role_id'] ?? 0);
         $allowed = [1,2,3];
 
         if (!$email || !in_array($role_id, $allowed, true)) {
@@ -162,10 +162,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             exit();
         }
 
-        $targetUserId = (int) $user['id'];
-        $currentRole = (int) $user['role_id'];
-        $myId = (int) $_SESSION['userId'];
-        $myRole = (int) ($_SESSION['role'] ?? 0);
+        $targetUserId =  $user['id'];
+        $currentRole =  $user['role_id'];
+        $myId =  $_SESSION['userId'];
+        $myRole =  ($_SESSION['role'] ?? 0);
 
         // Prevent demoting your own admin role
         if ($myId === $targetUserId && $myRole === 3 && $role_id !== 3) {
@@ -190,15 +190,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     /* toggle admin role (AJAX-friendly) */
     if ($_POST['action'] === 'toggle_admin') {
-        $targetUserId = (int) ($_POST['user_id'] ?? 0);
+        $targetUserId =  ($_POST['user_id'] ?? 0);
         if ($targetUserId <= 0) {
             if (is_ajax_request()) json_response(['ok' => false, 'error' => 'Invalid user id'], 400);
             header('Location: index.php?role_error=invalid');
             exit();
         }
 
-        $myId = (int) ($_SESSION['userId'] ?? 0);
-        $myRole = (int) ($_SESSION['role'] ?? 0);
+        $myId =  ($_SESSION['userId'] ?? 0);
+        $myRole =  ($_SESSION['role'] ?? 0);
 
         // Prevent changing your own admin status
         if ($myId === $targetUserId) {
@@ -240,16 +240,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 $stats = ['users' => 0, 'courses' => 0, 'lessons' => 0, 'instructors' => 0];
 
 $q = $conn->query("SELECT COUNT(*) c FROM users");
-$stats['users'] = (int) $q->fetch_assoc()['c'];
+$stats['users'] =  $q->fetch_assoc()['c'];
 
 $q = $conn->query("SELECT COUNT(*) c FROM courses");
-$stats['courses'] = (int) $q->fetch_assoc()['c'];
+$stats['courses'] =  $q->fetch_assoc()['c'];
 
 $q = $conn->query("SELECT COUNT(*) c FROM lessons");
-$stats['lessons'] = (int) $q->fetch_assoc()['c'];
+$stats['lessons'] =  $q->fetch_assoc()['c'];
 
 $q = $conn->query("SELECT COUNT(*) c FROM users WHERE role_id = 2");
-$stats['instructors'] = (int) $q->fetch_assoc()['c'];
+$stats['instructors'] =  $q->fetch_assoc()['c'];
 
 /* courses */
 $courses = [];
@@ -267,7 +267,7 @@ $stmt->close();
 $lessonsByCourse = [];
 foreach ($courses as $c) {
 
-    $cid = (int) $c['id'];
+    $cid =  $c['id'];
     $stmt = $conn->prepare(
         "SELECT id, title, duration_seconds, `order` AS position
          FROM lessons WHERE course_id = ? ORDER BY `order`"
@@ -287,7 +287,7 @@ foreach ($courses as $c) {
 
 /* admins (exclude current admin from list) */
 $admins = [];
-$myId = (int) ($_SESSION['userId'] ?? 0);
+$myId =  ($_SESSION['userId'] ?? 0);
 $stmt = $conn->prepare("SELECT id, fname, lname, email FROM users WHERE role_id = 3 AND id != ? ORDER BY joined_at DESC");
 $stmt->bind_param('i', $myId);
 $stmt->execute();
@@ -436,7 +436,7 @@ while ($r = $res->fetch_assoc()) {
                             </svg></div>
                         <div class="stat-info">
                             <h3>Total Users</h3>
-                            <div class="number"><?= (int) $stats['users'] ?></div>
+                            <div class="number"><?=  $stats['users'] ?></div>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -445,7 +445,7 @@ while ($r = $res->fetch_assoc()) {
                             </svg></div>
                         <div class="stat-info">
                             <h3>Courses</h3>
-                            <div class="number"><?= (int) $stats['courses'] ?></div>
+                            <div class="number"><?=  $stats['courses'] ?></div>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -454,7 +454,7 @@ while ($r = $res->fetch_assoc()) {
                             </svg></div>
                         <div class="stat-info">
                             <h3>Lessons</h3>
-                            <div class="number"><?= (int) $stats['lessons'] ?></div>
+                            <div class="number"><?=  $stats['lessons'] ?></div>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -463,7 +463,7 @@ while ($r = $res->fetch_assoc()) {
                             </svg></div>
                         <div class="stat-info">
                             <h3>Instructors</h3>
-                            <div class="number"><?= (int) $stats['instructors'] ?></div>
+                            <div class="number"><?=  $stats['instructors'] ?></div>
                         </div>
                     </div>
                 </div>
@@ -495,7 +495,7 @@ while ($r = $res->fetch_assoc()) {
                                             <select name="instructor_id" required style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;">
                                                 <option value="">Select Instructor</option>
                                                 <?php foreach ($instructors as $inst): ?>
-                                                    <option value="<?= (int) $inst['id'] ?>"><?= htmlspecialchars($inst['fname'] . ' ' . $inst['lname']) ?> (<?= htmlspecialchars($inst['email']) ?>)</option>
+                                                    <option value="<?=  $inst['id'] ?>"><?= htmlspecialchars($inst['fname'] . ' ' . $inst['lname']) ?> (<?= htmlspecialchars($inst['email']) ?>)</option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -543,8 +543,8 @@ while ($r = $res->fetch_assoc()) {
                                     </thead>
                                     <tbody id="courses-table-body">
                                         <?php foreach ($courses as $c): ?>
-                                            <tr data-course-id="<?= (int) $c['id'] ?>">
-                                                <td>#<?= (int) $c['id'] ?></td>
+                                            <tr data-course-id="<?=  $c['id'] ?>">
+                                                <td>#<?=  $c['id'] ?></td>
                                                 <td><?= htmlspecialchars($c['fname'] . ' ' . $c['lname']) ?>
                                                     <div class="muted"><?= htmlspecialchars($c['email']) ?></div>
                                                 </td>
@@ -555,9 +555,9 @@ while ($r = $res->fetch_assoc()) {
                                                     <button class="btn btn-danger delete-course">Delete</button>
                                                 </td>
                                             </tr>
-                                            <tr class="lessons-row" data-course-id="<?= (int) $c['id'] ?>" style="display:none;background:#fafafa;">
+                                            <tr class="lessons-row" data-course-id="<?=  $c['id'] ?>" style="display:none;background:#fafafa;">
                                                 <td colspan="6">
-                                                    <?php $cid = (int) $c['id'];
+                                                    <?php $cid =  $c['id'];
                                                     $less = $lessonsByCourse[$cid] ?? []; ?>
 
                                                     <!-- Add Lesson Form -->
@@ -605,11 +605,11 @@ while ($r = $res->fetch_assoc()) {
                                                         <div class="muted">No lessons in this course.</div>
                                                     <?php else: ?>
                                                         <?php foreach ($less as $l): ?>
-                                                            <div class="lesson-row" data-lesson-id="<?= (int) $l['id'] ?>">
+                                                            <div class="lesson-row" data-lesson-id="<?=  $l['id'] ?>">
                                                                 <div>
-                                                                    <strong><?= (int) $l['position'] ?>.</strong>
+                                                                    <strong><?=  $l['position'] ?>.</strong>
                                                                     <?= htmlspecialchars($l['title']) ?>
-                                                                    <span class="lesson-meta">(<?= (int) $l['duration_seconds'] ? gmdate('i:s', (int) $l['duration_seconds']) : '—' ?>)</span>
+                                                                    <span class="lesson-meta">(<?=  $l['duration_seconds'] ? gmdate('i:s',  $l['duration_seconds']) : '—' ?>)</span>
                                                                 </div>
                                                                 <div>
                                                                     <button class="btn btn-danger delete-lesson">Delete Lesson</button>
@@ -633,7 +633,7 @@ while ($r = $res->fetch_assoc()) {
                                     <div class="muted">No admins found.</div>
                                 <?php else: ?>
                                     <?php foreach ($admins as $u): ?>
-                                        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0f0;" data-user-id="<?= (int) $u['id'] ?>">
+                                        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0f0;" data-user-id="<?=  $u['id'] ?>">
                                             <div>
                                                 <div><strong><?= htmlspecialchars($u['fname'] . ' ' . $u['lname']) ?></strong></div>
                                                 <div class="muted"><?= htmlspecialchars($u['email']) ?></div>
