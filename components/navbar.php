@@ -34,15 +34,14 @@
                 ?>
 
                 <li class="nav-link">
-                    <a href="#"><?= htmlspecialchars($_SESSION['fullname']) ?></a>
-                </li>
-
-                <li class="nav-link">
                     <a href="logout.php">Logout</a>
                 </li>
 
-                <li class="nav-link user-avatar-dropdown" style="display:flex; align-items:center; margin-left:12px; position:relative;">
-                    <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="Avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #ddd;cursor:pointer;">
+                <li class="nav-link user-profile">
+                    <a href="profile.php" class="profile-anchor">
+                        <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="Avatar" class="user-avatar">
+                        <span class="profile-name"><?= htmlspecialchars($_SESSION['fullname']) ?></span>
+                    </a>
 
                     <?php if ($_SESSION['role'] == 1): ?>
                     <div class="avatar-dropdown-menu">
@@ -59,7 +58,7 @@
                             <h4>Delete Photo</h4>
                             <form method="post" action="index.php">
                                 <input type="hidden" name="action" value="delete_student_photo">
-                                <button type="submit" style="background:#dc2626;">Delete</button>
+                                <button type="submit" class="btn-danger">Delete</button>
                             </form>
                         </div>
 

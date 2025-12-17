@@ -5,17 +5,17 @@ if (!isset($_SESSION['role']) || (int)$_SESSION['role'] !== 2) {
     header('Location: login.php');
     exit();
 }
-$userId = isset($_SESSION['userId']) ? (int)$_SESSION['userId'] : 0;
+$userId = (int)($_SESSION['userId'] ?? 0);
 
 // Handle create course
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'create_course') {
-        $title = isset($_POST['title']) ? trim($_POST['title']) : '';
-        $slug = isset($_POST['slug']) ? trim($_POST['slug']) : '';
-        $description = isset($_POST['description']) ? trim($_POST['description']) : '';
-        $thumbnail_url = isset($_POST['thumbnail_url']) ? trim($_POST['thumbnail_url']) : '';
-        $price = isset($_POST['price']) ? (float)$_POST['price'] : 0;
-        $level = isset($_POST['level']) ? $_POST['level'] : 'beginner';
+        $title = trim($_POST['title'] ?? '');
+        $slug = trim($_POST['slug'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $thumbnail_url = trim($_POST['thumbnail_url'] ?? '');
+        $price = (float)($_POST['price'] ?? 0);
+        $level = $_POST['level'] ?? 'beginner';
         if ($title && $slug) {
             $stmt = $conn->prepare("INSERT INTO courses (instructor_id, title, slug, description, thumbnail_url, price, level) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmt->bind_param('issssds', $userId, $title, $slug, $description, $thumbnail_url, $price, $level);
@@ -23,12 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmt->close();
         }
     } elseif ($_POST['action'] === 'create_lesson') {
-        $course_id = isset($_POST['course_id']) ? (int)$_POST['course_id'] : 0;
-        $title = isset($_POST['title']) ? trim($_POST['title']) : '';
-        $video_url = isset($_POST['video_url']) ? trim($_POST['video_url']) : '';
-        $content = isset($_POST['content']) ? trim($_POST['content']) : '';
-        $position = isset($_POST['position']) ? (int)$_POST['position'] : 1;
-        $duration = isset($_POST['duration_seconds']) ? (int)$_POST['duration_seconds'] : 0;
+        $course_id = (int)($_POST['course_id'] ?? 0);
+        $title = trim($_POST['title'] ?? '');
+        $video_url = trim($_POST['video_url'] ?? '');
+        $content = trim($_POST['content'] ?? '');
+        $position = (int)($_POST['position'] ?? 1);
+        $duration = (int)($_POST['duration_seconds'] ?? 0);
         if ($course_id && $title) {
             // schema uses `order` column for lesson ordering; alias on selects keeps backward compatibility
             $stmt = $conn->prepare("INSERT INTO lessons (course_id, title, video_url, content, `order`, duration_seconds) VALUES (?, ?, ?, ?, ?, ?)");
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmt->close();
         }
     } elseif ($_POST['action'] === 'delete_course') {
-        $course_id = isset($_POST['course_id']) ? (int)$_POST['course_id'] : 0;
+        $course_id = (int)($_POST['course_id'] ?? 0);
         if ($course_id) {
             $stmt = $conn->prepare("DELETE FROM courses WHERE id = ? AND instructor_id = ?");
             $stmt->bind_param('ii', $course_id, $userId);
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmt->close();
         }
     } elseif ($_POST['action'] === 'delete_lesson') {
-        $lesson_id = isset($_POST['lesson_id']) ? (int)$_POST['lesson_id'] : 0;
+        $lesson_id = (int)($_POST['lesson_id'] ?? 0);
         if ($lesson_id) {
             $stmt = $conn->prepare("DELETE FROM lessons WHERE id = ?");
             $stmt->bind_param('i', $lesson_id);
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
     } elseif ($_POST['action'] === 'update_profile_image') {
         // schema uses `pfp`
-        $pfp = isset($_POST['pfp']) ? trim($_POST['pfp']) : '';
+        $pfp = trim($_POST['pfp'] ?? '');
         if ($pfp) {
             $stmt = $conn->prepare("UPDATE users SET pfp = ? WHERE id = ?");
             $stmt->bind_param('si', $pfp, $userId);
@@ -62,38 +62,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmt->close();
         }
     } elseif ($_POST['action'] === 'change_instructor_password') {
-        $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-        $current_password = isset($_POST['current_password']) ? $_POST['current_password'] : '';
-        $new_password = isset($_POST['new_password']) ? $_POST['new_password'] : '';
+        $email = trim($_POST['email'] ?? '');
+        $current_password = $_POST['current_password'] ?? '';
+        $new_password = $_POST['new_password'] ?? '';
         
         if ($email && $current_password && $new_password && strlen($new_password) >= 6) {
             // Verify email and current password
             $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ? AND id = ?");
             $stmt->bind_param('si', $email, $userId);
             $stmt->execute();
-            $res = $stmt->get_result();
-            $userRow = $res ? $res->fetch_assoc() : null;
-            $stmt->close();
-            if ($userRow && password_verify($current_password, $userRow['password'])) {
-                $new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
-                $up = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-                $up->bind_param('si', $new_password_hash, $userId);
-                $up->execute();
-                $up->close();
+            $result = $stmt->get_result();
+            
+            if ($result->num_rows === 1) {
+                $user = $result->fetch_assoc();
+                if (password_verify($current_password, $user['password'])) {
+                    // Update password
+                    $new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
+                    $updateStmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+                    $updateStmt->bind_param('si', $new_password_hash, $userId);
+                    $updateStmt->execute();
+                    $updateStmt->close();
+                }
             }
+            $stmt->close();
         }
     }
 }
 
 // Fetch my courses
+$courses = [];
 $stmt = $conn->prepare("SELECT id, title, slug FROM courses WHERE instructor_id = ? ORDER BY created_at DESC");
 $stmt->bind_param('i', $userId);
 $stmt->execute();
 $res = $stmt->get_result();
-if ($res) { while ($r = $res->fetch_assoc()) { $courses[] = $r; } }
+while ($row = $res->fetch_assoc()) { $courses[] = $row; }
 $stmt->close();
 
 // Fetch lessons for all my courses
+$lessonsByCourse = [];
 if (!empty($courses)) {
     $courseIds = array_map(fn($c) => (int)$c['id'], $courses);
     $placeholders = implode(',', array_fill(0, count($courseIds), '?'));
@@ -104,20 +110,22 @@ if (!empty($courses)) {
     $res = $stmt->get_result();
     while ($row = $res->fetch_assoc()) {
         $cid = (int)$row['course_id'];
-        if (!isset($lessonsByCourse[$cid])) $lessonsByCourse[$cid] = array();
+        if (!isset($lessonsByCourse[$cid])) $lessonsByCourse[$cid] = [];
         $lessonsByCourse[$cid][] = $row;
     }
     $stmt->close();
 }
 
 // Fetch current instructor profile image (schema uses `pfp`)
+$current_profile_image = null;
 $stmt = $conn->prepare("SELECT pfp FROM users WHERE id = ?");
 $stmt->bind_param('i', $userId);
 $stmt->execute();
 $res = $stmt->get_result();
-$row = $res ? $res->fetch_assoc() : null;
+if ($row = $res->fetch_assoc()) {
+    $current_profile_image = $row['pfp'];
+}
 $stmt->close();
-$current_profile_image = isset($row['pfp']) ? $row['pfp'] : null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -155,7 +163,7 @@ $current_profile_image = isset($row['pfp']) ? $row['pfp'] : null;
                 </div>
                 <?php endif; ?>
                 <label>Profile Image URL</label>
-                <input type="url" name="pfp" placeholder="https://example.com/image.jpg" value="<?= htmlspecialchars(isset($current_profile_image) ? $current_profile_image : '') ?>" required />
+                <input type="url" name="pfp" placeholder="https://example.com/image.jpg" value="<?= htmlspecialchars($current_profile_image ?? '') ?>" required />
                 <button type="submit">Update Image</button>
             </form>
         </div>
@@ -165,7 +173,7 @@ $current_profile_image = isset($row['pfp']) ? $row['pfp'] : null;
             <form method="post">
                 <input type="hidden" name="action" value="change_instructor_password" />
                 <label>Email</label>
-                <input type="email" name="email" placeholder="Your email" value="<?= htmlspecialchars(isset($_SESSION['email']) ? $_SESSION['email'] : '') ?>" required />
+                <input type="email" name="email" placeholder="Your email" value="<?= htmlspecialchars($_SESSION['email'] ?? '') ?>" required />
                 <label>Current Password</label>
                 <input type="password" name="current_password" placeholder="Current password" required />
                 <label>New Password</label>
@@ -246,7 +254,7 @@ $current_profile_image = isset($row['pfp']) ? $row['pfp'] : null;
                         <h3 style="margin-bottom:12px;font-size:16px;">Lessons for: <?= htmlspecialchars($c['title']) ?></h3>
                         <?php 
                         $cid = (int)$c['id'];
-                        $lessons = isset($lessonsByCourse[$cid]) ? $lessonsByCourse[$cid] : array(); 
+                        $lessons = $lessonsByCourse[$cid] ?? [];
                         ?>
                         <?php if (empty($lessons)): ?>
                             <p style="color:#6b7280;font-style:italic;">No lessons added yet.</p>

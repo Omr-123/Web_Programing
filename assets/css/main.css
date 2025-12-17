@@ -4,6 +4,9 @@
 
 body {
     padding-top: 80px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 
@@ -81,10 +84,121 @@ body {
     width: 15px;
 }
 
+/* Profile (avatar + name) - clickable and no underline */
+.header .nav-link.user-profile::before {
+    display: none;
+}
+
+.header .nav-link.user-profile .profile-anchor {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: inherit;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 4px 8px;
+    background: #fff;
+}
+
+.header .nav-link.user-profile .profile-anchor:hover {
+    text-decoration: none;
+}
+
+.header .nav-link.user-profile .profile-name {
+    margin-right: 8px;
+    margin-left: 5px;
+    font-weight: 600;
+}
+
+/* Hover to show dropdown */
+.user-profile:hover .avatar-dropdown-menu {
+    display: block;
+}
+
+/* Responsive navbar adjustments */
+@media (max-width: 768px) {
+    .header .nav {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        padding: 8px 16px;
+    }
+
+    .header .nav-logo {
+        margin-bottom: 8px;
+    }
+
+    .header .nav-links {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        padding-bottom: 8px;
+    }
+
+    .header .nav-links .nav-link {
+        width: 100%;
+    }
+
+    .header .nav-links .nav-link a {
+        display: inline-block;
+        padding: 8px 0;
+        width: 100%;
+    }
+
+    .user-profile {
+        align-self: flex-end;
+    }
+
+    .avatar-dropdown-menu {
+        right: 16px;
+        left: auto;
+    }
+}
+
+/* Compact adjustments for very small screens */
+@media (max-width: 420px) {
+    .header .nav {
+        padding: 8px 12px;
+    }
+
+    .header .nav-logo img {
+        height: 36px;
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .header .nav-links {
+        gap: 6px;
+    }
+}
+
 /* Avatar Dropdown */
+
+/* Ensure nav items are vertically centered */
+.header .nav-links {
+    align-items: center;
+}
 
 .user-avatar-dropdown {
     position: relative !important;
+    display: flex;
+    align-items: center;
+    margin-left: 12px;
+}
+
+.user-avatar-dropdown .user-avatar,
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    display: block;
 }
 
 .avatar-dropdown-menu {
@@ -99,6 +213,17 @@ body {
     overflow: hidden;
     z-index: 10000;
     padding: 12px;
+}
+
+/* Danger button inside dropdown */
+.dropdown-section .btn-danger {
+    background: #dc2626;
+    color: #fff;
+    border: none;
+}
+
+.dropdown-section .btn-danger:hover {
+    background: #b91c1c;
 }
 
 .avatar-dropdown-menu::before {
@@ -118,7 +243,7 @@ body {
 }
 
 .dropdown-section {
-    padding: 12px 0;
+    padding: 10px 0 !important;
     border-bottom: 1px solid #e5e7eb;
 }
 
@@ -162,8 +287,12 @@ body {
 
 /* Footer */
 
+/* Make HTML section padding uniform and slightly smaller */
+section { padding: 12px !important; }
+
 .footer {
-    padding: 20px;
+    padding: 12px 0;
     text-align: center;
     border-top: 1px solid rgba(0, 0, 0, .1);
+    margin-top: auto;
 }
