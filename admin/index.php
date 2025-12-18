@@ -544,6 +544,7 @@ while ($r = $res->fetch_assoc()) {
                                         <?php foreach ($courses as $c): ?>
                                             <tr data-course-id="<?=  $c['id'] ?>">
                                                 <td>#<?=  $c['id'] ?></td>
+                                                <td><?=  $c['title'] ?></td>
                                                 <td><?= htmlspecialchars($c['fname'] . ' ' . $c['lname']) ?>
                                                     <div class="muted"><?= htmlspecialchars($c['email']) ?></div>
                                                 </td>
